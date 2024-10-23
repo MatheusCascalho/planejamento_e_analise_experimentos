@@ -16,12 +16,26 @@ imc2017 = imc2017[,c('Sex', 'height.m', 'weight.kg')]
 imc2016$amostra <- '2016'
 imc2017$amostra <- '2017'
 
+# Calculando o IMC de cada população
+imc2016$imc <- imc2016$weight.kg/(imc2016$height.m^2)
+imc2017$imc <- imc2017$weight.kg/(imc2017$height.m^2)
+
+# Normalização das amostras
+n1 = length(imc2016$imc)
+sigma_1 = sd(imc2016$imc)
+mu_1 = mean(imc2016$imc)
+imc2016$z0 <- (imc2016$imc - mu_1)/(sigma_1/sqrt(n1))
+
+n2 = length(imc2017$imc)
+sigma_2 = sd(imc2017$imc)
+mu_2 = mean(imc2017$imc)
+imc2017$z0 <- (imc2017$imc - mu_2)/(sigma_2/sqrt(n2))
+
+
 imc <- rbind(imc2016, imc2017)
 
 
 
-# Calculando o IMC de cada população
-imc$imc <- imc$weight.kg/(imc$height.m^2)
 
 # Segregação de dados entre Homens e Mulheres
 imc_feminino <- imc[imc$Sex == 'F',]
