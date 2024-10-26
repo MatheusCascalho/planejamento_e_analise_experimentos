@@ -46,33 +46,115 @@ imc_masculino <- imc[imc$Sex == 'M',]
 #hist(imc_feminino$imc, col = 'red', probability=TRUE, add = TRUE)
 
 
-
 # Teste de hipótese
-mu_0 = 21.7 # IMC que representa o peso normal
-delta = 3.2
 
-t.test(
-  imc$imc, 
-  alternative = 'two.sided', 
-  mu=21.7, 
-  conf.level = 0.99
-)
-
-# Tamanho do efeito
-mu_bar = mean(imc$imc)
-s = sd(imc$imc)
-d <- (mu_bar - mu_0)/s
-
-power.t.test(n           = length(imc$imc), 
-             delta       = delta, 
-             sd          = s, 
-             sig.level   = 0.01, 
-             type        = "one.sample", 
-             alternative = "two.sided")
+## - Teste de hipótese entre imc homens e mulheres da pós (supõe iid)
+# IID(Independente e Igualmente distribuida): significa que temos uma amostra representativa da população total
+# Vamos supor que o IMC de homens é igual ao de mulheres
+# H0: mu_m = mu_h
+# H1: mu_m < mu_h
+# Teste unilateral. Podemos assumir isso pois acreditamos que o IMC das mulheres será menor que o dos homens
+# Premissa: amostrar com a mesma variância
+fligner.test(imc ~ Sex, data = imc) # H0: VARIANCIAS IGUAIS
+# Resulto do teste de fligner < 0.05 -> podemos assumir variancias iguais
 
 
-# Melhorias do estudo
-# Avaliação de outras métricas, como bioimpedância para identificação de massa
-# magra e gorduras. Homens tendem a ter mais massa magra devido a composição 
-# corporal masculina, enquanto mulheres tem mais regiões de acúmulo de gordura
-# como mamas e glúteos.k
+# Premissa: amostras seguem a normalidade
+# H0: Distribuição é normal
+# Resulto do teste de shapiro < 0.05 -> podemos assumir normalidade
+
+shapiro.test(imc$imc[imc$Sex == "F"]) # p-value = 0.3179 -> aceitamos H0
+power.t.test(delta       = mean(imc_feminino$imc)*0.1,
+             sd          = sd(imc_feminino$imc),
+             sig.level   = 0.05,
+             # power       = 0.8,
+             n = 11,
+             type        = "one.sample",
+             alternative = "one.sided")
+
+shapiro.test(imc$imc[imc$Sex == "M"]) # p-value = 0.0618 -> rejeitamos H0, não segue normalidade (por muito pouco)
+
+power.t.test(delta       = mean(imc_masculino$imc)*0.1,
+             sd          = sd(imc_masculino$imc),
+             sig.level   = 0.05,
+             # power       = 0.8,
+             n = 42,
+             type        = "one.sample",
+             alternative = "one.sided")
+
+
+t.test(imc$imc ~ imc$Sex, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
+# p-value = 0.0003175 -> rejeitamos H0, ou seja, o IMC das populações é diferente. 
+# H1: mu_m < mu_h
+# Resulto do hipotese < 0.05 -> podemos rejeitar H0
+
+power.t.test(delta       = mean(imc$imc)*0.1,
+             sd          = sd(imc$imc),
+             sig.level   = 0.05,
+             # power       = 0.8,
+             n = length(imc$imc),
+             type        = "two.sample",
+             alternative = "one.sided")
+# power = 0.911528
+
+
+library(confintr) # package for confidence intervals
+library(ggplot2)
+
+ci_masculino = ci_mean(imc_masculino$imc, probs = c(0.05, 0.95),
+             type = c("t"))
+ci_feminino = ci_mean(imc_feminino$imc, probs = c(0.05, 0.95),
+                       type = c("t"))
+
+
+
+
+for (i in 1:N) {
+  # generate normally distributed sample of size n
+  rsample <- rnorm(n, mean = 50, sd = 5)  
+  # calculate confidence interval
+  ci = ci_mean(rsample, probs = c(0.025, 0.975),
+               type = c("t"))
+  mean[i] <- ci$estimate
+  L[i] <- ci$interval[1]
+  U[i] <- ci$interval[2]
+}
+
+mean <- rep(0, 2)  # vector of zeros and size N
+mean[1]=mean(imc_masculino$imc)
+mean[2]=mean(imc_feminino$imc)
+
+L <- rep(0, 2)  # vector of zeros and size N
+L[1]=ci_masculino$interval[1]
+L[2]=ci_feminino$interval[1]
+
+U <- rep(0, 2)  # vector of zeros and size N
+U[1]=ci_masculino$interval[2]
+U[2]=ci_feminino$interval[2]
+
+
+
+data <- data.frame(x = 1:2,
+                   y = mean,
+                   low = L,
+                   up = U)
+
+p <- ggplot(data, aes(x, y)) + geom_point() + 
+            geom_errorbar(aes(ymin = low, ymax = up))
+
+p
+
+p + labs(x = "Intervalos")
+p + labs(title = "Intervalos de Confian?a 95%")
+
+# -----------------------------------------------------------------------
+
+# DÚVIDAS
+# Estimação do tamanho do efeito e do intervalo de
+# confiança na grandeza de interesse;
+
+
