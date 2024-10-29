@@ -34,7 +34,7 @@ Neste estudo, serão propostos três testes de forma a compreender possíveis re
 
 * Diferença entre IMC de Homens e Mulheres;
 * Diferença de IMC entre os dois anos em estudo;
-* Diferença entre alunos de Graduação e Pós-Graduação em 2017.
+* Diferença entre alunos de Graduação e Pós-Graduação em 2016.
 
 Por meio destes testes, podemos obter informações relevantes capazes de compreender diferenças baseadas em idade, sexo e ano de estudo.
 
@@ -65,8 +65,8 @@ Nos experimentos aqui realizados, procuramos extrair o máximo de informações 
 Apesar de tais problemas existirem, será aproveitada ao máximo a robustez existente nos experimentos.
 
 ### Diferença entre IMC de Homens e Mulheres
-Dada a suposta natureza do IMC das mulheres ser inferior aos homens [ADD REF.], torna-se relevante realizar a mesma análise dentro do universo de estudo. Para isso, podemos testar a alternativa de o imc masculino ($imc_m$) ser maior que o feminino ($imc_f$).
-$$\begin{cases} H_0: imc_f = imc_m&\\H_1: imc_f<imc_m\end{cases}$$
+Dada a suposta natureza do IMC das mulheres ser inferior aos homens [ADD REF.], torna-se relevante realizar a mesma análise dentro do universo de estudo. Para isso, podemos testar a alternativa de o imc masculino ($\mu_{imcm}$) ser maior que o feminino ($\mu_{imcf}$).
+$$\begin{cases} H_0: \mu_{imcf} = \mu_{imcm}&\\H_1: \mu_{imcf}<\mu_{imcm}\end{cases}$$
 
 Estudos referentes à normalidade de ambas distribuições foram realizados, assim como um teste de comparação das variâncias de Fligner-Killen.
 
@@ -74,8 +74,19 @@ O tamanho de ($\delta^*$) utilizado neste teste baseou-se na relevância das fai
 
 O valor de $\alpha=0.05$ buscou manter o padrão encontrado na literatura médica, assim como esperava-se encontrar um valor de $\beta=0.8$ para corroborar com não encontrarmos falsos negativos.
 
-### Description of the data collection
-Whenever needed, you can also include an (optional) subsection describing the actual data collection, how it was performed, any adaptations or unexpected events that may have occurred, etc. Subsections like this can also be used for the sample size calculations or any other aspect that requires a longer discussion.
+### Diferença de IMC entre os dois anos em estudo;
+Realizamos para este teste dois experimentos, um para o sexo masculino e outro para o feminino. Esta estratificação baseou-se no mesmo critério da suposta diferença dos IMCs entre os sexos.
+
+Para cada um dos testes, iremos avaliar se ($\mu_{2016}$) é igual a ($\mu_{2017}$).
+
+$$\begin{cases} H_0: \mu_{2016} = \mu_{2017}&\\H_1: \mu_{2016} \neq \mu_{2017}\end{cases}$$
+Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos aos do primeiro experimento.
+
+### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
+Realizamos para este experimento um teste entre a diferença da média do IMC entre alunos de graduação ($\mu_{grad}$) e pós graduação ($\mu_{pos}$) de forma a testar se a idade é um fator que influencia a saúde dos alunos do departamento. 
+
+$$\begin{cases} H_0: \mu_{grad} = \mu_{pos}&\\H_1: \mu_{grad} \neq \mu_{pos}\end{cases}$$
+Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos aos do primeiro experimento.
 
 ## Experimentos
 The first step is to load and preprocess the data. For instance,
