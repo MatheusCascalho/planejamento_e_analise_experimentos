@@ -72,7 +72,7 @@ power.t.test(delta       = mean(imc_feminino$imc)*0.1,
              type        = "one.sample",
              alternative = "one.sided")
 
-shapiro.test(imc$imc[imc$Sex == "M"]) # p-value = 0.0618 -> rejeitamos H0, não segue normalidade (por muito pouco)
+shapiro.test(imc$imc[imc$Sex == "M"]) # p-value = 0.0618 -> aceitamos H0, segue normalidade (por muito pouco)
 
 power.t.test(delta       = mean(imc_masculino$imc)*0.1,
              sd          = sd(imc_masculino$imc),
@@ -92,7 +92,7 @@ t.test(imc$imc ~ imc$Sex,
 # H1: mu_m < mu_h
 # Resulto do hipotese < 0.05 -> podemos rejeitar H0
 
-power.t.test(delta       = mean(imc$imc)*0.1,
+power.t.test(delta       = mean(imc$imc)*0.1, # substituir pelo delta mínimo que faz a mudança de faixa
              sd          = sd(imc$imc),
              sig.level   = 0.05,
              # power       = 0.8,
@@ -156,5 +156,28 @@ p + labs(title = "Intervalos de Confian?a 95%")
 # DÚVIDAS
 # Estimação do tamanho do efeito e do intervalo de
 # confiança na grandeza de interesse;
+
+
+t.test(imc_feminino$imc ~ imc_feminino$amostra, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
+
+t.test(imc_masculino$imc ~ imc_masculino$amostra, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
+
+imc2016 <- read.csv('imc_20162.csv')
+imc2016$imc <- imc2016$Weight.kg/(imc2016$Height.m^2)
+shapiro.test(imc2016$imc[imc2016$Course == "PPGEE"]) # p-value = 0.3179 -> aceitamos H0
+
+t.test(imc2016$imc ~ imc2016$Course, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
 
 
