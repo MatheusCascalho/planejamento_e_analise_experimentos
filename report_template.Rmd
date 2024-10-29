@@ -25,10 +25,20 @@ if (!require(GGally, quietly = TRUE)){
       install.packages("GGally")
       }
 ```
-## Summary
-This document provides a template for the Case Study reports. Reports should always start a short executive summary (call it an _Abstract_ if you want) to give the reader a general idea of the topic under investigation, the kind of analysis performed, the results obtained, and the general recommendations of the authors.
+## Descrição do Problema
+O IMC é uma medida utilizada na área de saúde como um indicador simples capaz de encontrar correlações entre o peso e altura do paciente com doenças decorrentes de obesidade, sendo inclusive capaz de classificar em diferentes grupos para obter maior precisão na análise em questão [ADD. REF].
 
-There are (at least) two ways to render this document to **pdf** in R: one easy and one... well, less easy.
+Apesar dos problemas decorrentes da simplicidade do teste [ADD REF.] e métodos mais robustos tais como a bioimpedância [ADD REF.] estarem presentes, continua sendo uma medida interessante pela facilidade e baixo custo de encontrá-la. A partir de tal importância médica, muitas questões naturalmente surgem relacionadas a testes entre diferentes populações.
+
+Neste estudo, serão propostos três testes de forma a compreender possíveis relações e diferenças presentes na amostragem realizada nos anos de 2016 e 2017 no Departamento de Engenharia da UFMG. Os testes propostos são:
+
+* Diferença entre IMC de Homens e Mulheres;
+* Diferença de IMC entre os dois anos em estudo;
+* Diferença entre alunos de Graduação e Pós-Graduação em 2017.
+
+Por meio destes testes, podemos obter informações relevantes capazes de compreender diferenças baseadas em idade, sexo e ano de estudo.
+
+## Design dos Experimentos
 
 ### 1. The easy way
 Use [RStudio](http://rstudio.com/) as your editor, open the **.Rmd** file and click the _Knit PDF_ button at the top of the editor.
@@ -44,8 +54,10 @@ library(rmarkdown)
 render("report_template.Rmd","pdf_document")    # this renders the pdf
 ```
 
-## Experimental design
-A section detailing the experimental setup. This is the place where you will define your test hypotheses, e.g.:
+## Design dos Experimentos
+
+### Diferença entre IMC de Homens e Mulheres
+Dada a suposta natureza 
 $$\begin{cases} H_0: \mu = 10&\\H_1: \mu<10\end{cases}$$
 
 including the reasons behind your choices of the value for $H_0$ and the directionality (or not) of $H_1$. 
@@ -55,7 +67,7 @@ This is also the place where you should discuss (whenever necessary) your defini
 ### Description of the data collection
 Whenever needed, you can also include an (optional) subsection describing the actual data collection, how it was performed, any adaptations or unexpected events that may have occurred, etc. Subsections like this can also be used for the sample size calculations or any other aspect that requires a longer discussion.
 
-## Exploratory Data Analysis
+## Experimentos
 The first step is to load and preprocess the data. For instance,
 ```{r loaddata}
 data(mtcars)
