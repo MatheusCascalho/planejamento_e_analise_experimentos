@@ -92,7 +92,7 @@ t.test(imc$imc ~ imc$Sex,
 # H1: mu_m < mu_h
 # Resulto do hipotese < 0.05 -> podemos rejeitar H0
 
-power.t.test(delta       = mean(imc$imc)*0.1, # substituir pelo delta mínimo que faz a mudança de faixa
+power.t.test(delta       = 2.5, # substituir pelo delta mínimo que faz a mudança de faixa
              sd          = sd(imc$imc),
              sig.level   = 0.05,
              # power       = 0.8,
@@ -110,19 +110,6 @@ ci_masculino = ci_mean(imc_masculino$imc, probs = c(0.05, 0.95),
 ci_feminino = ci_mean(imc_feminino$imc, probs = c(0.05, 0.95),
                        type = c("t"))
 
-
-
-
-for (i in 1:N) {
-  # generate normally distributed sample of size n
-  rsample <- rnorm(n, mean = 50, sd = 5)  
-  # calculate confidence interval
-  ci = ci_mean(rsample, probs = c(0.025, 0.975),
-               type = c("t"))
-  mean[i] <- ci$estimate
-  L[i] <- ci$interval[1]
-  U[i] <- ci$interval[2]
-}
 
 mean <- rep(0, 2)  # vector of zeros and size N
 mean[1]=mean(imc_masculino$imc)
@@ -152,11 +139,20 @@ p + labs(x = "Intervalos")
 p + labs(title = "Intervalos de Confian?a 95%")
 
 # -----------------------------------------------------------------------
+# ======================================================================================
 
-# DÚVIDAS
-# Estimação do tamanho do efeito e do intervalo de
-# confiança na grandeza de interesse;
+# TESTE: O IMC de mulheres nas diferentes amostras (2016 e 2017) é igual
+fligner.test(imc ~ amostra, data = imc_feminino) # H0: VARIANCIAS IGUAIS
 
+shapiro.test(imc_feminino$imc[imc_feminino$amostra == "2017"])
+hist(imc_feminino$imc[imc_feminino$amostra == "2017"])
+qqnorm(imc_feminino$imc[imc_feminino$amostra == "2017"])
+qqline(imc_feminino$imc[imc_feminino$amostra == "2017"])
+
+shapiro.test(imc_feminino$imc[imc_feminino$amostra == "2016"]) 
+hist(imc_feminino$imc[imc_feminino$amostra == "2016"])
+qqnorm(imc_feminino$imc[imc_feminino$amostra == "2016"])
+qqline(imc_feminino$imc[imc_feminino$amostra == "2016"])
 
 t.test(imc_feminino$imc ~ imc_feminino$amostra, 
        alternative = "less", 
@@ -164,11 +160,32 @@ t.test(imc_feminino$imc ~ imc_feminino$amostra,
        var.equal   = TRUE, 
        conf.level  = 0.95)
 
+# ======================================================================================
+
+# ======================================================================================
+# TESTE: O IMC de homens nas diferentes amostras (2016 e 2017) é igual
+
+fligner.test(imc ~ amostra, data = imc_feminino) # H0: VARIANCIAS IGUAIS
+
+shapiro.test(imc_masculino$imc) # p-value = 0.3179 -> aceitamos H0
+
+shapiro.test(imc_masculino$imc[imc_masculino$amostra == "2017"])
+hist(imc_masculino$imc[imc_masculino$amostra == "2017"])
+qqnorm(imc_masculino$imc[imc_masculino$amostra == "2017"])
+qqline(imc_masculino$imc[imc_masculino$amostra == "2017"])
+
+shapiro.test(imc_masculino$imc[imc_masculino$amostra == "2016"]) 
+hist(imc_masculino$imc[imc_masculino$amostra == "2016"])
+qqnorm(imc_masculino$imc[imc_masculino$amostra == "2016"])
+qqline(imc_masculino$imc[imc_masculino$amostra == "2016"])
+
 t.test(imc_masculino$imc ~ imc_masculino$amostra, 
        alternative = "less", 
        mu          = 0, 
        var.equal   = TRUE, 
        conf.level  = 0.95)
+
+# ======================================================================================
 
 imc2016 <- read.csv('imc_20162.csv')
 imc2016$imc <- imc2016$Weight.kg/(imc2016$Height.m^2)
