@@ -7,6 +7,9 @@ output:
     df_print: paged
   pdf_document:
     fig_caption: yes
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup,results='hide',warning=FALSE,echo=FALSE}
@@ -25,26 +28,46 @@ if (!require(GGally, quietly = TRUE)){
       install.packages("GGally")
       }
 ```
+
 ## Descrição do Problema
-O IMC é uma medida utilizada na área de saúde como um indicador simples capaz de encontrar correlações entre o peso e altura do paciente com doenças decorrentes de obesidade, sendo inclusive capaz de classificar em diferentes grupos para obter maior precisão na análise em questão [ADD. REF].
 
-Apesar dos problemas decorrentes da simplicidade do teste [ADD REF.] e métodos mais robustos tais como a bioimpedância [ADD REF.] estarem presentes, continua sendo uma medida interessante pela facilidade e baixo custo de encontrá-la. A partir de tal importância médica, muitas questões naturalmente surgem relacionadas a testes entre diferentes populações.
+O IMC é uma medida utilizada na área de saúde como um indicador simples
+capaz de encontrar correlações entre o peso e altura do paciente com
+doenças decorrentes de obesidade, sendo inclusive capaz de classificar
+em diferentes grupos para obter maior precisão na análise em questão
+[ADD. REF].
 
-Neste estudo, serão propostos três testes de forma a compreender possíveis relações e diferenças presentes na amostragem realizada nos anos de 2016 e 2017 no Departamento de Engenharia da UFMG. Os testes propostos são:
+Apesar dos problemas decorrentes da simplicidade do teste [ADD REF.] e
+métodos mais robustos tais como a bioimpedância [ADD REF.] estarem
+presentes, continua sendo uma medida interessante pela facilidade e
+baixo custo de encontrá-la. A partir de tal importância médica, muitas
+questões naturalmente surgem relacionadas a testes entre diferentes
+populações.
 
-* Diferença entre IMC de Homens e Mulheres;
-* Diferença de IMC entre os dois anos em estudo;
-* Diferença entre alunos de Graduação e Pós-Graduação em 2016.
+Neste estudo, serão propostos três testes de forma a compreender
+possíveis relações e diferenças presentes na amostragem realizada nos
+anos de 2016 e 2017 no Departamento de Engenharia da UFMG. Os testes
+propostos são:
 
-Por meio destes testes, podemos obter informações relevantes capazes de compreender diferenças baseadas em idade, sexo e ano de estudo.
+-   Diferença entre IMC de Homens e Mulheres;
+-   Diferença de IMC entre os dois anos em estudo;
+-   Diferença entre alunos de Graduação e Pós-Graduação em 2016.
+
+Por meio destes testes, podemos obter informações relevantes capazes de
+compreender diferenças baseadas em idade, sexo e ano de estudo.
 
 ## Design dos Experimentos
 
 ### 1. The easy way
-Use [RStudio](http://rstudio.com/) as your editor, open the **.Rmd** file and click the _Knit PDF_ button at the top of the editor.
+
+Use [RStudio](http://rstudio.com/) as your editor, open the **.Rmd**
+file and click the *Knit PDF* button at the top of the editor.
 
 ### 2. The slightly-less-easy way
-If you're using any other R editor (such as the basic [R](http://cran.r-project.org) editor), you have to use the _render()_ function from the **rmarkdown** package:
+
+If you're using any other R editor (such as the basic
+[R](http://cran.r-project.org) editor), you have to use the *render()*
+function from the **rmarkdown** package:
 
 ```{r, eval=F}
 install.packages("devtools")                    # you only have to install it once
@@ -56,39 +79,66 @@ render("report_template.Rmd","pdf_document")    # this renders the pdf
 
 ## Design dos Experimentos
 
-Nos experimentos aqui realizados, procuramos extrair o máximo de informações possíveis de dados que já foram extraídos. A partir disto, problemas estatísticos naturalmente irão surgir, sendo alguns deles:
+Nos experimentos aqui realizados, procuramos extrair o máximo de
+informações possíveis de dados que já foram extraídos. A partir disto,
+problemas estatísticos naturalmente irão surgir, sendo alguns deles:
 
-* Diferentes tamanhos de amostra;
-* Poucos dados;
-* Amostra não representativa de todo o departamento.
+-   Diferentes tamanhos de amostra;
+-   Poucos dados;
+-   Amostra não representativa de todo o departamento.
 
-Apesar de tais problemas existirem, será aproveitada ao máximo a robustez existente nos experimentos.
+Apesar de tais problemas existirem, será aproveitada ao máximo a
+robustez existente nos experimentos.
 
 ### Diferença entre IMC de Homens e Mulheres
-Dada a suposta natureza do IMC das mulheres ser inferior aos homens [ADD REF.], torna-se relevante realizar a mesma análise dentro do universo de estudo. Para isso, podemos testar a alternativa de o imc masculino ($\mu_{imcm}$) ser maior que o feminino ($\mu_{imcf}$).
+
+Dada a suposta natureza do IMC das mulheres ser inferior aos homens [ADD
+REF.], torna-se relevante realizar a mesma análise dentro do universo de
+estudo. Para isso, podemos testar a alternativa de o imc masculino
+($\mu_{imcm}$) ser maior que o feminino ($\mu_{imcf}$).
 $$\begin{cases} H_0: \mu_{imcf} = \mu_{imcm}&\\H_1: \mu_{imcf}<\mu_{imcm}\end{cases}$$
 
-Estudos referentes à normalidade de ambas distribuições foram realizados, assim como um teste de comparação das variâncias de Fligner-Killen.
+Estudos referentes à normalidade de ambas distribuições foram
+realizados, assim como um teste de comparação das variâncias de
+Fligner-Killen.
 
-O tamanho de ($\delta^*$) utilizado neste teste baseou-se na relevância das faixas pré-definidas de IMC, sendo que para que pessoa no meio de uma faixa precisa ter uma alteração de 2.5 em seu IMC para alternar de faixa, sendo ($\delta^*=2.5$).
+O tamanho de ($\delta^*$) utilizado neste teste baseou-se na relevância
+das faixas pré-definidas de IMC, sendo que para que pessoa no meio de
+uma faixa precisa ter uma alteração de 2.5 em seu IMC para alternar de
+faixa, sendo ($\delta^*=2.5$).
 
-O valor de $\alpha=0.05$ buscou manter o padrão encontrado na literatura médica, assim como esperava-se encontrar um valor de $\beta=0.8$ para corroborar com não encontrarmos falsos negativos.
+O valor de $\alpha=0.05$ buscou manter o padrão encontrado na literatura
+médica, assim como esperava-se encontrar um valor de $\beta=0.8$ para
+corroborar com não encontrarmos falsos negativos.
 
 ### Diferença de IMC entre os dois anos em estudo;
-Realizamos para este teste dois experimentos, um para o sexo masculino e outro para o feminino. Esta estratificação baseou-se no mesmo critério da suposta diferença dos IMCs entre os sexos.
 
-Para cada um dos testes, iremos avaliar se ($\mu_{2016}$) é igual a ($\mu_{2017}$).
+Realizamos para este teste dois experimentos, um para o sexo masculino e
+outro para o feminino. Esta estratificação baseou-se no mesmo critério
+da suposta diferença dos IMCs entre os sexos.
+
+Para cada um dos testes, iremos avaliar se ($\mu_{2016}$) é igual a
+($\mu_{2017}$).
 
 $$\begin{cases} H_0: \mu_{2016} = \mu_{2017}&\\H_1: \mu_{2016} \neq \mu_{2017}\end{cases}$$
-Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos aos do primeiro experimento.
+Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos
+aos do primeiro experimento.
 
 ### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
-Realizamos para este experimento um teste entre a diferença da média do IMC entre alunos de graduação ($\mu_{grad}$) e pós graduação ($\mu_{pos}$) de forma a testar se a idade é um fator que influencia a saúde dos alunos do departamento. 
+
+Realizamos para este experimento um teste entre a diferença da média do
+IMC entre alunos de graduação ($\mu_{grad}$) e pós graduação
+($\mu_{pos}$) de forma a testar se a idade é um fator que influencia a
+saúde dos alunos do departamento.
 
 $$\begin{cases} H_0: \mu_{grad} = \mu_{pos}&\\H_1: \mu_{grad} \neq \mu_{pos}\end{cases}$$
-Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos aos do primeiro experimento.
+Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos
+aos do primeiro experimento.
 
 ## Experimentos
+
+### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
+
 O primeiro passo é carregar os dados e calcular o IMC das amostras.
 
 ```{r loaddata}
@@ -121,15 +171,15 @@ imc_masculino <- imc[imc$Sex == 'M',]
 
 ```
 
-Em seguida, executamos o teste de Fligner-Killeen para verificar se a premissa 
-de que as variâncias são iguais se aplica no experimento.
+Em seguida, executamos o teste de Fligner-Killeen para verificar se a
+premissa de que as variâncias são iguais se aplica no experimento.
 
 ```{r fligner test}
 fligner.test(imc ~ Sex, data = imc) 
 ```
 
-Em seguida, executamos o teste de Shapiro-Wilker para verificar a premissa de 
-normalidade das amostras
+Em seguida, executamos o teste de Shapiro-Wilker para verificar a
+premissa de normalidade das amostras
 
 ```{r shapiro test}
 shapiro.test(imc$imc[imc$Sex == "F"]) 
@@ -158,9 +208,67 @@ power.t.test(delta       = 2.5, # mínimo que faz a mudança de faixa de IMC
              alternative = "one.sided")
 ```
 
+### Diferença de IMC entre os dois anos em estudo;
+
+Para esse o próximo experimos utilizaremos os dados carregados na seção
+anterior. Validamos as premissas de normalidade e variâncias da seguinte
+forma:
+
+```{r normalidade e variancias iguais}
+fligner.test(imc ~ amostra, data = imc_feminino) 
+
+shapiro.test(imc_feminino$imc[imc_feminino$amostra == "2017"])
+hist(imc_feminino$imc[imc_feminino$amostra == "2017"])
+qqnorm(imc_feminino$imc[imc_feminino$amostra == "2017"])
+qqline(imc_feminino$imc[imc_feminino$amostra == "2017"])
+
+shapiro.test(imc_feminino$imc[imc_feminino$amostra == "2016"]) 
+hist(imc_feminino$imc[imc_feminino$amostra == "2016"])
+qqnorm(imc_feminino$imc[imc_feminino$amostra == "2016"])
+qqline(imc_feminino$imc[imc_feminino$amostra == "2016"])
+
+```
+
+Experimento:
+
+```{r teste entre anos}
+t.test(imc_feminino$imc ~ imc_feminino$amostra, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
+```
+
+### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
+
+```{r teste entre turmas}
+
+fligner.test(imc ~ amostra, data = imc_feminino) # H0: VARIANCIAS IGUAIS
+
+shapiro.test(imc_masculino$imc) # p-value = 0.3179 -> aceitamos H0
+
+shapiro.test(imc_masculino$imc[imc_masculino$amostra == "2017"])
+hist(imc_masculino$imc[imc_masculino$amostra == "2017"])
+qqnorm(imc_masculino$imc[imc_masculino$amostra == "2017"])
+qqline(imc_masculino$imc[imc_masculino$amostra == "2017"])
+
+shapiro.test(imc_masculino$imc[imc_masculino$amostra == "2016"]) 
+hist(imc_masculino$imc[imc_masculino$amostra == "2016"])
+qqnorm(imc_masculino$imc[imc_masculino$amostra == "2016"])
+qqline(imc_masculino$imc[imc_masculino$amostra == "2016"])
+
+t.test(imc_masculino$imc ~ imc_masculino$amostra, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
+```
 
 ## Statistical Analysis
-Your statistical analysis should come here. This is the place where you should fit your statistical model, get the results of your significance test, your effect size estimates and confidence intervals.
+
+Your statistical analysis should come here. This is the place where you
+should fit your statistical model, get the results of your significance
+test, your effect size estimates and confidence intervals.
 
 ```{r fitmodel,results='hold'}
 model<-aov(mpg~am*disp,data=mtcars)
@@ -168,11 +276,17 @@ summary(model)
 ```
 
 ### Checking Model Assumptions
-The assumptions of your test should also be validated, and possible effects of violations should also be explored.
+
+The assumptions of your test should also be validated, and possible
+effects of violations should also be explored.
+
 ```{r resplots,fig.width=8,echo=TRUE,message=FALSE, fig.cap = "Residual plots for the anova model"}
 par(mfrow=c(2,2), mai=.3*c(1,1,1,1))
 plot(model,pch=16,lty=1,lwd=2)
 ```
 
 ### Conclusions and Recommendations
-The discussion of your results, and the scientific/technical meaning of the effects detected, should be placed here. Always be sure to tie your results back to the original question of interest!
+
+The discussion of your results, and the scientific/technical meaning of
+the effects detected, should be placed here. Always be sure to tie your
+results back to the original question of interest!
