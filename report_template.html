@@ -1680,16 +1680,35 @@ render(&quot;report_template.Rmd&quot;,&quot;pdf_document&quot;)    # this rende
 </div>
 <div id="design-dos-experimentos-1" class="section level2">
 <h2>Design dos Experimentos</h2>
+<p>Nos experimentos aqui realizados, procuramos extrair o máximo de
+informações possíveis de dados que já foram extraídos. A partir disto,
+problemas estatísticos naturalmente irão surgir, sendo alguns deles:</p>
+<ul>
+<li>Diferentes tamanhos de amostra;</li>
+<li>Poucos dados;</li>
+<li>Amostra não representativa de todo o departamento.</li>
+</ul>
+<p>Apesar de tais problemas existirem, será aproveitada ao máximo a
+robustez existente nos experimentos.</p>
 <div id="diferença-entre-imc-de-homens-e-mulheres" class="section level3">
 <h3>Diferença entre IMC de Homens e Mulheres</h3>
-<p>Dada a suposta natureza <span class="math display">\[\begin{cases}
-H_0: \mu = 10&amp;\\H_1: \mu&lt;10\end{cases}\]</span></p>
-<p>including the reasons behind your choices of the value for <span class="math inline">\(H_0\)</span> and the directionality (or not) of
-<span class="math inline">\(H_1\)</span>.</p>
-<p>This is also the place where you should discuss (whenever necessary)
-your definitions of minimally relevant effects (<span class="math inline">\(\delta^*\)</span>), sample size calculations,
-choice of power and significance levels, and any other relevant
-information about specificities in your data collection procedures.</p>
+<p>Dada a suposta natureza do IMC das mulheres ser inferior aos homens
+[ADD REF.], torna-se relevante realizar a mesma análise dentro do
+universo de estudo. Para isso, podemos testar a alternativa de o imc
+masculino (<span class="math inline">\(imc_m\)</span>) ser maior que o
+feminino (<span class="math inline">\(imc_f\)</span>). <span class="math display">\[\begin{cases} H_0: imc_f = imc_m&amp;\\H_1:
+imc_f&lt;imc_m\end{cases}\]</span></p>
+<p>Estudos referentes à normalidade de ambas distribuições foram
+realizados, assim como um teste de comparação das variâncias de
+Fligner-Killen.</p>
+<p>O tamanho de (<span class="math inline">\(\delta^*\)</span>)
+utilizado neste teste baseou-se na relevância das faixas pré-definidas
+de IMC, sendo que para que pessoa no meio de uma faixa precisa ter uma
+alteração de 2.5 em seu IMC para alternar de faixa, sendo (<span class="math inline">\(\delta^*=2.5\)</span>).</p>
+<p>O valor de <span class="math inline">\(\alpha=0.05\)</span> buscou
+manter o padrão encontrado na literatura médica, assim como esperava-se
+encontrar um valor de <span class="math inline">\(\beta=0.8\)</span>
+para corroborar com não encontrarmos falsos negativos.</p>
 </div>
 <div id="description-of-the-data-collection" class="section level3">
 <h3>Description of the data collection</h3>
