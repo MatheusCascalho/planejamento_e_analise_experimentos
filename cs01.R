@@ -186,10 +186,22 @@ t.test(imc_masculino$imc ~ imc_masculino$amostra,
        conf.level  = 0.95)
 
 # ======================================================================================
+# TESTE: O IMC de alunos nas diferentes amostras (PPGEE e ENGSIS) é igual
 
 imc2016 <- read.csv('imc_20162.csv')
 imc2016$imc <- imc2016$Weight.kg/(imc2016$Height.m^2)
+
+
 shapiro.test(imc2016$imc[imc2016$Course == "PPGEE"]) # p-value = 0.3179 -> aceitamos H0
+hist(imc2016$imc[imc2016$Course == "PPGEE"])
+qqnorm(imc2016$imc[imc2016$Course == "PPGEE"])
+qqline(imc2016$imc[imc2016$Course == "PPGEE"])
+
+shapiro.test(imc2016$imc[imc2016$Course == "ENGSIS"]) # p-value = 0.3179 -> aceitamos H0
+hist(imc2016$imc[imc2016$Course == "ENGSIS"])
+qqnorm(imc2016$imc[imc2016$Course == "ENGSIS"])
+qqline(imc2016$imc[imc2016$Course == "ENGSIS"])
+
 
 t.test(imc2016$imc ~ imc2016$Course, 
        alternative = "less", 
