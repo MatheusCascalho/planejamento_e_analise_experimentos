@@ -3,10 +3,10 @@ title: 'Case Study 00: This is a template'
 author: "Author 1 and Author 2"
 date: "March 00, 2015"
 output:
-  pdf_document:
-    fig_caption: yes
   html_document:
     df_print: paged
+  pdf_document:
+    fig_caption: yes
 ---
 
 ```{r setup,results='hide',warning=FALSE,echo=FALSE}
@@ -128,7 +128,7 @@ t.test(imc$imc ~ imc$Sex,
 
 Finalmente, identificamos o poder do teste
 
-```{}
+```{r poder do teste}
 power.t.test(delta       = 2.5, # mínimo que faz a mudança de faixa de IMC
              sd          = sd(imc$imc),
              sig.level   = 0.05,
