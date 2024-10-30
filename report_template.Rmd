@@ -50,27 +50,6 @@ compreender diferenças baseadas em idade, sexo e ano de estudo.
 
 ## Design dos Experimentos
 
-### 1. The easy way
-
-Use [RStudio](http://rstudio.com/) as your editor, open the **.Rmd**
-file and click the *Knit PDF* button at the top of the editor.
-
-### 2. The slightly-less-easy way
-
-If you're using any other R editor (such as the basic
-[R](http://cran.r-project.org) editor), you have to use the *render()*
-function from the **rmarkdown** package:
-
-```{r, eval=F}
-install.packages("devtools")                    # you only have to install it once
-library(devtools)
-install_github("rstudio/rmarkdown")             # you only have to install it once
-library(rmarkdown)
-render("report_template.Rmd","pdf_document")    # this renders the pdf
-```
-
-## Design dos Experimentos
-
 Nos experimentos aqui realizados, procuramos extrair o máximo de
 informações possíveis de dados que já foram extraídos. A partir disto,
 problemas estatísticos naturalmente irão surgir, sendo alguns deles:
@@ -160,7 +139,7 @@ premissa de que as variâncias são iguais se aplica no experimento.
 fligner.test(imc ~ Sex, data = imc) 
 ```
 
-Executamos, então, o teste de Shapiro-Wilker para verificar a premissa de 
+O p-valor resultante, de 0,3054, indica que não há evidências o suficiente para rejeitar a hipótese nula, ou seja, corrobora com a hipótese de que as variâncias dos dois grupos são iguais. Executamos, então, o teste de Shapiro-Wilker para verificar a premissa de 
 normalidade das amostras.
 
 ```{r shapiro test}
@@ -169,7 +148,7 @@ shapiro.test(imc$imc[imc$Sex == "M"])
 
 ```
 
-Com as premissas validadas, executamos o t-test:
+Novamente, não há evidências para rejeitar $H_0$. Com as premissas validadas, executamos o t-test:
 
 ```{r t-test homens e mulheres}
 t.test(imc$imc ~ imc$Sex, 

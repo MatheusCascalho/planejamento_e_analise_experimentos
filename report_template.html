@@ -1680,26 +1680,6 @@ de compreender diferenças baseadas em idade, sexo e ano de estudo.</p>
 </div>
 <div id="design-dos-experimentos" class="section level2">
 <h2>Design dos Experimentos</h2>
-<div id="the-easy-way" class="section level3">
-<h3>1. The easy way</h3>
-<p>Use <a href="http://rstudio.com/">RStudio</a> as your editor, open
-the <strong>.Rmd</strong> file and click the <em>Knit PDF</em> button at
-the top of the editor.</p>
-</div>
-<div id="the-slightly-less-easy-way" class="section level3">
-<h3>2. The slightly-less-easy way</h3>
-<p>If you’re using any other R editor (such as the basic <a href="http://cran.r-project.org">R</a> editor), you have to use the
-<em>render()</em> function from the <strong>rmarkdown</strong>
-package:</p>
-<pre class="r"><code>install.packages(&quot;devtools&quot;)                    # you only have to install it once
-library(devtools)
-install_github(&quot;rstudio/rmarkdown&quot;)             # you only have to install it once
-library(rmarkdown)
-render(&quot;report_template.Rmd&quot;,&quot;pdf_document&quot;)    # this renders the pdf</code></pre>
-</div>
-</div>
-<div id="design-dos-experimentos-1" class="section level2">
-<h2>Design dos Experimentos</h2>
 <p>Nos experimentos aqui realizados, procuramos extrair o máximo de
 informações possíveis de dados que já foram extraídos. A partir disto,
 problemas estatísticos naturalmente irão surgir, sendo alguns deles:</p>
@@ -1800,8 +1780,11 @@ premissa de que as variâncias são iguais se aplica no experimento.</p>
 ## 
 ## data:  imc by Sex
 ## Fligner-Killeen:med chi-squared = 1.0504, df = 1, p-value = 0.3054</code></pre>
-<p>Executamos, então, o teste de Shapiro-Wilker para verificar a
-premissa de normalidade das amostras.</p>
+<p>O p-valor resultante, de 0,3054, indica que não há evidências o
+suficiente para rejeitar a hipótese nula, ou seja, corrobora com a
+hipótese de que as variâncias dos dois grupos são iguais. Executamos,
+então, o teste de Shapiro-Wilker para verificar a premissa de
+normalidade das amostras.</p>
 <pre class="r"><code>shapiro.test(imc$imc[imc$Sex == &quot;F&quot;]) </code></pre>
 <pre><code>## 
 ##  Shapiro-Wilk normality test
@@ -1814,7 +1797,8 @@ premissa de normalidade das amostras.</p>
 ## 
 ## data:  imc$imc[imc$Sex == &quot;M&quot;]
 ## W = 0.94947, p-value = 0.0618</code></pre>
-<p>Com as premissas validadas, executamos o t-test:</p>
+<p>Novamente, não há evidências para rejeitar <span class="math inline">\(H_0\)</span>. Com as premissas validadas,
+executamos o t-test:</p>
 <pre class="r"><code>t.test(imc$imc ~ imc$Sex, 
        alternative = &quot;less&quot;, 
        mu          = 0, 
