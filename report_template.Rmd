@@ -5,8 +5,11 @@ date: "March 00, 2015"
 output:
   pdf_document:
     fig_caption: yes
-  html_document:
-    df_print: paged
+editor_options: 
+  markdown: 
+    wrap: 72
+bibliography: references.bib
+csl: ieee.csl
 ---
 
 ```{r setup,results='hide',warning=FALSE,echo=FALSE}
@@ -25,70 +28,76 @@ if (!require(GGally, quietly = TRUE)){
       install.packages("GGally")
       }
 ```
+
 ## Descrição do Problema
-O IMC é uma medida utilizada na área de saúde como um indicador simples capaz de encontrar correlações entre o peso e altura do paciente com doenças decorrentes de obesidade, sendo inclusive capaz de classificar em diferentes grupos para obter maior precisão na análise em questão [ADD. REF].
+O IMC é uma medida utilizada na área de saúde como um indicador simples capaz de encontrar correlações entre o peso e altura do paciente com doenças decorrentes de obesidade, sendo inclusive capaz de classificar em diferentes grupos para obter maior precisão na análise em questão [@IMC_def;@weir2019bmi].
 
-Apesar dos problemas decorrentes da simplicidade do teste [ADD REF.] e métodos mais robustos tais como a bioimpedância [ADD REF.] estarem presentes, continua sendo uma medida interessante pela facilidade e baixo custo de encontrá-la. A partir de tal importância médica, muitas questões naturalmente surgem relacionadas a testes entre diferentes populações.
+Apesar dos problemas decorrentes da simplicidade do teste [@nuttall2015body;@shah2012measuring] e métodos mais robustos tais como a bioimpedância [@branco2023bioelectrical] estarem presentes, continua sendo uma medida interessante pela facilidade e baixo custo de encontrá-la. A partir de tal importância médica, muitas questões naturalmente surgem relacionadas a testes entre diferentes populações.
 
-Neste estudo, serão propostos três testes de forma a compreender possíveis relações e diferenças presentes na amostragem realizada nos anos de 2016 e 2017 no Departamento de Engenharia da UFMG. Os testes propostos são:
+Neste estudo, serão propostos três testes de forma a compreender
+possíveis relações e diferenças presentes na amostragem realizada nos
+anos de 2016 e 2017 no Departamento de Engenharia da UFMG. Os testes
+propostos são:
 
-* Diferença entre IMC de Homens e Mulheres;
-* Diferença de IMC entre os dois anos em estudo;
-* Diferença entre alunos de Graduação e Pós-Graduação em 2016.
+-   Diferença entre IMC de Homens e Mulheres;
+-   Diferença de IMC entre os dois anos em estudo;
+-   Diferença entre alunos de Graduação e Pós-Graduação em 2016.
 
-Por meio destes testes, podemos obter informações relevantes capazes de compreender diferenças baseadas em idade, sexo e ano de estudo.
-
-## Design dos Experimentos
-
-### 1. The easy way
-Use [RStudio](http://rstudio.com/) as your editor, open the **.Rmd** file and click the _Knit PDF_ button at the top of the editor.
-
-### 2. The slightly-less-easy way
-If you're using any other R editor (such as the basic [R](http://cran.r-project.org) editor), you have to use the _render()_ function from the **rmarkdown** package:
-
-```{r, eval=F}
-install.packages("devtools")                    # you only have to install it once
-library(devtools)
-install_github("rstudio/rmarkdown")             # you only have to install it once
-library(rmarkdown)
-render("report_template.Rmd","pdf_document")    # this renders the pdf
-```
+Por meio destes testes, podemos obter informações relevantes capazes de
+compreender diferenças baseadas em idade, sexo e ano de estudo.
 
 ## Design dos Experimentos
 
-Nos experimentos aqui realizados, procuramos extrair o máximo de informações possíveis de dados que já foram extraídos. A partir disto, problemas estatísticos naturalmente irão surgir, sendo alguns deles:
+Nos experimentos aqui realizados, procuramos extrair o máximo de
+informações possíveis de dados que já foram extraídos. A partir disto,
+problemas estatísticos naturalmente irão surgir, sendo alguns deles:
 
-* Diferentes tamanhos de amostra;
-* Poucos dados;
-* Amostra não representativa de todo o departamento.
+-   Diferentes tamanhos de amostra;
+-   Poucos dados;
+-   Amostra não representativa de todo o departamento.
 
-Apesar de tais problemas existirem, será aproveitada ao máximo a robustez existente nos experimentos.
+Apesar de tais problemas existirem, será aproveitada ao máximo a
+robustez existente nos experimentos.
 
 ### Diferença entre IMC de Homens e Mulheres
-Dada a suposta natureza do IMC das mulheres ser inferior aos homens [ADD REF.], torna-se relevante realizar a mesma análise dentro do universo de estudo. Para isso, podemos testar a alternativa de o imc masculino ($\mu_{imcm}$) ser maior que o feminino ($\mu_{imcf}$).
+Dada a conhecida diferença na composição corporal entre homens e mulheres [@bredella2017sex], torna-se relevante analisar os índices de IMC dentro do universo em estudo. Em termos gerais, observam-se valores semelhantes de IMC entre os sexos [@olfert2018self], apesar das variações na composição corporal. Para aprofundar essa análise, podemos testar a hipótese alternativa de que o IMC médio masculino ($\mu_{imcm}$) seja superior ao feminino ($\mu_{imcf}$).
 $$\begin{cases} H_0: \mu_{imcf} = \mu_{imcm}&\\H_1: \mu_{imcf}<\mu_{imcm}\end{cases}$$
 
-Estudos referentes à normalidade de ambas distribuições foram realizados, assim como um teste de comparação das variâncias de Fligner-Killen.
+Estudos referentes à normalidade de ambas distribuições foram
+realizados, assim como um teste de comparação das variâncias de
+Fligner-Killen.
 
-O tamanho de ($\delta^*$) utilizado neste teste baseou-se na relevância das faixas pré-definidas de IMC, sendo que para que pessoa no meio de uma faixa precisa ter uma alteração de 2.5 em seu IMC para alternar de faixa, sendo ($\delta^*=2.5$).
+O valor de ($\delta^*$) utilizado neste teste foi selecionado com base na relevância das faixas pré-definidas de IMC, sendo que para que pessoa no meio de uma faixa precisa ter uma alteração de 2.5 em seu IMC para alternar de faixa, sendo ($\delta^*=2.5$).
 
-O valor de $\alpha=0.05$ buscou manter o padrão encontrado na literatura médica, assim como esperava-se encontrar um valor de $\beta=0.8$ para corroborar com não encontrarmos falsos negativos.
+O valor de $\alpha=0.05$ buscou manter o padrão encontrado na literatura
+médica, assim como esperava-se encontrar um valor de $\beta=0.8$ para
+corroborar com não encontrarmos falsos negativos.
 
 ### Diferença de IMC entre os dois anos em estudo;
-Realizamos para este teste dois experimentos, um para o sexo masculino e outro para o feminino. Esta estratificação baseou-se no mesmo critério da suposta diferença dos IMCs entre os sexos.
 
-Para cada um dos testes, iremos avaliar se ($\mu_{2016}$) é igual a ($\mu_{2017}$).
+Realizamos para este teste dois experimentos, um para o sexo masculino e
+outro para o feminino. Esta estratificação baseou-se no mesmo critério
+da suposta diferença dos IMCs entre os sexos.
+
+Para cada um dos testes, iremos avaliar se ($\mu_{2016}$) é igual a
+($\mu_{2017}$).
 
 $$\begin{cases} H_0: \mu_{2016} = \mu_{2017}&\\H_1: \mu_{2016} \neq \mu_{2017}\end{cases}$$
-Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos aos do primeiro experimento.
+Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos
+aos do primeiro experimento.
 
 ### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
-Realizamos para este experimento um teste entre a diferença da média do IMC entre alunos de graduação ($\mu_{grad}$) e pós graduação ($\mu_{pos}$) de forma a testar se a idade é um fator que influencia a saúde dos alunos do departamento. 
+
+Realizamos para este experimento um teste entre a diferença da média do IMC entre alunos de graduação ($\mu_{grad}$) e pós graduação ($\mu_{pos}$) de forma a testar se a idade é um fator que influencia a saúde dos alunos do departamento. Um estudo análogo, realizado na University of South Alabama, apresentou um IMC médio levemente superior de alunos da pós-graduação em enfermagem, em relação aos alunos da graduação do mesmo curso [@graves2022undergraduate].
 
 $$\begin{cases} H_0: \mu_{grad} = \mu_{pos}&\\H_1: \mu_{grad} \neq \mu_{pos}\end{cases}$$
-Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos aos do primeiro experimento.
+Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos
+aos do primeiro experimento.
 
 ## Experimentos
+
+### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
+
 O primeiro passo é carregar os dados e calcular o IMC das amostras.
 
 ```{r loaddata}
@@ -121,15 +130,15 @@ imc_masculino <- imc[imc$Sex == 'M',]
 
 ```
 
-Em seguida, executamos o teste de Fligner-Killeen para verificar se a premissa 
-de que as variâncias são iguais se aplica no experimento.
+Em seguida, executamos o teste de Fligner-Killeen para verificar se a
+premissa de que as variâncias são iguais se aplica no experimento.
 
 ```{r fligner test}
 fligner.test(imc ~ Sex, data = imc) 
 ```
 
-Em seguida, executamos o teste de Shapiro-Wilker para verificar a premissa de 
-normalidade das amostras
+O p-valor resultante, de 0,3054, indica que não há evidências o suficiente para rejeitar a hipótese nula, ou seja, corrobora com a hipótese de que as variâncias dos dois grupos são iguais. Executamos, então, o teste de Shapiro-Wilker para verificar a premissa de 
+normalidade das amostras.
 
 ```{r shapiro test}
 shapiro.test(imc$imc[imc$Sex == "F"]) 
@@ -137,7 +146,7 @@ shapiro.test(imc$imc[imc$Sex == "M"])
 
 ```
 
-Com as premissas validadas, executamos o t-test:
+Novamente, não há evidências para rejeitar $H_0$. Com as premissas validadas, executamos o t-test:
 
 ```{r t-test homens e mulheres}
 t.test(imc$imc ~ imc$Sex, 
@@ -158,6 +167,61 @@ power.t.test(delta       = 2.5, # mínimo que faz a mudança de faixa de IMC
              alternative = "one.sided")
 ```
 
+### Diferença de IMC entre os dois anos em estudo;
+
+Para esse o próximo experimos utilizaremos os dados carregados na seção
+anterior. Validamos as premissas de normalidade e variâncias da seguinte
+forma:
+
+```{r normalidade e variancias iguais}
+fligner.test(imc ~ amostra, data = imc_feminino) 
+
+shapiro.test(imc_feminino$imc[imc_feminino$amostra == "2017"])
+hist(imc_feminino$imc[imc_feminino$amostra == "2017"])
+qqnorm(imc_feminino$imc[imc_feminino$amostra == "2017"])
+qqline(imc_feminino$imc[imc_feminino$amostra == "2017"])
+
+shapiro.test(imc_feminino$imc[imc_feminino$amostra == "2016"]) 
+hist(imc_feminino$imc[imc_feminino$amostra == "2016"])
+qqnorm(imc_feminino$imc[imc_feminino$amostra == "2016"])
+qqline(imc_feminino$imc[imc_feminino$amostra == "2016"])
+
+```
+
+Experimento:
+
+```{r teste entre anos}
+t.test(imc_feminino$imc ~ imc_feminino$amostra, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
+```
+
+### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
+
+```{r teste entre turmas}
+
+fligner.test(imc ~ amostra, data = imc_feminino) # H0: VARIANCIAS IGUAIS
+
+shapiro.test(imc_masculino$imc) # p-value = 0.3179 -> aceitamos H0
+
+shapiro.test(imc_masculino$imc[imc_masculino$amostra == "2017"])
+hist(imc_masculino$imc[imc_masculino$amostra == "2017"])
+qqnorm(imc_masculino$imc[imc_masculino$amostra == "2017"])
+qqline(imc_masculino$imc[imc_masculino$amostra == "2017"])
+
+shapiro.test(imc_masculino$imc[imc_masculino$amostra == "2016"]) 
+hist(imc_masculino$imc[imc_masculino$amostra == "2016"])
+qqnorm(imc_masculino$imc[imc_masculino$amostra == "2016"])
+qqline(imc_masculino$imc[imc_masculino$amostra == "2016"])
+
+t.test(imc_masculino$imc ~ imc_masculino$amostra, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
+```
 
 ## Discussões e Conclusões
 Em todos os testes, o fato de trabalharmos com dados históricos apresentou-se como uma complexidade que nos obrigou a ter uma cautela adicional. O fato de possuirmos diferentes tamanhos de amostras em todos os testes fez com que procuremos explorar o máximo o poder dos testes utilizando por exemplo testes em que podíamos considerar variâncias iguais.
@@ -165,6 +229,15 @@ Em todos os testes, o fato de trabalharmos com dados históricos apresentou-se c
 O intuito de extrapolar os resultados de uma amostra centrada em uma única disciplina para todo o departamento de Engenharia Elétrica rompe com as premissas básicas de uma amostra iid, sendo que nos apoiamos na suposição de que como qualquer aluno pode se matricular na disciplina os alunos matriculados representariam todo o curso. Essa suposição, apesar de ser razoável considerando que a altura e peso são fatores comumente individuais, poderia não ser fidedigna com os testes, sendo que possíveis estudos de correlação entre indivíduos poderia ser realizada para fortalecer mais as conclusões estabelecidas.
 
 ### Diferença entre IMC de Homens e Mulheres
+
+Corroborando a rejeição da hipótese nula, pode-se assumir que o IMC feminino de fato é menor que o IMC masculino. Tais resultados podem advir de diferenças na composição muscular e de gordura, assim como a própria fisionomia. Maiores estudos podem ser realizados para validar tais hipóteses desde que novos dados sejam extraidos.
+
+### Diferença de IMC entre os dois anos em estudo
+Ao compararmos o IMC dos dois anos de estudo, todas hipóteses de normalidade do teste foram corroboradas. Além disso, não foi possível rejeitar a hipótese nula, inclusive apresentando um p-valor significativamente alto, sendo possível afirmar que não possuímos certeza suficiente para considerar que os dois anos possuem diferenças significativas na média do IMC.
+
+### Diferença entre alunos de Graduação e Pós-Graduação em 2016
+
+Na realização deste experimento, é interessante notar que o teste de normalidade não possuiu nível de significância estatística esperada, apesar disto devido ao teste t ser robusto à variações de normalidade o experimento pode ser executado. Novamente não podemos afirmar de forma fidedigna que as duas amostras possuem diferença no valor das médias do IMC, sendo que experimentos com um maior número de dados e maior aleatoriedade poderiam fornecer maior significado estatístico.
 
 ...
 
@@ -174,11 +247,17 @@ summary(model)
 ```
 
 ### Checking Model Assumptions
-The assumptions of your test should also be validated, and possible effects of violations should also be explored.
+
+The assumptions of your test should also be validated, and possible
+effects of violations should also be explored.
+
 ```{r resplots,fig.width=8,echo=TRUE,message=FALSE, fig.cap = "Residual plots for the anova model"}
 par(mfrow=c(2,2), mai=.3*c(1,1,1,1))
 plot(model,pch=16,lty=1,lwd=2)
 ```
 
 ### Conclusions and Recommendations
-The discussion of your results, and the scientific/technical meaning of the effects detected, should be placed here. Always be sure to tie your results back to the original question of interest!
+
+The discussion of your results, and the scientific/technical meaning of
+the effects detected, should be placed here. Always be sure to tie your
+results back to the original question of interest!
