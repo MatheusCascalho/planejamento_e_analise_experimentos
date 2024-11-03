@@ -1,0 +1,787 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Case Study 00: This is a template},
+  pdfauthor={Author 1 and Author 2},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Case Study 00: This is a template}
+\author{Author 1 and Author 2}
+\date{March 00, 2015}
+
+\begin{document}
+\maketitle
+
+\begin{verbatim}
+## Installing package into '/home/enacom/R/x86_64-pc-linux-gnu-library/4.3'
+## (as 'lib' is unspecified)
+\end{verbatim}
+
+\begin{verbatim}
+## also installing the dependencies 'credentials', 'systemfonts', 'textshaping', 'curl', 'gert', 'gh', 'httr2', 'ragg', 'xml2', 'usethis', 'pkgdown', 'rcmdcheck', 'roxygen2', 'rversions', 'urlchecker'
+\end{verbatim}
+
+\begin{verbatim}
+## Registered S3 method overwritten by 'GGally':
+##   method from   
+##   +.gg   ggplot2
+\end{verbatim}
+
+\subsection{Descrição do Problema}\label{descriuxe7uxe3o-do-problema}
+
+O IMC é uma medida utilizada na área de saúde como um indicador simples
+capaz de encontrar correlações entre o peso e altura do paciente com
+doenças decorrentes de obesidade, sendo inclusive capaz de classificar
+em diferentes grupos para obter maior precisão na análise em questão
+{[}1{]}, {[}2{]}.
+
+Apesar dos problemas decorrentes da simplicidade do teste {[}3{]},
+{[}4{]} e métodos mais robustos tais como a bioimpedância {[}5{]}
+estarem presentes, continua sendo uma medida interessante pela
+facilidade e baixo custo de encontrá-la. A partir de tal importância
+médica, muitas questões naturalmente surgem relacionadas a testes entre
+diferentes populações.
+
+Neste estudo, serão propostos três testes de forma a compreender
+possíveis relações e diferenças presentes na amostragem realizada nos
+anos de 2016 e 2017 no Departamento de Engenharia da UFMG. Os testes
+propostos são:
+
+\begin{itemize}
+\tightlist
+\item
+  Diferença entre IMC de Homens e Mulheres;
+\item
+  Diferença de IMC entre os dois anos em estudo;
+\item
+  Diferença entre alunos de Graduação e Pós-Graduação em 2016.
+\end{itemize}
+
+Por meio destes testes, podemos obter informações relevantes capazes de
+compreender diferenças baseadas em idade, sexo e ano de estudo.
+
+\subsection{Design dos Experimentos}\label{design-dos-experimentos}
+
+Nos experimentos aqui realizados, procuramos extrair o máximo de
+informações possíveis de dados que já foram extraídos. A partir disto,
+problemas estatísticos naturalmente irão surgir, sendo alguns deles:
+
+\begin{itemize}
+\tightlist
+\item
+  Diferentes tamanhos de amostra;
+\item
+  Poucos dados;
+\item
+  Amostra não representativa de todo o departamento.
+\end{itemize}
+
+Apesar de tais problemas existirem, será aproveitada ao máximo a
+robustez existente nos experimentos.
+
+\subsubsection{Diferença entre IMC de Homens e
+Mulheres}\label{diferenuxe7a-entre-imc-de-homens-e-mulheres}
+
+Dada a conhecida diferença na composição corporal entre homens e
+mulheres {[}6{]}, torna-se relevante analisar os índices de IMC dentro
+do universo em estudo. Em termos gerais, observam-se valores semelhantes
+de IMC entre os sexos {[}7{]}, apesar das variações na composição
+corporal. Para aprofundar essa análise, podemos testar a hipótese
+alternativa de que o IMC médio masculino (\(\mu_{imcm}\)) seja superior
+ao feminino (\(\mu_{imcf}\)).
+\[\begin{cases} H_0: \mu_{imcf} = \mu_{imcm}&\\H_1: \mu_{imcf}<\mu_{imcm}\end{cases}\]
+
+Estudos referentes à normalidade de ambas distribuições foram
+realizados, assim como um teste de comparação das variâncias de
+Fligner-Killen.
+
+O valor de (\(\delta^*\)) utilizado neste teste foi selecionado com base
+na relevância das faixas pré-definidas de IMC, sendo que para que pessoa
+no meio de uma faixa precisa ter uma alteração de 2.5 em seu IMC para
+alternar de faixa, sendo (\(\delta^*=2.5\)).
+
+O valor de \(\alpha=0.05\) buscou manter o padrão encontrado na
+literatura médica, assim como esperava-se encontrar um valor de
+\(\beta=0.8\) para corroborar com não encontrarmos falsos negativos.
+
+\subsubsection{Diferença de IMC entre os dois anos em
+estudo;}\label{diferenuxe7a-de-imc-entre-os-dois-anos-em-estudo}
+
+Realizamos para este teste dois experimentos, um para o sexo masculino e
+outro para o feminino. Esta estratificação baseou-se no mesmo critério
+da suposta diferença dos IMCs entre os sexos.
+
+Para cada um dos testes, iremos avaliar se (\(\mu_{2016}\)) é igual a
+(\(\mu_{2017}\)).
+
+\[\begin{cases} H_0: \mu_{2016} = \mu_{2017}&\\H_1: \mu_{2016} \neq \mu_{2017}\end{cases}\]
+Comentários referentes ao \(\delta^*\), \(\alpha\) e \(\beta\) são
+análogos aos do primeiro experimento.
+
+\subsubsection{Diferença entre alunos de Graduação e Pós-Graduação em
+2016;}\label{diferenuxe7a-entre-alunos-de-graduauxe7uxe3o-e-puxf3s-graduauxe7uxe3o-em-2016}
+
+Realizamos para este experimento um teste entre a diferença da média do
+IMC entre alunos de graduação (\(\mu_{grad}\)) e pós graduação
+(\(\mu_{pos}\)) de forma a testar se a idade é um fator que influencia a
+saúde dos alunos do departamento. Um estudo análogo, realizado na
+University of South Alabama, apresentou um IMC médio levemente superior
+de alunos da pós-graduação em enfermagem, em relação aos alunos da
+graduação do mesmo curso {[}8{]}.
+
+\[\begin{cases} H_0: \mu_{grad} = \mu_{pos}&\\H_1: \mu_{grad} \neq \mu_{pos}\end{cases}\]
+Comentários referentes ao \(\delta^*\), \(\alpha\) e \(\beta\) são
+análogos aos do primeiro experimento.
+
+\subsection{Experimentos}\label{experimentos}
+
+\subsubsection{Diferença entre IMC de Homens e
+Mulheres}\label{diferenuxe7a-entre-imc-de-homens-e-mulheres-1}
+
+O primeiro passo é carregar os dados e calcular o IMC das amostras.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{imc2016 }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}imc\_20162.csv\textquotesingle{}}\NormalTok{)}
+\NormalTok{imc2017 }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}CS01\_20172.csv\textquotesingle{}}\NormalTok{, }\AttributeTok{sep =} \StringTok{\textquotesingle{};\textquotesingle{}}\NormalTok{)}
+
+\CommentTok{\# Filtragem de dados}
+\NormalTok{imc2016 }\OtherTok{\textless{}{-}}\NormalTok{ imc2016[imc2016}\SpecialCharTok{$}\NormalTok{Course }\SpecialCharTok{==} \StringTok{\textquotesingle{}PPGEE\textquotesingle{}}\NormalTok{,]}
+
+\CommentTok{\# Padronização do dataframe}
+\FunctionTok{colnames}\NormalTok{(imc2016)[}\FunctionTok{colnames}\NormalTok{(imc2016)}\SpecialCharTok{==}\StringTok{\textquotesingle{}Gender\textquotesingle{}}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{\textquotesingle{}Sex\textquotesingle{}}
+\FunctionTok{colnames}\NormalTok{(imc2016)[}\FunctionTok{colnames}\NormalTok{(imc2016)}\SpecialCharTok{==}\StringTok{\textquotesingle{}Height.m\textquotesingle{}}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{\textquotesingle{}height.m\textquotesingle{}}
+\FunctionTok{colnames}\NormalTok{(imc2016)[}\FunctionTok{colnames}\NormalTok{(imc2016)}\SpecialCharTok{==}\StringTok{\textquotesingle{}Weight.kg\textquotesingle{}}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{\textquotesingle{}weight.kg\textquotesingle{}}
+\FunctionTok{colnames}\NormalTok{(imc2017)[}\FunctionTok{colnames}\NormalTok{(imc2017)}\SpecialCharTok{==}\StringTok{\textquotesingle{}Weight.kg\textquotesingle{}}\NormalTok{] }\OtherTok{\textless{}{-}} \StringTok{\textquotesingle{}weight.kg\textquotesingle{}}
+\NormalTok{imc2016 }\OtherTok{=}\NormalTok{ imc2016[,}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}Sex\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}height.m\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}weight.kg\textquotesingle{}}\NormalTok{)]}
+\NormalTok{imc2017 }\OtherTok{=}\NormalTok{ imc2017[,}\FunctionTok{c}\NormalTok{(}\StringTok{\textquotesingle{}Sex\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}height.m\textquotesingle{}}\NormalTok{, }\StringTok{\textquotesingle{}weight.kg\textquotesingle{}}\NormalTok{)]}
+\NormalTok{imc2016}\SpecialCharTok{$}\NormalTok{amostra }\OtherTok{\textless{}{-}} \StringTok{\textquotesingle{}2016\textquotesingle{}}
+\NormalTok{imc2017}\SpecialCharTok{$}\NormalTok{amostra }\OtherTok{\textless{}{-}} \StringTok{\textquotesingle{}2017\textquotesingle{}}
+
+\CommentTok{\# Calculando o IMC de cada população}
+\NormalTok{imc2016}\SpecialCharTok{$}\NormalTok{imc }\OtherTok{\textless{}{-}}\NormalTok{ imc2016}\SpecialCharTok{$}\NormalTok{weight.kg}\SpecialCharTok{/}\NormalTok{(imc2016}\SpecialCharTok{$}\NormalTok{height.m}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\NormalTok{imc2017}\SpecialCharTok{$}\NormalTok{imc }\OtherTok{\textless{}{-}}\NormalTok{ imc2017}\SpecialCharTok{$}\NormalTok{weight.kg}\SpecialCharTok{/}\NormalTok{(imc2017}\SpecialCharTok{$}\NormalTok{height.m}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+
+\CommentTok{\# União dos dataframes}
+\NormalTok{imc }\OtherTok{\textless{}{-}} \FunctionTok{rbind}\NormalTok{(imc2016, imc2017)}
+
+\CommentTok{\# Segregação de dados entre Homens e Mulheres}
+\NormalTok{imc\_feminino }\OtherTok{\textless{}{-}}\NormalTok{ imc[imc}\SpecialCharTok{$}\NormalTok{Sex }\SpecialCharTok{==} \StringTok{\textquotesingle{}F\textquotesingle{}}\NormalTok{,]}
+\NormalTok{imc\_masculino }\OtherTok{\textless{}{-}}\NormalTok{ imc[imc}\SpecialCharTok{$}\NormalTok{Sex }\SpecialCharTok{==} \StringTok{\textquotesingle{}M\textquotesingle{}}\NormalTok{,]}
+\end{Highlighting}
+\end{Shaded}
+
+Em seguida, executamos o teste de Fligner-Killeen para verificar se a
+premissa de que as variâncias são iguais se aplica no experimento.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{fligner.test}\NormalTok{(imc }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Sex, }\AttributeTok{data =}\NormalTok{ imc) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Fligner-Killeen test of homogeneity of variances
+## 
+## data:  imc by Sex
+## Fligner-Killeen:med chi-squared = 1.0504, df = 1, p-value = 0.3054
+\end{verbatim}
+
+O p-valor resultante, de 0,3054, indica que não há evidências o
+suficiente para rejeitar a hipótese nula, ou seja, corrobora com a
+hipótese de que as variâncias dos dois grupos são iguais. Executamos,
+então, o teste de Shapiro-Wilker para verificar a premissa de
+normalidade das amostras.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(imc}\SpecialCharTok{$}\NormalTok{imc[imc}\SpecialCharTok{$}\NormalTok{Sex }\SpecialCharTok{==} \StringTok{"F"}\NormalTok{]) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  imc$imc[imc$Sex == "F"]
+## W = 0.91991, p-value = 0.3179
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(imc}\SpecialCharTok{$}\NormalTok{imc[imc}\SpecialCharTok{$}\NormalTok{Sex }\SpecialCharTok{==} \StringTok{"M"}\NormalTok{]) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  imc$imc[imc$Sex == "M"]
+## W = 0.94947, p-value = 0.0618
+\end{verbatim}
+
+Novamente, não há evidências para rejeitar \(H_0\). Com as premissas
+validadas, executamos o t-test:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{t.test}\NormalTok{(imc}\SpecialCharTok{$}\NormalTok{imc }\SpecialCharTok{\textasciitilde{}}\NormalTok{ imc}\SpecialCharTok{$}\NormalTok{Sex, }
+       \AttributeTok{alternative =} \StringTok{"less"}\NormalTok{, }
+       \AttributeTok{mu          =} \DecValTok{0}\NormalTok{, }
+       \AttributeTok{var.equal   =} \ConstantTok{TRUE}\NormalTok{, }
+       \AttributeTok{conf.level  =} \FloatTok{0.95}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Two Sample t-test
+## 
+## data:  imc$imc by imc$Sex
+## t = -3.6409, df = 51, p-value = 0.0003175
+## alternative hypothesis: true difference in means between group F and group M is less than 0
+## 95 percent confidence interval:
+##       -Inf -2.421576
+## sample estimates:
+## mean in group F mean in group M 
+##        20.12522        24.61073
+\end{verbatim}
+
+Finalmente, identificamos o poder do teste
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{power.t.test}\NormalTok{(}\AttributeTok{delta       =} \FloatTok{2.5}\NormalTok{, }\CommentTok{\# mínimo que faz a mudança de faixa de IMC}
+             \AttributeTok{sd          =} \FunctionTok{sd}\NormalTok{(imc}\SpecialCharTok{$}\NormalTok{imc),}
+             \AttributeTok{sig.level   =} \FloatTok{0.05}\NormalTok{,}
+             \AttributeTok{n =} \FunctionTok{length}\NormalTok{(imc}\SpecialCharTok{$}\NormalTok{imc),}
+             \AttributeTok{type        =} \StringTok{"two.sample"}\NormalTok{,}
+             \AttributeTok{alternative =} \StringTok{"one.sided"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##      Two-sample t test power calculation 
+## 
+##               n = 53
+##           delta = 2.5
+##              sd = 4.043382
+##       sig.level = 0.05
+##           power = 0.935392
+##     alternative = one.sided
+## 
+## NOTE: n is number in *each* group
+\end{verbatim}
+
+\subsubsection{Diferença de IMC entre os dois anos em
+estudo;}\label{diferenuxe7a-de-imc-entre-os-dois-anos-em-estudo-1}
+
+Para esse o próximo experimos utilizaremos os dados carregados na seção
+anterior. Validamos as premissas de normalidade e variâncias da seguinte
+forma:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{fligner.test}\NormalTok{(imc }\SpecialCharTok{\textasciitilde{}}\NormalTok{ amostra, }\AttributeTok{data =}\NormalTok{ imc\_feminino) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Fligner-Killeen test of homogeneity of variances
+## 
+## data:  imc by amostra
+## Fligner-Killeen:med chi-squared = 0.71101, df = 1, p-value = 0.3991
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(imc\_feminino}\SpecialCharTok{$}\NormalTok{imc[imc\_feminino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2017"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  imc_feminino$imc[imc_feminino$amostra == "2017"]
+## W = 0.7475, p-value = 0.03659
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{hist}\NormalTok{(imc\_feminino}\SpecialCharTok{$}\NormalTok{imc[imc\_feminino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2017"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{report_template_files/figure-latex/normalidade e variancias iguais-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qqnorm}\NormalTok{(imc\_feminino}\SpecialCharTok{$}\NormalTok{imc[imc\_feminino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2017"}\NormalTok{])}
+\FunctionTok{qqline}\NormalTok{(imc\_feminino}\SpecialCharTok{$}\NormalTok{imc[imc\_feminino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2017"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{report_template_files/figure-latex/normalidade e variancias iguais-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(imc\_feminino}\SpecialCharTok{$}\NormalTok{imc[imc\_feminino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2016"}\NormalTok{]) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  imc_feminino$imc[imc_feminino$amostra == "2016"]
+## W = 0.91974, p-value = 0.4674
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{hist}\NormalTok{(imc\_feminino}\SpecialCharTok{$}\NormalTok{imc[imc\_feminino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2016"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{report_template_files/figure-latex/normalidade e variancias iguais-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qqnorm}\NormalTok{(imc\_feminino}\SpecialCharTok{$}\NormalTok{imc[imc\_feminino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2016"}\NormalTok{])}
+\FunctionTok{qqline}\NormalTok{(imc\_feminino}\SpecialCharTok{$}\NormalTok{imc[imc\_feminino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2016"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{report_template_files/figure-latex/normalidade e variancias iguais-4.pdf}
+
+Experimento:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{t.test}\NormalTok{(imc\_feminino}\SpecialCharTok{$}\NormalTok{imc }\SpecialCharTok{\textasciitilde{}}\NormalTok{ imc\_feminino}\SpecialCharTok{$}\NormalTok{amostra, }
+       \AttributeTok{alternative =} \StringTok{"less"}\NormalTok{, }
+       \AttributeTok{mu          =} \DecValTok{0}\NormalTok{, }
+       \AttributeTok{var.equal   =} \ConstantTok{TRUE}\NormalTok{, }
+       \AttributeTok{conf.level  =} \FloatTok{0.95}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Two Sample t-test
+## 
+## data:  imc_feminino$imc by imc_feminino$amostra
+## t = 1.9308, df = 9, p-value = 0.9572
+## alternative hypothesis: true difference in means between group 2016 and group 2017 is less than 0
+## 95 percent confidence interval:
+##     -Inf 5.14222
+## sample estimates:
+## mean in group 2016 mean in group 2017 
+##           21.08443           18.44660
+\end{verbatim}
+
+\subsubsection{Diferença entre alunos de Graduação e Pós-Graduação em
+2016;}\label{diferenuxe7a-entre-alunos-de-graduauxe7uxe3o-e-puxf3s-graduauxe7uxe3o-em-2016-1}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{fligner.test}\NormalTok{(imc }\SpecialCharTok{\textasciitilde{}}\NormalTok{ amostra, }\AttributeTok{data =}\NormalTok{ imc\_feminino) }\CommentTok{\# H0: VARIANCIAS IGUAIS}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Fligner-Killeen test of homogeneity of variances
+## 
+## data:  imc by amostra
+## Fligner-Killeen:med chi-squared = 0.71101, df = 1, p-value = 0.3991
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(imc\_masculino}\SpecialCharTok{$}\NormalTok{imc) }\CommentTok{\# p{-}value = 0.3179 {-}\textgreater{} aceitamos H0}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  imc_masculino$imc
+## W = 0.94947, p-value = 0.0618
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(imc\_masculino}\SpecialCharTok{$}\NormalTok{imc[imc\_masculino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2017"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  imc_masculino$imc[imc_masculino$amostra == "2017"]
+## W = 0.96494, p-value = 0.6206
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{hist}\NormalTok{(imc\_masculino}\SpecialCharTok{$}\NormalTok{imc[imc\_masculino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2017"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{report_template_files/figure-latex/teste entre turmas-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qqnorm}\NormalTok{(imc\_masculino}\SpecialCharTok{$}\NormalTok{imc[imc\_masculino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2017"}\NormalTok{])}
+\FunctionTok{qqline}\NormalTok{(imc\_masculino}\SpecialCharTok{$}\NormalTok{imc[imc\_masculino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2017"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{report_template_files/figure-latex/teste entre turmas-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{shapiro.test}\NormalTok{(imc\_masculino}\SpecialCharTok{$}\NormalTok{imc[imc\_masculino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2016"}\NormalTok{]) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Shapiro-Wilk normality test
+## 
+## data:  imc_masculino$imc[imc_masculino$amostra == "2016"]
+## W = 0.92833, p-value = 0.1275
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{hist}\NormalTok{(imc\_masculino}\SpecialCharTok{$}\NormalTok{imc[imc\_masculino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2016"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{report_template_files/figure-latex/teste entre turmas-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qqnorm}\NormalTok{(imc\_masculino}\SpecialCharTok{$}\NormalTok{imc[imc\_masculino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2016"}\NormalTok{])}
+\FunctionTok{qqline}\NormalTok{(imc\_masculino}\SpecialCharTok{$}\NormalTok{imc[imc\_masculino}\SpecialCharTok{$}\NormalTok{amostra }\SpecialCharTok{==} \StringTok{"2016"}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{report_template_files/figure-latex/teste entre turmas-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{t.test}\NormalTok{(imc\_masculino}\SpecialCharTok{$}\NormalTok{imc }\SpecialCharTok{\textasciitilde{}}\NormalTok{ imc\_masculino}\SpecialCharTok{$}\NormalTok{amostra, }
+       \AttributeTok{alternative =} \StringTok{"less"}\NormalTok{, }
+       \AttributeTok{mu          =} \DecValTok{0}\NormalTok{, }
+       \AttributeTok{var.equal   =} \ConstantTok{TRUE}\NormalTok{, }
+       \AttributeTok{conf.level  =} \FloatTok{0.95}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Two Sample t-test
+## 
+## data:  imc_masculino$imc by imc_masculino$amostra
+## t = 0.53979, df = 40, p-value = 0.7038
+## alternative hypothesis: true difference in means between group 2016 and group 2017 is less than 0
+## 95 percent confidence interval:
+##      -Inf 2.679482
+## sample estimates:
+## mean in group 2016 mean in group 2017 
+##           24.93595           24.28551
+\end{verbatim}
+
+\subsection{Discussões e
+Conclusões}\label{discussuxf5es-e-conclusuxf5es}
+
+Em todos os testes, o fato de trabalharmos com dados históricos
+apresentou-se como uma complexidade que nos obrigou a ter uma cautela
+adicional. O fato de possuirmos diferentes tamanhos de amostras em todos
+os testes fez com que procuremos explorar o máximo o poder dos testes
+utilizando por exemplo testes em que podíamos considerar variâncias
+iguais.
+
+O intuito de extrapolar os resultados de uma amostra centrada em uma
+única disciplina para todo o departamento de Engenharia Elétrica rompe
+com as premissas básicas de uma amostra iid, sendo que nos apoiamos na
+suposição de que como qualquer aluno pode se matricular na disciplina os
+alunos matriculados representariam todo o curso. Essa suposição, apesar
+de ser razoável considerando que a altura e peso são fatores comumente
+individuais, poderia não ser fidedigna com os testes, sendo que
+possíveis estudos de correlação entre indivíduos poderia ser realizada
+para fortalecer mais as conclusões estabelecidas.
+
+\subsubsection{Diferença entre IMC de Homens e
+Mulheres}\label{diferenuxe7a-entre-imc-de-homens-e-mulheres-2}
+
+Corroborando a rejeição da hipótese nula, pode-se assumir que o IMC
+feminino de fato é menor que o IMC masculino. Tais resultados podem
+advir de diferenças na composição muscular e de gordura, assim como a
+própria fisionomia. Maiores estudos podem ser realizados para validar
+tais hipóteses desde que novos dados sejam extraidos.
+
+\subsubsection{Diferença de IMC entre os dois anos em
+estudo}\label{diferenuxe7a-de-imc-entre-os-dois-anos-em-estudo-2}
+
+Ao compararmos o IMC dos dois anos de estudo, todas hipóteses de
+normalidade do teste foram corroboradas. Além disso, não foi possível
+rejeitar a hipótese nula, inclusive apresentando um p-valor
+significativamente alto, sendo possível afirmar que não possuímos
+certeza suficiente para considerar que os dois anos possuem diferenças
+significativas na média do IMC.
+
+\subsubsection{Diferença entre alunos de Graduação e Pós-Graduação em
+2016}\label{diferenuxe7a-entre-alunos-de-graduauxe7uxe3o-e-puxf3s-graduauxe7uxe3o-em-2016-2}
+
+Na realização deste experimento, é interessante notar que o teste de
+normalidade não possuiu nível de significância estatística esperada,
+apesar disto devido ao teste t ser robusto à variações de normalidade o
+experimento pode ser executado. Novamente não podemos afirmar de forma
+fidedigna que as duas amostras possuem diferença no valor das médias do
+IMC, sendo que experimentos com um maior número de dados e maior
+aleatoriedade poderiam fornecer maior significado estatístico.
+
+\ldots{}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{model}\OtherTok{\textless{}{-}}\FunctionTok{aov}\NormalTok{(mpg}\SpecialCharTok{\textasciitilde{}}\NormalTok{am}\SpecialCharTok{*}\NormalTok{disp,}\AttributeTok{data=}\NormalTok{mtcars)}
+\FunctionTok{summary}\NormalTok{(model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##             Df Sum Sq Mean Sq F value   Pr(>F)    
+## am           1  405.2   405.2  47.948 1.58e-07 ***
+## disp         1  420.6   420.6  49.778 1.13e-07 ***
+## am:disp      1   63.7    63.7   7.537   0.0104 *  
+## Residuals   28  236.6     8.4                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\subsubsection{Checking Model
+Assumptions}\label{checking-model-assumptions}
+
+The assumptions of your test should also be validated, and possible
+effects of violations should also be explored.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{), }\AttributeTok{mai=}\NormalTok{.}\DecValTok{3}\SpecialCharTok{*}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{,}\DecValTok{1}\NormalTok{))}
+\FunctionTok{plot}\NormalTok{(model,}\AttributeTok{pch=}\DecValTok{16}\NormalTok{,}\AttributeTok{lty=}\DecValTok{1}\NormalTok{,}\AttributeTok{lwd=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{report_template_files/figure-latex/resplots-1.pdf}
+\caption{Residual plots for the anova model}
+\end{figure}
+
+\subsubsection{Conclusions and
+Recommendations}\label{conclusions-and-recommendations}
+
+The discussion of your results, and the scientific/technical meaning of
+the effects detected, should be placed here. Always be sure to tie your
+results back to the original question of interest!
+
+\phantomsection\label{refs}
+\begin{CSLReferences}{0}{0}
+\bibitem[\citeproctext]{ref-IMC_def}
+\CSLLeftMargin{{[}1{]} }%
+\CSLRightInline{Centers for Disease Control and Prevention, {``About
+body mass index (BMI).''} 2024. Available:
+\url{https://www.cdc.gov/bmi/about/index.html}}
+
+\bibitem[\citeproctext]{ref-weir2019bmi}
+\CSLLeftMargin{{[}2{]} }%
+\CSLRightInline{C. B. Weir and A. Jan, {``BMI classification percentile
+and cut off points,''} 2019.}
+
+\bibitem[\citeproctext]{ref-nuttall2015body}
+\CSLLeftMargin{{[}3{]} }%
+\CSLRightInline{F. Q. Nuttall, {``Body mass index: Obesity, BMI, and
+health: A critical review,''} \emph{Nutrition today}, vol. 50, no. 3,
+pp. 117--128, 2015.}
+
+\bibitem[\citeproctext]{ref-shah2012measuring}
+\CSLLeftMargin{{[}4{]} }%
+\CSLRightInline{N. R. Shah and E. R. Braverman, {``Measuring adiposity
+in patients: The utility of body mass index (BMI), percent body fat, and
+leptin,''} \emph{PloS one}, vol. 7, no. 4, p. e33308, 2012.}
+
+\bibitem[\citeproctext]{ref-branco2023bioelectrical}
+\CSLLeftMargin{{[}5{]} }%
+\CSLRightInline{M. G. Branco \emph{et al.}, {``Bioelectrical impedance
+analysis (BIA) for the assessment of body composition in oncology: A
+scoping review,''} \emph{Nutrients}, vol. 15, no. 22, p. 4792, 2023.}
+
+\bibitem[\citeproctext]{ref-bredella2017sex}
+\CSLLeftMargin{{[}6{]} }%
+\CSLRightInline{M. A. Bredella, {``Sex differences in body
+composition,''} \emph{Sex and gender factors affecting metabolic
+homeostasis, diabetes and obesity}, pp. 9--27, 2017.}
+
+\bibitem[\citeproctext]{ref-olfert2018self}
+\CSLLeftMargin{{[}7{]} }%
+\CSLRightInline{M. D. Olfert \emph{et al.}, {``Self-reported vs.
+Measured height, weight, and BMI in young adults,''} \emph{International
+journal of environmental research and public health}, vol. 15, no. 10,
+p. 2216, 2018.}
+
+\bibitem[\citeproctext]{ref-graves2022undergraduate}
+\CSLLeftMargin{{[}8{]} }%
+\CSLRightInline{R. J. Graves \emph{et al.}, {``Undergraduate versus
+graduate nursing students: Differences in nutrition, physical activity,
+and self-reported body mass index,''} \emph{Journal of American College
+Health}, vol. 70, no. 7, pp. 1941--1946, 2022.}
+
+\end{CSLReferences}
+
+\end{document}

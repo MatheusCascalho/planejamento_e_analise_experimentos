@@ -1,12 +1,15 @@
 ---
-title: 'Case Study 00: This is a template'
-author: "Author 1 and Author 2"
-date: "March 00, 2015"
+title: 'Estudo de Caso 01: Comparação do IMC médio de alunos do PPGEE-UFMG ao longo de dois
+semestres'
+author: "Joao Paulo Lara Pinto, Thales Henrique de Oliveira Gonçalves, Henrique Alves Barbosa, Matheus Cascalho dos Santos"
+date: "05 de Novembro de 2024"
 output:
+  html_document:
+    df_print: paged
   pdf_document:
-    fig_caption: yes
-editor_options: 
-  markdown: 
+    fig_caption: true
+editor_options:
+  markdown:
     wrap: 72
 bibliography: references.bib
 csl: ieee.csl
@@ -96,7 +99,7 @@ aos do primeiro experimento.
 
 ## Experimentos
 
-### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
+### Diferença entre IMC de Homens e Mulheres
 
 O primeiro passo é carregar os dados e calcular o IMC das amostras.
 
@@ -156,6 +159,8 @@ t.test(imc$imc ~ imc$Sex,
        conf.level  = 0.95)
 ```
 
+O resultado do p-valor igual a 0.0003175 indica que há evidência suficiente para rejeitar $H_0$, ou seja, rejeitamos a hipótese
+de que homens e mulheres possuem o mesmo imc.
 Finalmente, identificamos o poder do teste
 
 ```{r poder do teste}
@@ -166,6 +171,8 @@ power.t.test(delta       = 2.5, # mínimo que faz a mudança de faixa de IMC
              type        = "two.sample",
              alternative = "one.sided")
 ```
+
+Esse resultado mostra que temos 93.5% de confiança de que não estamos cometendo um falso negativo em nossa conclusão. 
 
 ### Diferença de IMC entre os dois anos em estudo;
 
@@ -188,6 +195,9 @@ qqline(imc_feminino$imc[imc_feminino$amostra == "2016"])
 
 ```
 
+Observamos que na amostra de imc_feminino o p-valor foi menor que 0.05 para o teste de Shapiro-Wilker, o que indicaria que a amostra não segue uma distribuição normal. Entretanto, como observamos no Q-Q Plot, esse desvio da normalidade se dá na cauda direita da amostra. Como o teste t é um teste robusto a desvios de normalidade nos extremos da distribuição, aceitamos que esse desvio de normalidade não irá prejudicar o resultado da análise. Nota-se também que a amostra feminina é muito menor que a amostra masculina. Uma melhoria que propomos ao teste e o aumento na coleta de dados de imc feminino, para trazer maior segurança nos resultados do teste.
+
+
 Experimento:
 
 ```{r teste entre anos}
@@ -198,30 +208,50 @@ t.test(imc_feminino$imc ~ imc_feminino$amostra,
        conf.level  = 0.95)
 ```
 
+O p-valor de 0.9572 indica que não há evidência suficiente para rejeitar $H_0$, ou seja, não há evidência para rejeitar a hipótese de que o IMC dos dois anos seja igual.
+
 ### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
 
-```{r teste entre turmas}
+Assim como nos experimentos anteriores, realizamos os testes de normalidade e de variância igual para as amostras de alunos da graduação e da pós-graduação.
 
-fligner.test(imc ~ amostra, data = imc_feminino) # H0: VARIANCIAS IGUAIS
+```{r teste entre turmas - PPGEE}
 
-shapiro.test(imc_masculino$imc) # p-value = 0.3179 -> aceitamos H0
+imc2016 <- read.csv('imc_20162.csv')
+imc2016$imc <- imc2016$Weight.kg/(imc2016$Height.m^2)
 
-shapiro.test(imc_masculino$imc[imc_masculino$amostra == "2017"])
-hist(imc_masculino$imc[imc_masculino$amostra == "2017"])
-qqnorm(imc_masculino$imc[imc_masculino$amostra == "2017"])
-qqline(imc_masculino$imc[imc_masculino$amostra == "2017"])
+fligner.test(imc ~ Course, data = imc2016) # H0: VARIANCIAS IGUAIS
 
-shapiro.test(imc_masculino$imc[imc_masculino$amostra == "2016"]) 
-hist(imc_masculino$imc[imc_masculino$amostra == "2016"])
-qqnorm(imc_masculino$imc[imc_masculino$amostra == "2016"])
-qqline(imc_masculino$imc[imc_masculino$amostra == "2016"])
+shapiro.test(imc2016$imc[imc2016$Course == "PPGEE"]) 
+hist(imc2016$imc[imc2016$Course == "PPGEE"])
+qqnorm(imc2016$imc[imc2016$Course == "PPGEE"])
+qqline(imc2016$imc[imc2016$Course == "PPGEE"])
 
-t.test(imc_masculino$imc ~ imc_masculino$amostra, 
+```
+
+Assim como no experimento anterior para a amostra de imc feminino, a amostra de imc dos alunos do PPGEE não segue uma distribuição normal na cauda direita. Entretanto, para os fins desse estudo, dada a robustez do t-test à desvios de normalidade nos extremos da distribuição, podemos manter a premissa de normalidade e aplicar o t-teste. 
+
+```{r teste entre turmas - ENGSIS}
+
+
+shapiro.test(imc2016$imc[imc2016$Course == "ENGSIS"]) 
+hist(imc2016$imc[imc2016$Course == "ENGSIS"])
+qqnorm(imc2016$imc[imc2016$Course == "ENGSIS"])
+qqline(imc2016$imc[imc2016$Course == "ENGSIS"])
+
+```
+
+
+```{r teste entre turmas - final}
+
+t.test(imc2016$imc ~ imc2016$Course, 
        alternative = "less", 
        mu          = 0, 
        var.equal   = TRUE, 
        conf.level  = 0.95)
 ```
+
+O p-valor de 0.3328 indica que não há evidência suficiente para rejeitar $H_0$, ou seja, não há evidência para rejeitar a hipótese de que o IMC dos alunos dos dois cursos seja igual.
+
 
 ## Discussões e Conclusões
 Em todos os testes, o fato de trabalharmos com dados históricos apresentou-se como uma complexidade que nos obrigou a ter uma cautela adicional. O fato de possuirmos diferentes tamanhos de amostras em todos os testes fez com que procuremos explorar o máximo o poder dos testes utilizando por exemplo testes em que podíamos considerar variâncias iguais.
@@ -239,25 +269,5 @@ Ao compararmos o IMC dos dois anos de estudo, todas hipóteses de normalidade do
 
 Na realização deste experimento, é interessante notar que o teste de normalidade não possuiu nível de significância estatística esperada, apesar disto devido ao teste t ser robusto à variações de normalidade o experimento pode ser executado. Novamente não podemos afirmar de forma fidedigna que as duas amostras possuem diferença no valor das médias do IMC, sendo que experimentos com um maior número de dados e maior aleatoriedade poderiam fornecer maior significado estatístico.
 
-...
+# Bibliografia
 
-```{r fitmodel,results='hold'}
-model<-aov(mpg~am*disp,data=mtcars)
-summary(model)
-```
-
-### Checking Model Assumptions
-
-The assumptions of your test should also be validated, and possible
-effects of violations should also be explored.
-
-```{r resplots,fig.width=8,echo=TRUE,message=FALSE, fig.cap = "Residual plots for the anova model"}
-par(mfrow=c(2,2), mai=.3*c(1,1,1,1))
-plot(model,pch=16,lty=1,lwd=2)
-```
-
-### Conclusions and Recommendations
-
-The discussion of your results, and the scientific/technical meaning of
-the effects detected, should be placed here. Always be sure to tie your
-results back to the original question of interest!
