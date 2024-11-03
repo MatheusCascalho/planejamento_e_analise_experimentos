@@ -3,10 +3,10 @@ title: 'Case Study 00: This is a template'
 author: "Author 1 and Author 2"
 date: "March 00, 2015"
 output:
-  html_document:
-    df_print: paged
   pdf_document:
     fig_caption: yes
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup,results='hide',warning=FALSE,echo=FALSE}
@@ -159,8 +159,14 @@ power.t.test(delta       = 2.5, # mínimo que faz a mudança de faixa de IMC
 ```
 
 
-## Statistical Analysis
-Your statistical analysis should come here. This is the place where you should fit your statistical model, get the results of your significance test, your effect size estimates and confidence intervals.
+## Discussões e Conclusões
+Em todos os testes, o fato de trabalharmos com dados históricos apresentou-se como uma complexidade que nos obrigou a ter uma cautela adicional. O fato de possuirmos diferentes tamanhos de amostras em todos os testes fez com que procuremos explorar o máximo o poder dos testes utilizando por exemplo testes em que podíamos considerar variâncias iguais.
+
+O intuito de extrapolar os resultados de uma amostra centrada em uma única disciplina para todo o departamento de Engenharia Elétrica rompe com as premissas básicas de uma amostra iid, sendo que nos apoiamos na suposição de que como qualquer aluno pode se matricular na disciplina os alunos matriculados representariam todo o curso. Essa suposição, apesar de ser razoável considerando que a altura e peso são fatores comumente individuais, poderia não ser fidedigna com os testes, sendo que possíveis estudos de correlação entre indivíduos poderia ser realizada para fortalecer mais as conclusões estabelecidas.
+
+### Diferença entre IMC de Homens e Mulheres
+
+...
 
 ```{r fitmodel,results='hold'}
 model<-aov(mpg~am*disp,data=mtcars)
