@@ -33,11 +33,11 @@ if (!require(GGally, quietly = TRUE)){
 ```
 
 ## Descrição do Problema
-O IMC é uma medida utilizada na área de saúde como um indicador simples capaz de encontrar correlações entre o peso e altura do paciente com doenças decorrentes de obesidade, sendo inclusive capaz de classificar em diferentes grupos para obter maior precisão na análise em questão [@IMC_def;@weir2019bmi].
+O IMC é uma medida utilizada na área de saúde como um indicador simples capaz de encontrar correlações entre o peso e altura de pacientes com doenças decorrentes de obesidade, sendo inclusive capaz de classificar pacientes em diferentes grupos de forma a segmentar efeitos de saúde gerais em diversos grupos dependendo do valor encontrado [@IMC_def;@weir2019bmi].
 
-Apesar dos problemas decorrentes da simplicidade do teste [@nuttall2015body;@shah2012measuring] e métodos mais robustos tais como a bioimpedância [@branco2023bioelectrical] estarem presentes, continua sendo uma medida interessante pela facilidade e baixo custo de encontrá-la. A partir de tal importância médica, muitas questões naturalmente surgem relacionadas a testes entre diferentes populações.
+Apesar dos problemas decorrentes da simplicidade do teste [@nuttall2015body;@shah2012measuring] e métodos mais robustos tais como a bioimpedância [@branco2023bioelectrical] existirem, continua sendo uma medida de interesse médico pela facilidade e baixo custo de medição. Doravante a relevância que ainda apresenta no cenário médico atual, diversas questões relacionadas a testes entre diferentes populações emergem naturalmente.
 
-Neste estudo, serão propostos três testes de forma a compreender
+Neste estudo, serão propostas três testes de forma a compreender
 possíveis relações e diferenças presentes na amostragem realizada nos
 anos de 2016 e 2017 no Departamento de Engenharia da UFMG. Os testes
 propostos são:
@@ -63,22 +63,22 @@ Apesar de tais problemas existirem, será aproveitada ao máximo a
 robustez existente nos experimentos.
 
 ### Diferença entre IMC de Homens e Mulheres
-Dada a conhecida diferença na composição corporal entre homens e mulheres [@bredella2017sex], torna-se relevante analisar os índices de IMC dentro do universo em estudo. Em termos gerais, observam-se valores semelhantes de IMC entre os sexos [@olfert2018self], apesar das variações na composição corporal. Para aprofundar essa análise, podemos testar a hipótese alternativa de que o IMC médio masculino ($\mu_{imcm}$) seja superior ao feminino ($\mu_{imcf}$).
+Dada a conhecida diferença na composição corporal entre homens e mulheres [@bredella2017sex], torna-se relevante analisar os índices de IMC dentro do universo de estudo. Em termos gerais, observam-se valores semelhantes de IMC entre os sexos [@olfert2018self], apesar das variações na composição corporal. Para aprofundar essa análise, podemos testar a hipótese alternativa de que o IMC médio masculino ($\mu_{imcm}$) seja superior ao feminino ($\mu_{imcf}$).
 $$\begin{cases} H_0: \mu_{imcf} = \mu_{imcm}&\\H_1: \mu_{imcf}<\mu_{imcm}\end{cases}$$
 
 Estudos referentes à normalidade de ambas distribuições foram
 realizados, assim como um teste de comparação das variâncias de
 Fligner-Killen.
 
-O valor de ($\delta^*$) utilizado neste teste foi selecionado com base na relevância das faixas pré-definidas de IMC, sendo que para que pessoa no meio de uma faixa precisa ter uma alteração de 2.5 em seu IMC para alternar de faixa, sendo ($\delta^*=2.5$).
+O valor de ($\delta^*$) utilizado neste teste foi selecionado com base na relevância das faixas pré-definidas de IMC, sendo que um indivíduo no meio de uma faixa precisa ter uma alteração de 2.5 em seu IMC para alternar de faixa, sendo assim ($\delta^*=2.5$).
 
 O valor de $\alpha=0.05$ buscou manter o padrão encontrado na literatura
 médica, assim como esperava-se encontrar um valor de $\beta=0.8$ para
-corroborar com não encontrarmos falsos negativos.
+corroborar com não encontrarmos falsos negativos nas conclusões dos experimentos.
 
 ### Diferença de IMC entre os dois anos em estudo;
 
-Realizamos para este teste dois experimentos, um para o sexo masculino e
+Realizamos para este experimento dois testes, um para o sexo masculino e
 outro para o feminino. Esta estratificação baseou-se no mesmo critério
 da suposta diferença dos IMCs entre os sexos.
 
@@ -160,7 +160,7 @@ t.test(imc$imc ~ imc$Sex,
 ```
 
 O resultado do p-valor igual a 0.0003175 indica que há evidência suficiente para rejeitar $H_0$, ou seja, rejeitamos a hipótese
-de que homens e mulheres possuem o mesmo imc.
+de que homens e mulheres possuem o mesmo IMC.
 Finalmente, identificamos o poder do teste
 
 ```{r poder do teste}
@@ -176,9 +176,8 @@ Esse resultado mostra que temos 93.5% de confiança de que não estamos cometend
 
 ### Diferença de IMC entre os dois anos em estudo;
 
-Para esse o próximo experimos utilizaremos os dados carregados na seção
-anterior. Validamos as premissas de normalidade e variâncias da seguinte
-forma:
+Para esse próximo experimento utilizaremos os dados carregados na seção
+anterior. Inicialmente, validamos as premissas de normalidade e igualdade de variâncias:
 
 ```{r normalidade e variancias iguais}
 fligner.test(imc ~ amostra, data = imc_feminino) 
@@ -195,7 +194,7 @@ qqline(imc_feminino$imc[imc_feminino$amostra == "2016"])
 
 ```
 
-Observamos que na amostra de imc_feminino o p-valor foi menor que 0.05 para o teste de Shapiro-Wilker, o que indicaria que a amostra não segue uma distribuição normal. Entretanto, como observamos no Q-Q Plot, esse desvio da normalidade se dá na cauda direita da amostra. Como o teste t é um teste robusto a desvios de normalidade nos extremos da distribuição, aceitamos que esse desvio de normalidade não irá prejudicar o resultado da análise. Nota-se também que a amostra feminina é muito menor que a amostra masculina. Uma melhoria que propomos ao teste e o aumento na coleta de dados de imc feminino, para trazer maior segurança nos resultados do teste.
+Observamos que na amostra de imc_feminino o p-valor foi menor que 0.05 para o teste de Shapiro-Wilker, o que indicaria que a amostra não segue uma distribuição normal. Entretanto, como observamos no Q-Q Plot, esse desvio da normalidade se dá na cauda direita da amostra. Como o teste t é um teste robusto a desvios de normalidade nos extremos da distribuição, aceitamos que esse desvio de normalidade não irá prejudicar o resultado da análise. Nota-se também que a amostra feminina é muito menor que a amostra masculina. Uma possível melhoria no teste se daria com o aumento na coleta de dados de IMC feminino, de forma a trazer maior segurança nos resultados estatísticos.
 
 
 Experimento:
@@ -228,7 +227,7 @@ qqline(imc2016$imc[imc2016$Course == "PPGEE"])
 
 ```
 
-Assim como no experimento anterior para a amostra de imc feminino, a amostra de imc dos alunos do PPGEE não segue uma distribuição normal na cauda direita. Entretanto, para os fins desse estudo, dada a robustez do t-test à desvios de normalidade nos extremos da distribuição, podemos manter a premissa de normalidade e aplicar o t-teste. 
+Assim como no experimento anterior para a amostra de imc feminino, a amostra de imc dos alunos do PPGEE não segue uma distribuição normal na cauda direita. Entretanto, para os fins desse estudo, dada a robustez do t-test a desvios de normalidade nos extremos da distribuição, podemos manter a premissa de normalidade e aplicar o t-teste. 
 
 ```{r teste entre turmas - ENGSIS}
 
@@ -254,20 +253,20 @@ O p-valor de 0.3328 indica que não há evidência suficiente para rejeitar $H_0
 
 
 ## Discussões e Conclusões
-Em todos os testes, o fato de trabalharmos com dados históricos apresentou-se como uma complexidade que nos obrigou a ter uma cautela adicional. O fato de possuirmos diferentes tamanhos de amostras em todos os testes fez com que procuremos explorar o máximo o poder dos testes utilizando por exemplo testes em que podíamos considerar variâncias iguais.
+Em todos os testes, o fato de trabalharmos com dados históricos apresentou-se como uma complexidade, a qual nos obrigou a manter uma cautela adicional. O fato de possuirmos diferentes tamanhos de amostras em todos os testes fez com que procuremos explorar o máximo o poder dos testes utilizando por exemplo testes em que podíamos considerar variâncias iguais.
 
-O intuito de extrapolar os resultados de uma amostra centrada em uma única disciplina para todo o departamento de Engenharia Elétrica rompe com as premissas básicas de uma amostra iid, sendo que nos apoiamos na suposição de que como qualquer aluno pode se matricular na disciplina os alunos matriculados representariam todo o curso. Essa suposição, apesar de ser razoável considerando que a altura e peso são fatores comumente individuais, poderia não ser fidedigna com os testes, sendo que possíveis estudos de correlação entre indivíduos poderia ser realizada para fortalecer mais as conclusões estabelecidas.
+O intuito de extrapolar os resultados de uma amostra centrada em uma única disciplina para todo o departamento de Engenharia Elétrica rompe com as premissas básicas de uma amostra com variáveis iid, sendo que nos apoiamos na suposição de que como qualquer aluno pode se matricular na disciplina os alunos matriculados representariam todo o curso. Essa suposição, apesar de ser razoável considerando que a altura e peso são fatores que não dependem da matéria cursada, poderia não ser fidedigna com os testes, sendo que possíveis estudos de correlação entre indivíduos poderiam ser realizados para fortalecer ainda mais as conclusões estabelecidas.
 
 ### Diferença entre IMC de Homens e Mulheres
 
-Corroborando a rejeição da hipótese nula, pode-se assumir que o IMC feminino de fato é menor que o IMC masculino. Tais resultados podem advir de diferenças na composição muscular e de gordura, assim como a própria fisionomia. Maiores estudos podem ser realizados para validar tais hipóteses desde que novos dados sejam extraidos.
+Corroborando a rejeição da hipótese nula, pode-se assumir que o IMC feminino de fato é menor que o IMC masculino. Tais resultados podem advir de diferenças na composição muscular e de gordura, assim como a própria composição óssea. Mais estudos podem ser realizados para validar tais hipóteses, sendo necessário a extração dos dados citados.
 
 ### Diferença de IMC entre os dois anos em estudo
-Ao compararmos o IMC dos dois anos de estudo, todas hipóteses de normalidade do teste foram corroboradas. Além disso, não foi possível rejeitar a hipótese nula, inclusive apresentando um p-valor significativamente alto, sendo possível afirmar que não possuímos certeza suficiente para considerar que os dois anos possuem diferenças significativas na média do IMC.
+Ao compararmos o IMC dos dois anos de estudo nem todas hipóteses de normalidade do teste foram corroboradas por uma possível cauda em uma das distribuições, no entanto pelo t-teste ser robusto a pequenas variações de normalidade este fato não se apresentou como um problema maior. Além disso, não foi possível rejeitar a hipótese nula, inclusive apresentando um p-valor significativamente alto, sendo possível afirmar que não possuímos certeza suficiente para considerar que os dois anos possuem diferenças significativas na média do IMC.
 
 ### Diferença entre alunos de Graduação e Pós-Graduação em 2016
 
-Na realização deste experimento, é interessante notar que o teste de normalidade não possuiu nível de significância estatística esperada, apesar disto devido ao teste t ser robusto à variações de normalidade o experimento pode ser executado. Novamente não podemos afirmar de forma fidedigna que as duas amostras possuem diferença no valor das médias do IMC, sendo que experimentos com um maior número de dados e maior aleatoriedade poderiam fornecer maior significado estatístico.
+Na realização deste experimento, é interessante notar que o teste de normalidade não possuiu nível de significância estatística esperada, apesar disto devido ao t-teste ser robusto à variações de normalidade o experimento pode ser executado. Novamente não podemos afirmar de forma fidedigna que as duas amostras possuem diferença no valor das médias do IMC, sendo que experimentos com um maior número de dados e maior aleatoriedade poderiam fornecer maior significado estatístico.
 
 # Bibliografia
 
