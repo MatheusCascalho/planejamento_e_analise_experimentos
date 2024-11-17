@@ -1,0 +1,272 @@
+---
+title: 'Estudo de Caso 01: Comparação do IMC médio de alunos do PPGEE-UFMG ao longo de dois
+semestres'
+author: "Joao Paulo Lara Pinto, Thales Henrique de Oliveira Gonçalves, Henrique Alves Barbosa, Matheus Cascalho dos Santos"
+date: "05 de Novembro de 2024"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    fig_caption: true
+editor_options:
+  markdown:
+    wrap: 72
+bibliography: references.bib
+csl: ieee.csl
+---
+
+```{r setup,results='hide',warning=FALSE,echo=FALSE}
+# A few initial definitions just to make sure all required packages are installed. Change as needed.
+# NOTE: It may echo some weird messages to the PDF on the first compile (package installation messages). Run twice and the problem will (hopefully) go away.
+if (!require(ggplot2, quietly = TRUE)){
+      install.packages("ggplot2")
+      }
+if (!require(devtools, quietly = TRUE)){
+      install.packages("devtools")
+      }
+ if (!require(broom, quietly = TRUE)){
+       devtools::install_github("dgrtwo/broom")
+      }
+if (!require(GGally, quietly = TRUE)){
+      install.packages("GGally")
+      }
+```
+
+## Descrição do Problema
+O IMC é uma medida utilizada na área de saúde como um indicador simples capaz de encontrar correlações entre o peso e altura de pacientes com doenças decorrentes de obesidade, sendo inclusive capaz de classificar pacientes em diferentes grupos de forma a segmentar efeitos de saúde gerais em diversos grupos dependendo do valor encontrado [@IMC_def;@weir2019bmi].
+
+Apesar dos problemas decorrentes da simplicidade do teste [@nuttall2015body;@shah2012measuring] e métodos mais robustos tais como a bioimpedância [@branco2023bioelectrical] existirem, continua sendo uma medida de interesse médico pela facilidade e baixo custo de medição. Doravante a relevância que ainda apresenta no cenário médico atual, diversas questões relacionadas a testes entre diferentes populações emergem naturalmente.
+
+Neste estudo, serão propostas três testes de forma a compreender
+possíveis relações e diferenças presentes na amostragem realizada nos
+anos de 2016 e 2017 no Departamento de Engenharia da UFMG. Os testes
+propostos são:
+
+-   Diferença entre IMC de Homens e Mulheres;
+-   Diferença de IMC entre os dois anos em estudo;
+-   Diferença entre alunos de Graduação e Pós-Graduação em 2016.
+
+Por meio destes testes, podemos obter informações relevantes capazes de
+compreender diferenças baseadas em idade, sexo e ano de estudo.
+
+## Design dos Experimentos
+
+Nos experimentos aqui realizados, procuramos extrair o máximo de
+informações possíveis de dados que já foram extraídos. A partir disto,
+problemas estatísticos naturalmente irão surgir, sendo alguns deles:
+
+-   Diferentes tamanhos de amostra;
+-   Poucos dados;
+-   Amostra não representativa de todo o departamento.
+
+Apesar de tais problemas existirem, será aproveitada ao máximo a
+robustez existente nos experimentos.
+
+### Diferença entre IMC de Homens e Mulheres
+Dada a conhecida diferença na composição corporal entre homens e mulheres [@bredella2017sex], torna-se relevante analisar os índices de IMC dentro do universo de estudo. Em termos gerais, observam-se valores semelhantes de IMC entre os sexos [@olfert2018self], apesar das variações na composição corporal. Para aprofundar essa análise, podemos testar a hipótese alternativa de que o IMC médio masculino ($\mu_{imcm}$) seja superior ao feminino ($\mu_{imcf}$).
+$$\begin{cases} H_0: \mu_{imcf} = \mu_{imcm}&\\H_1: \mu_{imcf}<\mu_{imcm}\end{cases}$$
+
+Estudos referentes à normalidade de ambas distribuições foram
+realizados, assim como um teste de comparação das variâncias de
+Fligner-Killen.
+
+O valor de ($\delta^*$) utilizado neste teste foi selecionado com base na relevância das faixas pré-definidas de IMC, sendo que um indivíduo no meio de uma faixa precisa ter uma alteração de 2.5 em seu IMC para alternar de faixa, sendo assim ($\delta^*=2.5$).
+
+O valor de $\alpha=0.05$ buscou manter o padrão encontrado na literatura
+médica, assim como esperava-se encontrar um valor de $\beta=0.8$ para
+corroborar com não encontrarmos falsos negativos nas conclusões dos experimentos.
+
+### Diferença de IMC entre os dois anos em estudo;
+
+Realizamos para este experimento dois testes, um para o sexo masculino e
+outro para o feminino. Esta estratificação baseou-se no mesmo critério
+da suposta diferença dos IMCs entre os sexos.
+
+Para cada um dos testes, iremos avaliar se ($\mu_{2016}$) é igual a
+($\mu_{2017}$).
+
+$$\begin{cases} H_0: \mu_{2016} = \mu_{2017}&\\H_1: \mu_{2016} \neq \mu_{2017}\end{cases}$$
+Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos
+aos do primeiro experimento.
+
+### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
+
+Realizamos para este experimento um teste entre a diferença da média do IMC entre alunos de graduação ($\mu_{grad}$) e pós graduação ($\mu_{pos}$) de forma a testar se a idade é um fator que influencia a saúde dos alunos do departamento. Um estudo análogo, realizado na University of South Alabama, apresentou um IMC médio levemente superior de alunos da pós-graduação em enfermagem, em relação aos alunos da graduação do mesmo curso [@graves2022undergraduate].
+
+$$\begin{cases} H_0: \mu_{grad} = \mu_{pos}&\\H_1: \mu_{grad} \neq \mu_{pos}\end{cases}$$
+Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos
+aos do primeiro experimento.
+
+## Experimentos
+
+### Diferença entre IMC de Homens e Mulheres
+
+O primeiro passo é carregar os dados e calcular o IMC das amostras.
+
+```{r loaddata}
+imc2016 <- read.csv('imc_20162.csv')
+imc2017 <- read.csv('CS01_20172.csv', sep = ';')
+
+# Filtragem de dados
+imc2016 <- imc2016[imc2016$Course == 'PPGEE',]
+
+# Padronização do dataframe
+colnames(imc2016)[colnames(imc2016)=='Gender'] <- 'Sex'
+colnames(imc2016)[colnames(imc2016)=='Height.m'] <- 'height.m'
+colnames(imc2016)[colnames(imc2016)=='Weight.kg'] <- 'weight.kg'
+colnames(imc2017)[colnames(imc2017)=='Weight.kg'] <- 'weight.kg'
+imc2016 = imc2016[,c('Sex', 'height.m', 'weight.kg')]
+imc2017 = imc2017[,c('Sex', 'height.m', 'weight.kg')]
+imc2016$amostra <- '2016'
+imc2017$amostra <- '2017'
+
+# Calculando o IMC de cada população
+imc2016$imc <- imc2016$weight.kg/(imc2016$height.m^2)
+imc2017$imc <- imc2017$weight.kg/(imc2017$height.m^2)
+
+# União dos dataframes
+imc <- rbind(imc2016, imc2017)
+
+# Segregação de dados entre Homens e Mulheres
+imc_feminino <- imc[imc$Sex == 'F',]
+imc_masculino <- imc[imc$Sex == 'M',]
+
+```
+
+Em seguida, executamos o teste de Fligner-Killeen para verificar se a
+premissa de que as variâncias são iguais se aplica no experimento.
+
+```{r fligner test}
+fligner.test(imc ~ Sex, data = imc) 
+```
+
+O p-valor resultante, de 0,3054, indica que não há evidências o suficiente para rejeitar a hipótese nula, ou seja, corrobora com a hipótese de que as variâncias dos dois grupos são iguais. Executamos, então, o teste de Shapiro-Wilker para verificar a premissa de 
+normalidade das amostras.
+
+```{r shapiro test}
+shapiro.test(imc$imc[imc$Sex == "F"]) 
+shapiro.test(imc$imc[imc$Sex == "M"]) 
+
+```
+
+Novamente, não há evidências para rejeitar $H_0$. Com as premissas validadas, executamos o t-test:
+
+```{r t-test homens e mulheres}
+t.test(imc$imc ~ imc$Sex, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
+```
+
+O resultado do p-valor igual a 0.0003175 indica que há evidência suficiente para rejeitar $H_0$, ou seja, rejeitamos a hipótese
+de que homens e mulheres possuem o mesmo IMC.
+Finalmente, identificamos o poder do teste
+
+```{r poder do teste}
+power.t.test(delta       = 2.5, # mínimo que faz a mudança de faixa de IMC
+             sd          = sd(imc$imc),
+             sig.level   = 0.05,
+             n = length(imc$imc),
+             type        = "two.sample",
+             alternative = "one.sided")
+```
+
+Esse resultado mostra que temos 93.5% de confiança de que não estamos cometendo um falso negativo em nossa conclusão. 
+
+### Diferença de IMC entre os dois anos em estudo;
+
+Para esse próximo experimento utilizaremos os dados carregados na seção
+anterior. Inicialmente, validamos as premissas de normalidade e igualdade de variâncias:
+
+```{r normalidade e variancias iguais}
+fligner.test(imc ~ amostra, data = imc_feminino) 
+
+shapiro.test(imc_feminino$imc[imc_feminino$amostra == "2017"])
+hist(imc_feminino$imc[imc_feminino$amostra == "2017"])
+qqnorm(imc_feminino$imc[imc_feminino$amostra == "2017"])
+qqline(imc_feminino$imc[imc_feminino$amostra == "2017"])
+
+shapiro.test(imc_feminino$imc[imc_feminino$amostra == "2016"]) 
+hist(imc_feminino$imc[imc_feminino$amostra == "2016"])
+qqnorm(imc_feminino$imc[imc_feminino$amostra == "2016"])
+qqline(imc_feminino$imc[imc_feminino$amostra == "2016"])
+
+```
+
+Observamos que na amostra de imc_feminino o p-valor foi menor que 0.05 para o teste de Shapiro-Wilker, o que indicaria que a amostra não segue uma distribuição normal. Entretanto, como observamos no Q-Q Plot, esse desvio da normalidade se dá na cauda direita da amostra. Como o teste t é um teste robusto a desvios de normalidade nos extremos da distribuição, aceitamos que esse desvio de normalidade não irá prejudicar o resultado da análise. Nota-se também que a amostra feminina é muito menor que a amostra masculina. Uma possível melhoria no teste se daria com o aumento na coleta de dados de IMC feminino, de forma a trazer maior segurança nos resultados estatísticos.
+
+
+Experimento:
+
+```{r teste entre anos}
+t.test(imc_feminino$imc ~ imc_feminino$amostra, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
+```
+
+O p-valor de 0.9572 indica que não há evidência suficiente para rejeitar $H_0$, ou seja, não há evidência para rejeitar a hipótese de que o IMC dos dois anos seja igual.
+
+### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
+
+Assim como nos experimentos anteriores, realizamos os testes de normalidade e de variância igual para as amostras de alunos da graduação e da pós-graduação.
+
+```{r teste entre turmas - PPGEE}
+
+imc2016 <- read.csv('imc_20162.csv')
+imc2016$imc <- imc2016$Weight.kg/(imc2016$Height.m^2)
+
+fligner.test(imc ~ Course, data = imc2016) # H0: VARIANCIAS IGUAIS
+
+shapiro.test(imc2016$imc[imc2016$Course == "PPGEE"]) 
+hist(imc2016$imc[imc2016$Course == "PPGEE"])
+qqnorm(imc2016$imc[imc2016$Course == "PPGEE"])
+qqline(imc2016$imc[imc2016$Course == "PPGEE"])
+
+```
+
+Assim como no experimento anterior para a amostra de imc feminino, a amostra de imc dos alunos do PPGEE não segue uma distribuição normal na cauda direita. Entretanto, para os fins desse estudo, dada a robustez do t-test a desvios de normalidade nos extremos da distribuição, podemos manter a premissa de normalidade e aplicar o t-teste. 
+
+```{r teste entre turmas - ENGSIS}
+
+
+shapiro.test(imc2016$imc[imc2016$Course == "ENGSIS"]) 
+hist(imc2016$imc[imc2016$Course == "ENGSIS"])
+qqnorm(imc2016$imc[imc2016$Course == "ENGSIS"])
+qqline(imc2016$imc[imc2016$Course == "ENGSIS"])
+
+```
+
+
+```{r teste entre turmas - final}
+
+t.test(imc2016$imc ~ imc2016$Course, 
+       alternative = "less", 
+       mu          = 0, 
+       var.equal   = TRUE, 
+       conf.level  = 0.95)
+```
+
+O p-valor de 0.3328 indica que não há evidência suficiente para rejeitar $H_0$, ou seja, não há evidência para rejeitar a hipótese de que o IMC dos alunos dos dois cursos seja igual.
+
+
+## Discussões e Conclusões
+Em todos os testes, o fato de trabalharmos com dados históricos apresentou-se como uma complexidade, a qual nos obrigou a manter uma cautela adicional. O fato de possuirmos diferentes tamanhos de amostras em todos os testes fez com que procuremos explorar o máximo o poder dos testes utilizando por exemplo testes em que podíamos considerar variâncias iguais.
+
+O intuito de extrapolar os resultados de uma amostra centrada em uma única disciplina para todo o departamento de Engenharia Elétrica rompe com as premissas básicas de uma amostra com variáveis iid, sendo que nos apoiamos na suposição de que como qualquer aluno pode se matricular na disciplina os alunos matriculados representariam todo o curso. Essa suposição, apesar de ser razoável considerando que a altura e peso são fatores que não dependem da matéria cursada, poderia não ser fidedigna com os testes, sendo que possíveis estudos de correlação entre indivíduos poderiam ser realizados para fortalecer ainda mais as conclusões estabelecidas.
+
+### Diferença entre IMC de Homens e Mulheres
+
+Corroborando a rejeição da hipótese nula, pode-se assumir que o IMC feminino de fato é menor que o IMC masculino. Tais resultados podem advir de diferenças na composição muscular e de gordura, assim como a própria composição óssea. Mais estudos podem ser realizados para validar tais hipóteses, sendo necessário a extração dos dados citados.
+
+### Diferença de IMC entre os dois anos em estudo
+Ao compararmos o IMC dos dois anos de estudo nem todas hipóteses de normalidade do teste foram corroboradas por uma possível cauda em uma das distribuições, no entanto pelo t-teste ser robusto a pequenas variações de normalidade este fato não se apresentou como um problema maior. Além disso, não foi possível rejeitar a hipótese nula, inclusive apresentando um p-valor significativamente alto, sendo possível afirmar que não possuímos certeza suficiente para considerar que os dois anos possuem diferenças significativas na média do IMC.
+
+### Diferença entre alunos de Graduação e Pós-Graduação em 2016
+
+Na realização deste experimento, é interessante notar que o teste de normalidade não possuiu nível de significância estatística esperada, apesar disto devido ao t-teste ser robusto à variações de normalidade o experimento pode ser executado. Novamente não podemos afirmar de forma fidedigna que as duas amostras possuem diferença no valor das médias do IMC, sendo que experimentos com um maior número de dados e maior aleatoriedade poderiam fornecer maior significado estatístico.
+
+# Bibliografia
+

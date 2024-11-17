@@ -165,9 +165,8 @@ t.test(imc_feminino$imc ~ imc_feminino$amostra,
 # ======================================================================================
 # TESTE: O IMC de homens nas diferentes amostras (2016 e 2017) é igual
 
-fligner.test(imc ~ amostra, data = imc_feminino) # H0: VARIANCIAS IGUAIS
-
-shapiro.test(imc_masculino$imc) # p-value = 0.3179 -> aceitamos H0
+fligner.test(imc ~ amostra, data = imc_feminino) 
+shapiro.test(imc_masculino$imc) 
 
 shapiro.test(imc_masculino$imc[imc_masculino$amostra == "2017"])
 hist(imc_masculino$imc[imc_masculino$amostra == "2017"])
@@ -191,13 +190,14 @@ t.test(imc_masculino$imc ~ imc_masculino$amostra,
 imc2016 <- read.csv('imc_20162.csv')
 imc2016$imc <- imc2016$Weight.kg/(imc2016$Height.m^2)
 
+fligner.test(imc ~ Course, data = imc2016) # H0: VARIANCIAS IGUAIS
 
-shapiro.test(imc2016$imc[imc2016$Course == "PPGEE"]) # p-value = 0.3179 -> aceitamos H0
+shapiro.test(imc2016$imc[imc2016$Course == "PPGEE"]) 
 hist(imc2016$imc[imc2016$Course == "PPGEE"])
 qqnorm(imc2016$imc[imc2016$Course == "PPGEE"])
 qqline(imc2016$imc[imc2016$Course == "PPGEE"])
 
-shapiro.test(imc2016$imc[imc2016$Course == "ENGSIS"]) # p-value = 0.3179 -> aceitamos H0
+shapiro.test(imc2016$imc[imc2016$Course == "ENGSIS"]) 
 hist(imc2016$imc[imc2016$Course == "ENGSIS"])
 qqnorm(imc2016$imc[imc2016$Course == "ENGSIS"])
 qqline(imc2016$imc[imc2016$Course == "ENGSIS"])
