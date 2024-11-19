@@ -98,80 +98,35 @@ aos do primeiro experimento.
 
 ## Experimentos
 
-### Diferença entre IMC de Homens e Mulheres
 
-O primeiro passo é carregar os dados e calcular o IMC das amostras.
+Após realizar o teste ANOVA e rejeitar $H_0$, conclui-se, pois, que pelo menos um dos níveis é diferente dos demais, o que implica que uma ou mais ações são de fato mais benéficas que outras. Para determinar quais são as ações com melhor retorno, é realizado, então, o teste de Diferença Significativa Honesta (\textit{Honest Significant Difference}, HSD) de Tukey, onde são realizadas comparações de todos os níveis contra todos. Esse teste é realizado em detrimento ao teste de um contra todos pois para esse caso, não existe um padrão a ser comparado. Os intervalos de confiança das diferenças entre os níveis são subsequentemente plotados, para visualização dos resultados.
 
-```{r loaddata}
-imc2016 <- read.csv('imc_20162.csv')
-imc2017 <- read.csv('CS01_20172.csv', sep = ';')
+```{r Multiple comparisons}
 
-# Filtragem de dados
-imc2016 <- imc2016[imc2016$Course == 'PPGEE',]
+# Situation 1: all vs. all
+library(multcomp)
+# rentabilidade_classificada.Ação <- rentabilidade_classificada$Ação
 
-# Padronização do dataframe
-colnames(imc2016)[colnames(imc2016)=='Gender'] <- 'Sex'
-colnames(imc2016)[colnames(imc2016)=='Height.m'] <- 'height.m'
-colnames(imc2016)[colnames(imc2016)=='Weight.kg'] <- 'weight.kg'
-colnames(imc2017)[colnames(imc2017)=='Weight.kg'] <- 'weight.kg'
-imc2016 = imc2016[,c('Sex', 'height.m', 'weight.kg')]
-imc2017 = imc2017[,c('Sex', 'height.m', 'weight.kg')]
-imc2016$amostra <- '2016'
-imc2017$amostra <- '2017'
-
-# Calculando o IMC de cada população
-imc2016$imc <- imc2016$weight.kg/(imc2016$height.m^2)
-imc2017$imc <- imc2017$weight.kg/(imc2017$height.m^2)
-
-# União dos dataframes
-imc <- rbind(imc2016, imc2017)
-
-# Segregação de dados entre Homens e Mulheres
-imc_feminino <- imc[imc$Sex == 'F',]
-imc_masculino <- imc[imc$Sex == 'M',]
-
+m <- mcp(Ação="Tukey")
+mc1    <- glht(my.model, linfct=m)
+mc1_CI <- confint(mc1, level = 0.95)
+plot(mc1_CI, 
+     xlab       = "Rentabilidade da ação",
+     sub        = "- Dados da ação -",
+     cex.axis   = 1.2,
+     cex        = 2)
 ```
 
-Em seguida, executamos o teste de Fligner-Killeen para verificar se a
-premissa de que as variâncias são iguais se aplica no experimento.
+É perceptível que os intervalos mais positivos são resultados das diferenças entre a ação 5 e as demais, indicando que ela se sobressai em relação às outras. Quando comparada com a ação 1, entretanto, parte do intervalo de confiança apresenta valores negativos, não sendo possível concluir com 95\% de confiança que a ação 5 é sempre melhor que a ação 1. MAIOR MINIMO
 
-```{r fligner test}
-fligner.test(imc ~ Sex, data = imc) 
+FAZER TESTE T PARA TESTE DE TUCKEY PARA n=35 E BETA=0.2
+
+```{r t test Tuckey}
+
 ```
 
 O p-valor resultante, de 0,3054, indica que não há evidências o suficiente para rejeitar a hipótese nula, ou seja, corrobora com a hipótese de que as variâncias dos dois grupos são iguais. Executamos, então, o teste de Shapiro-Wilker para verificar a premissa de 
 normalidade das amostras.
-
-```{r shapiro test}
-shapiro.test(imc$imc[imc$Sex == "F"]) 
-shapiro.test(imc$imc[imc$Sex == "M"]) 
-
-```
-
-Novamente, não há evidências para rejeitar $H_0$. Com as premissas validadas, executamos o t-test:
-
-```{r t-test homens e mulheres}
-t.test(imc$imc ~ imc$Sex, 
-       alternative = "less", 
-       mu          = 0, 
-       var.equal   = TRUE, 
-       conf.level  = 0.95)
-```
-
-O resultado do p-valor igual a 0.0003175 indica que há evidência suficiente para rejeitar $H_0$, ou seja, rejeitamos a hipótese
-de que homens e mulheres possuem o mesmo IMC.
-Finalmente, identificamos o poder do teste
-
-```{r poder do teste}
-power.t.test(delta       = 2.5, # mínimo que faz a mudança de faixa de IMC
-             sd          = sd(imc$imc),
-             sig.level   = 0.05,
-             n = length(imc$imc),
-             type        = "two.sample",
-             alternative = "one.sided")
-```
-
-Esse resultado mostra que temos 93.5% de confiança de que não estamos cometendo um falso negativo em nossa conclusão. 
 
 ### Diferença de IMC entre os dois anos em estudo;
 
