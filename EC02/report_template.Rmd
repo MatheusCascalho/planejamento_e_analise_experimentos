@@ -58,8 +58,128 @@ Neste estudo de caso, avaliamos 6 ações de forma a identificar qual dentre ela
 Inicialmente, é necessário realizar uma transformação da base de dados fornecida
 para este estudo de caso. Como possuimos uma base de dados com o fechamento das ações em cada período, precisamos transformar estes dados de forma a conseguir analisar o ganho diário da ação. Para isto, os seguintes pressupostos foram assumidos:
 
-• Considere que o preço de abertura de um dado mês é idêntico ao preço de fechamento da mesma ação no mês anterior.
-• Considere que as ações podem ser adquiridas de forma fracionária, se necessário, i.e., o montante financeiro será investido por completo em uma única ação.
+* Considere que o preço de abertura de um dado mês é idêntico ao preço de fechamento da mesma ação no mês anterior.
+* Considere que as ações podem ser adquiridas de forma fracionária, se necessário, i.e., o montante financeiro será investido por completo em uma única ação.
+
+A partir destes pressupostos, transformamos nossa base de dados através da seguinte fórmula:
+
+$$Var_i = \frac{Preço_i - Preço_{i-1}}{Preço_{i-1}}$$
+
+Podemos realizar isto utilizando o seguinte código:
+
+```{r loaddata}
+dados <- read.csv("/Users/henriquealvesbarbosa/Documents/planejamento-analise-experimentos/planejamento_e_analise_experimentos/EC02/DadosAcoesGrupoG.csv", header = FALSE)
+
+# Renomear as colunas
+colnames(dados) <- c("Ação 1", "Ação 2", "Ação 3", "Ação 4", "Ação 5")
+
+# Criar um novo data.frame para rentabilidades
+rentabilidade <- data.frame(matrix(NA, nrow = nrow(dados), ncol = ncol(dados)))
+colnames(rentabilidade) <- paste0("Rentabilidade ", colnames(dados))
+
+# Calcular a rentabilidade para cada coluna
+for (i in 1:ncol(dados)) {
+  # Cálculo da rentabilidade: (valor atual - valor anterior) / valor anterior
+  rentabilidade[1:(nrow(dados) - 1), i] <- (dados[1:(nrow(dados) - 1), i] - dados[2:nrow(dados), i]) / dados[2:nrow(dados), i]
+}
+```
+
+É útil realizar uma análise exploratória nas distribuições de rendimento,
+de forma a compreendermos qual a melhor forma de realizarmos os experimentos
+e quais hipósteses podemos buscar:
+
+```{r loaddata}
+library(ggplot2)
+library(reshape2)
+
+# Transformar o data frame em formato longo para usar com ggplot
+# rentabilidade
+rentabilidade <- na.omit(rentabilidade)
+rentabilidade_classificada <- melt(rentabilidade*100, variable.name = "Ação", value.name = "Valor")
+
+rentabilidade_classificada$Ação <- as.factor(rentabilidade_classificada$Ação)
+
+# Plotar histogramas para cada coluna
+ggplot(rentabilidade_classificada, aes(x = Valor)) +
+  geom_histogram(binwidth = 1, fill = "lightblue", color = "black") +
+  facet_wrap(~Ação, scales = "free") +
+  labs(title = "Histogramas das Ações", x = "Valores", y = "Frequência") +
+  theme_minimal()
+```
+
+Por meio destes histogramas podemos intuitivamente supor que existe de fato
+uma diferença do rendimento de cada uma das ações listadas, no entanto experimentos
+estatísticos devem ser realizados para poder afirmar tal suposta conclusão.
+
+## Análise de Variância (ANOVA)
+
+A forma convencional de começar uma comparação entre diferentes fatores (neste caso ações) é por meio do teste ANOVA. Este teste é construído de forma a possuir um alto poder estatístico, tirando conclusões acerca da média de um conjunto de grupos ser igual como hipótese nula. Formalmente, podemos definir o experimento da seguinte forma:
+
+$$\begin{cases} H_0: Z_i = 0 &\\H_1: \mu_{imcf}<\mu_{imcm}\end{cases}$$
+### Número da Amostra
+
+Apesar de não ser possível conseguir novos dados para a execução dos
+testes, é relevante confirmar se a quantidade de dados aqui presentes consegue
+gerar o poder do teste esperado para nosso experimentos.
+
+```{r loaddata}
+a       <- 4
+alpha   <- 0.05
+sigma   <- sd(rentabilidade_classificada$Valor)
+delta   <- 1.618  # Razão áurea
+beta    <- 0.2
+
+# Case 1: two levels symmetrically biased about the grand mean
+tau <- c(-delta / 2, 
+         delta / 2, 
+         rep(0, a - 2)) # define tau vector
+vartau <- var(tau)  # variance between groups
+power.anova.test(groups      = 4, 
+                 between.var = vartau, 
+                 within.var  = sigma ^ 2, 
+                 sig.level   = alpha, 
+                 power       = 1 - beta)$n
+
+```
+
+FALAR SE ESTÁ BOM OU NÃO E O QUE PODEMOS FAZER E SE OS TESTES CONTINUARÃO CONFIÁVEIS.
+
+### Teste ANOVA
+
+Podemos realizar o teste utilizando pacotes próprios do R da seguinte forma:
+
+```{r loaddata}
+my.model <- aov(Valor ~ Ação, 
+                data = rentabilidade_classificada)
+summary.aov(my.model)
+```
+
+O P valor resultante é extremamente baixo e abaixo do $\alpha$ definido, ou seja, podemos rejeitar a hipótese nula e concluir que de fato existem ações melhores que outras.
+
+### Premissas do Teste
+
+Dotados dos resíduos do teste, podemos conferir as premissas específicas do próprio teste. Inicialmente, confiramos se os resíduos seguem de fato uma normal padrão
+
+```{r loaddata}
+# Check normality
+shapiro.test(my.model$residuals)
+
+```
+
+```{r loaddata}
+qqnorm(my.model$residuals)
+qqline(my.model$residuals)
+```
+
+Podemos concluir que os resíduos de fato seguem suficientemente uma distribuição normal padrão. Por fim, precisamos de checar a igualdade de variâncias entre cada um dos fatores, ou seja, sua homoscedasticidade.
+
+```{r loaddata}
+# Check homoscedasticity
+fligner.test(rentabilidade_classificada$Valor ~ rentabilidade_classificada$Ação, 
+             data = rentabilidade_classificada)
+```
+Novamente podemos confirmar a premissa do teste, sendo que o ANOVA se apresenta realmente como um teste confiável para este problema.
+
 
 ### Diferença entre IMC de Homens e Mulheres
 Dada a conhecida diferença na composição corporal entre homens e mulheres [@bredella2017sex], torna-se relevante analisar os índices de IMC dentro do universo de estudo. Em termos gerais, observam-se valores semelhantes de IMC entre os sexos [@olfert2018self], apesar das variações na composição corporal. Para aprofundar essa análise, podemos testar a hipótese alternativa de que o IMC médio masculino ($\mu_{imcm}$) seja superior ao feminino ($\mu_{imcf}$).
