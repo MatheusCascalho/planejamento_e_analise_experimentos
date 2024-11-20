@@ -68,7 +68,7 @@ $$Var_i = \frac{Preço_i - Preço_{i-1}}{Preço_{i-1}}$$
 Podemos realizar isto utilizando o seguinte código:
 
 ```{r loaddata}
-dados <- read.csv("/Users/henriquealvesbarbosa/Documents/planejamento-analise-experimentos/planejamento_e_analise_experimentos/EC02/DadosAcoesGrupoG.csv", header = FALSE)
+dados <- read.csv("C:/Users/João Paulo/Documents/planejamento_e_analise_experimentos/EC02/DadosAcoesGrupoG.csv", header = FALSE)
 
 # Renomear as colunas
 colnames(dados) <- c("Ação 1", "Ação 2", "Ação 3", "Ação 4", "Ação 5")
@@ -88,7 +88,7 @@ for (i in 1:ncol(dados)) {
 de forma a compreendermos qual a melhor forma de realizarmos os experimentos
 e quais hipósteses podemos buscar:
 
-```{r loaddata}
+```{r loaddata2}
 library(ggplot2)
 library(reshape2)
 
@@ -122,7 +122,7 @@ Apesar de não ser possível conseguir novos dados para a execução dos
 testes, é relevante confirmar se a quantidade de dados aqui presentes consegue
 gerar o poder do teste esperado para nosso experimentos.
 
-```{r loaddata}
+```{r loaddata3}
 a       <- 4
 alpha   <- 0.05
 sigma   <- sd(rentabilidade_classificada$Valor)
@@ -148,7 +148,7 @@ FALAR SE ESTÁ BOM OU NÃO E O QUE PODEMOS FAZER E SE OS TESTES CONTINUARÃO CON
 
 Podemos realizar o teste utilizando pacotes próprios do R da seguinte forma:
 
-```{r loaddata}
+```{r loaddata4}
 my.model <- aov(Valor ~ Ação, 
                 data = rentabilidade_classificada)
 summary.aov(my.model)
@@ -160,66 +160,29 @@ O P valor resultante é extremamente baixo e abaixo do $\alpha$ definido, ou sej
 
 Dotados dos resíduos do teste, podemos conferir as premissas específicas do próprio teste. Inicialmente, confiramos se os resíduos seguem de fato uma normal padrão
 
-```{r loaddata}
+```{r loaddata5}
 # Check normality
 shapiro.test(my.model$residuals)
 
 ```
 
-```{r loaddata}
+```{r loaddata6}
 qqnorm(my.model$residuals)
 qqline(my.model$residuals)
 ```
 
 Podemos concluir que os resíduos de fato seguem suficientemente uma distribuição normal padrão. Por fim, precisamos de checar a igualdade de variâncias entre cada um dos fatores, ou seja, sua homoscedasticidade.
 
-```{r loaddata}
+```{r loaddata7}
 # Check homoscedasticity
 fligner.test(rentabilidade_classificada$Valor ~ rentabilidade_classificada$Ação, 
              data = rentabilidade_classificada)
 ```
 Novamente podemos confirmar a premissa do teste, sendo que o ANOVA se apresenta realmente como um teste confiável para este problema.
 
+## Comparações Múltiplas Entre Níveis
 
-### Diferença entre IMC de Homens e Mulheres
-Dada a conhecida diferença na composição corporal entre homens e mulheres [@bredella2017sex], torna-se relevante analisar os índices de IMC dentro do universo de estudo. Em termos gerais, observam-se valores semelhantes de IMC entre os sexos [@olfert2018self], apesar das variações na composição corporal. Para aprofundar essa análise, podemos testar a hipótese alternativa de que o IMC médio masculino ($\mu_{imcm}$) seja superior ao feminino ($\mu_{imcf}$).
-$$\begin{cases} H_0: \mu_{imcf} = \mu_{imcm}&\\H_1: \mu_{imcf}<\mu_{imcm}\end{cases}$$
-
-Estudos referentes à normalidade de ambas distribuições foram
-realizados, assim como um teste de comparação das variâncias de
-Fligner-Killen.
-
-O valor de ($\delta^*$) utilizado neste teste foi selecionado com base na relevância das faixas pré-definidas de IMC, sendo que um indivíduo no meio de uma faixa precisa ter uma alteração de 2.5 em seu IMC para alternar de faixa, sendo assim ($\delta^*=2.5$).
-
-O valor de $\alpha=0.05$ buscou manter o padrão encontrado na literatura
-médica, assim como esperava-se encontrar um valor de $\beta=0.8$ para
-corroborar com não encontrarmos falsos negativos nas conclusões dos experimentos.
-
-### Diferença de IMC entre os dois anos em estudo;
-
-Realizamos para este experimento dois testes, um para o sexo masculino e
-outro para o feminino. Esta estratificação baseou-se no mesmo critério
-da suposta diferença dos IMCs entre os sexos.
-
-Para cada um dos testes, iremos avaliar se ($\mu_{2016}$) é igual a
-($\mu_{2017}$).
-
-$$\begin{cases} H_0: \mu_{2016} = \mu_{2017}&\\H_1: \mu_{2016} \neq \mu_{2017}\end{cases}$$
-Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos
-aos do primeiro experimento.
-
-### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
-
-Realizamos para este experimento um teste entre a diferença da média do IMC entre alunos de graduação ($\mu_{grad}$) e pós graduação ($\mu_{pos}$) de forma a testar se a idade é um fator que influencia a saúde dos alunos do departamento. Um estudo análogo, realizado na University of South Alabama, apresentou um IMC médio levemente superior de alunos da pós-graduação em enfermagem, em relação aos alunos da graduação do mesmo curso [@graves2022undergraduate].
-
-$$\begin{cases} H_0: \mu_{grad} = \mu_{pos}&\\H_1: \mu_{grad} \neq \mu_{pos}\end{cases}$$
-Comentários referentes ao $\delta^*$, $\alpha$ e $\beta$ são análogos
-aos do primeiro experimento.
-
-## Experimentos
-
-
-Após realizar o teste ANOVA e rejeitar $H_0$, conclui-se, pois, que pelo menos um dos níveis é diferente dos demais, o que implica que uma ou mais ações são de fato mais benéficas que outras. Para determinar quais são as ações com melhor retorno, é realizado, então, o teste de Diferença Significativa Honesta (\textit{Honest Significant Difference}, HSD) de Tukey, onde são realizadas comparações de todos os níveis contra todos. Esse teste é realizado em detrimento ao teste de um contra todos pois para esse caso, não existe um padrão a ser comparado. Os intervalos de confiança das diferenças entre os níveis são subsequentemente plotados, para visualização dos resultados.
+Após a realização do teste ANOVA e a rejeição de $H_0$, conclui-se que pelo menos um dos níveis é significativamente diferente dos demais. Isso indica que uma ou mais ações apresentam resultados superiores às outras. Para identificar quais ações oferecem os melhores retornos, aplica-se o teste de Diferença Significativa Honesta (Honest Significant Difference, HSD) de Tukey, que realiza comparações entre todos os pares de níveis. Esse teste é escolhido em vez de um teste de um contra todos, pois, neste caso, não há um padrão específico a ser usado como referência. Por fim, os intervalos de confiança das diferenças entre os níveis são plotados para facilitar a interpretação dos resultados.
 
 ```{r Multiple comparisons}
 
@@ -237,110 +200,34 @@ plot(mc1_CI,
      cex        = 2)
 ```
 
-É perceptível que os intervalos mais positivos são resultados das diferenças entre a ação 5 e as demais, indicando que ela se sobressai em relação às outras. Quando comparada com a ação 1, entretanto, parte do intervalo de confiança apresenta valores negativos, não sendo possível concluir com 95\% de confiança que a ação 5 é sempre melhor que a ação 1. MAIOR MINIMO
+É perceptível que os intervalos mais positivos são resultados das diferenças entre a ação 5 e as demais, indicando que ela se sobressai em relação às outras. No entanto, ao compará-la com a ação 1, parte do intervalo de confiança inclui valores negativos, impossibilitando concluir, com 95% de confiança, que a ação 5 é mais vantajosa que a ação 1. Observando o boxplot abaixo, percebe-se que a ação 5 apresenta o maior valor mínimo entre as duas. Com base nesse critério, a ação 5 foi escolhida como a mais benéfica.
 
-FAZER TESTE T PARA TESTE DE TUCKEY PARA n=35 E BETA=0.2
-
-```{r t test Tuckey}
-
+```{r boxplot}
+boxplot(rentabilidade,
+        main = "Rentabilidade de cada Ação",
+        xlab = "Ação",
+        ylab = "Rentabilidade",
+        col = rainbow(5))
 ```
 
-O p-valor resultante, de 0,3054, indica que não há evidências o suficiente para rejeitar a hipótese nula, ou seja, corrobora com a hipótese de que as variâncias dos dois grupos são iguais. Executamos, então, o teste de Shapiro-Wilker para verificar a premissa de 
-normalidade das amostras.
+Para verificar se o número de amostras utilizado é adequado para realizar o teste de comparação, foi conduzido um teste t considerando um nível de significância ($\alpha$) de 0,05, um poder estatístico de 0,8 e uma diferença mínima detectável ($\delta$) correspondente a um desvio padrão dos resíduos do modelo ANOVA.
 
-### Diferença de IMC entre os dois anos em estudo;
+```{r power t test}
+sd<-sqrt(var(my.model$residuals))
 
-Para esse próximo experimento utilizaremos os dados carregados na seção
-anterior. Inicialmente, validamos as premissas de normalidade e igualdade de variâncias:
-
-```{r normalidade e variancias iguais}
-fligner.test(imc ~ amostra, data = imc_feminino) 
-
-shapiro.test(imc_feminino$imc[imc_feminino$amostra == "2017"])
-hist(imc_feminino$imc[imc_feminino$amostra == "2017"])
-qqnorm(imc_feminino$imc[imc_feminino$amostra == "2017"])
-qqline(imc_feminino$imc[imc_feminino$amostra == "2017"])
-
-shapiro.test(imc_feminino$imc[imc_feminino$amostra == "2016"]) 
-hist(imc_feminino$imc[imc_feminino$amostra == "2016"])
-qqnorm(imc_feminino$imc[imc_feminino$amostra == "2016"])
-qqline(imc_feminino$imc[imc_feminino$amostra == "2016"])
-
+power.t.test(power = 0.8,
+             delta = sd,
+             sd = sd,
+             sig.level = 0.05,
+             type = "two.sample",
+             alternative = "two.sided")
 ```
 
-Observamos que na amostra de imc_feminino o p-valor foi menor que 0.05 para o teste de Shapiro-Wilker, o que indicaria que a amostra não segue uma distribuição normal. Entretanto, como observamos no Q-Q Plot, esse desvio da normalidade se dá na cauda direita da amostra. Como o teste t é um teste robusto a desvios de normalidade nos extremos da distribuição, aceitamos que esse desvio de normalidade não irá prejudicar o resultado da análise. Nota-se também que a amostra feminina é muito menor que a amostra masculina. Uma possível melhoria no teste se daria com o aumento na coleta de dados de IMC feminino, de forma a trazer maior segurança nos resultados estatísticos.
-
-
-Experimento:
-
-```{r teste entre anos}
-t.test(imc_feminino$imc ~ imc_feminino$amostra, 
-       alternative = "less", 
-       mu          = 0, 
-       var.equal   = TRUE, 
-       conf.level  = 0.95)
-```
-
-O p-valor de 0.9572 indica que não há evidência suficiente para rejeitar $H_0$, ou seja, não há evidência para rejeitar a hipótese de que o IMC dos dois anos seja igual.
-
-### Diferença entre alunos de Graduação e Pós-Graduação em 2016;
-
-Assim como nos experimentos anteriores, realizamos os testes de normalidade e de variância igual para as amostras de alunos da graduação e da pós-graduação.
-
-```{r teste entre turmas - PPGEE}
-
-imc2016 <- read.csv('imc_20162.csv')
-imc2016$imc <- imc2016$Weight.kg/(imc2016$Height.m^2)
-
-fligner.test(imc ~ Course, data = imc2016) # H0: VARIANCIAS IGUAIS
-
-shapiro.test(imc2016$imc[imc2016$Course == "PPGEE"]) 
-hist(imc2016$imc[imc2016$Course == "PPGEE"])
-qqnorm(imc2016$imc[imc2016$Course == "PPGEE"])
-qqline(imc2016$imc[imc2016$Course == "PPGEE"])
-
-```
-
-Assim como no experimento anterior para a amostra de imc feminino, a amostra de imc dos alunos do PPGEE não segue uma distribuição normal na cauda direita. Entretanto, para os fins desse estudo, dada a robustez do t-test a desvios de normalidade nos extremos da distribuição, podemos manter a premissa de normalidade e aplicar o t-teste. 
-
-```{r teste entre turmas - ENGSIS}
-
-
-shapiro.test(imc2016$imc[imc2016$Course == "ENGSIS"]) 
-hist(imc2016$imc[imc2016$Course == "ENGSIS"])
-qqnorm(imc2016$imc[imc2016$Course == "ENGSIS"])
-qqline(imc2016$imc[imc2016$Course == "ENGSIS"])
-
-```
-
-
-```{r teste entre turmas - final}
-
-t.test(imc2016$imc ~ imc2016$Course, 
-       alternative = "less", 
-       mu          = 0, 
-       var.equal   = TRUE, 
-       conf.level  = 0.95)
-```
-
-O p-valor de 0.3328 indica que não há evidência suficiente para rejeitar $H_0$, ou seja, não há evidência para rejeitar a hipótese de que o IMC dos alunos dos dois cursos seja igual.
+O resultado indica que o número mínimo de amostras necessário para os parâmetros especificados é 17. Como foram utilizadas 35 amostras, o requisito é plenamente atendido, garantindo a validade dos testes realizados.
 
 
 ## Discussões e Conclusões
-Em todos os testes, o fato de trabalharmos com dados históricos apresentou-se como uma complexidade, a qual nos obrigou a manter uma cautela adicional. O fato de possuirmos diferentes tamanhos de amostras em todos os testes fez com que procuremos explorar o máximo o poder dos testes utilizando por exemplo testes em que podíamos considerar variâncias iguais.
-
-O intuito de extrapolar os resultados de uma amostra centrada em uma única disciplina para todo o departamento de Engenharia Elétrica rompe com as premissas básicas de uma amostra com variáveis iid, sendo que nos apoiamos na suposição de que como qualquer aluno pode se matricular na disciplina os alunos matriculados representariam todo o curso. Essa suposição, apesar de ser razoável considerando que a altura e peso são fatores que não dependem da matéria cursada, poderia não ser fidedigna com os testes, sendo que possíveis estudos de correlação entre indivíduos poderiam ser realizados para fortalecer ainda mais as conclusões estabelecidas.
-
-### Diferença entre IMC de Homens e Mulheres
-
-Corroborando a rejeição da hipótese nula, pode-se assumir que o IMC feminino de fato é menor que o IMC masculino. Tais resultados podem advir de diferenças na composição muscular e de gordura, assim como a própria composição óssea. Mais estudos podem ser realizados para validar tais hipóteses, sendo necessário a extração dos dados citados.
-
-### Diferença de IMC entre os dois anos em estudo
-Ao compararmos o IMC dos dois anos de estudo nem todas hipóteses de normalidade do teste foram corroboradas por uma possível cauda em uma das distribuições, no entanto pelo t-teste ser robusto a pequenas variações de normalidade este fato não se apresentou como um problema maior. Além disso, não foi possível rejeitar a hipótese nula, inclusive apresentando um p-valor significativamente alto, sendo possível afirmar que não possuímos certeza suficiente para considerar que os dois anos possuem diferenças significativas na média do IMC.
-
-### Diferença entre alunos de Graduação e Pós-Graduação em 2016
-
-Na realização deste experimento, é interessante notar que o teste de normalidade não possuiu nível de significância estatística esperada, apesar disto devido ao t-teste ser robusto à variações de normalidade o experimento pode ser executado. Novamente não podemos afirmar de forma fidedigna que as duas amostras possuem diferença no valor das médias do IMC, sendo que experimentos com um maior número de dados e maior aleatoriedade poderiam fornecer maior significado estatístico.
+Placeholder
 
 # Bibliografia
 
