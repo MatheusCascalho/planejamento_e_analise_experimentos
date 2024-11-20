@@ -68,7 +68,8 @@ $$Var_i = \frac{Preço_i - Preço_{i-1}}{Preço_{i-1}}$$
 Podemos realizar isto utilizando o seguinte código:
 
 ```{r loaddata}
-dados <- read.csv("C:/Users/João Paulo/Documents/planejamento_e_analise_experimentos/EC02/DadosAcoesGrupoG.csv", header = FALSE)
+file_path <- file.path(getwd(), "DadosAcoesGrupoG.csv")
+dados <- read.csv(file_path, header = FALSE)
 
 # Renomear as colunas
 colnames(dados) <- c("Ação 1", "Ação 2", "Ação 3", "Ação 4", "Ação 5")

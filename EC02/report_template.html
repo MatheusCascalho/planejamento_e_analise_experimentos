@@ -1671,7 +1671,11 @@ através da seguinte fórmula:</p>
 <p><span class="math display">\[Var_i = \frac{Preço_i -
 Preço_{i-1}}{Preço_{i-1}}\]</span></p>
 <p>Podemos realizar isto utilizando o seguinte código:</p>
-<pre class="r"><code>dados &lt;- read.csv(&quot;C:/Users/João Paulo/Documents/planejamento_e_analise_experimentos/EC02/DadosAcoesGrupoG.csv&quot;, header = FALSE)
+<pre class="r"><code>library(here)</code></pre>
+<pre><code>## Warning: pacote &#39;here&#39; foi compilado no R versão 4.4.2</code></pre>
+<pre><code>## here() starts at C:/Users/João Paulo/Documents/planejamento_e_analise_experimentos</code></pre>
+<pre class="r"><code>file_path &lt;- file.path(getwd(), &quot;DadosAcoesGrupoG.csv&quot;)
+dados &lt;- read.csv(file_path, header = FALSE)
 
 # Renomear as colunas
 colnames(dados) &lt;- c(&quot;Ação 1&quot;, &quot;Ação 2&quot;, &quot;Ação 3&quot;, &quot;Ação 4&quot;, &quot;Ação 5&quot;)
@@ -1795,12 +1799,12 @@ apresenta realmente como um teste confiável para este problema.</p>
 níveis é significativamente diferente dos demais. Isso indica que uma ou
 mais ações apresentam resultados superiores às outras. Para identificar
 quais ações oferecem os melhores retornos, aplica-se o teste de
-Diferença Significativa Honesta (, HSD) de Tukey, que realiza
-comparações entre todos os pares de níveis. Esse teste é escolhido em
-vez de um teste de um contra todos, pois, neste caso, não há um padrão
-específico a ser usado como referência. Por fim, os intervalos de
-confiança das diferenças entre os níveis são plotados para facilitar a
-interpretação dos resultados.</p>
+Diferença Significativa Honesta (Honest Significant Difference, HSD) de
+Tukey, que realiza comparações entre todos os pares de níveis. Esse
+teste é escolhido em vez de um teste de um contra todos, pois, neste
+caso, não há um padrão específico a ser usado como referência. Por fim,
+os intervalos de confiança das diferenças entre os níveis são plotados
+para facilitar a interpretação dos resultados.</p>
 <pre class="r"><code># Situation 1: all vs. all
 library(multcomp)</code></pre>
 <pre><code>## Warning: pacote &#39;multcomp&#39; foi compilado no R versão 4.4.2</code></pre>
