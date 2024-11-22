@@ -41,19 +41,18 @@ if (!require(reshape2, quietly = TRUE)){
 ## Descrição do Problema
 A escolha de um conjunto ideal de ações para serem investidas é um problema comum
 no ramo de ciências atuariais, sendo que modelos capazes de prever um portfolio ótimo de
-investimento são continuamente estudados e aprimorados [citar algum artigo de review de
-portfoio optimization].
+investimento são continuamente estudados e aprimorados [@xidonas2020robust].
 
 Apesar de o ideal frente ao mercado acionário ser balancear a diversificação com 
-a escolha de um portfólio capaz de ser adiministrado de maneira tácita [citar], é possível
+a escolha de um portfólio capaz de ser adiministrado de maneira tácita [@levivsauskait2010investment], é possível
 surgirem situações em que a escolha de uma única ação frente a um conjunto seja tomada como um
 problema de decisão. Exemplos como esse podem ocorrer em fundos multimercados que necessitem
 de escolher uma única empresa para cada segmento de mercado de forma a manter as 
-regras estabelecidas pelo fundo e questão
+regras estabelecidas pelo fundo em questão.
 
-Neste estudo de caso, avaliamos 6 ações de forma a identificar qual dentre elas pode ser considerada a melhor. Avaliamos questões pertinentes ao problema, tais como pressupostos assumidos, melhorias possiveis e futuros estudos.
+Neste estudo de caso, avaliamos 5 ações de forma a identificar qual dentre elas pode ser considerada a melhor. Avaliamos questões pertinentes ao problema, tais como pressupostos assumidos, melhorias possiveis e futuros estudos.
 
-## Análise Exploratória e Tratamento dos Dados
+# Análise Exploratória e Tratamento dos Dados
 
 Inicialmente, é necessário realizar uma transformação da base de dados fornecida
 para este estudo de caso. Como possuimos uma base de dados com o fechamento das ações em cada período, precisamos transformar estes dados de forma a conseguir analisar o ganho diário da ação. Para isto, os seguintes pressupostos foram assumidos:
@@ -86,7 +85,7 @@ for (i in 1:ncol(dados)) {
 ```
 
 É útil realizar uma análise exploratória nas distribuições de rendimento,
-de forma a compreendermos qual a melhor forma de realizarmos os experimentos
+de forma a compreendermos qual a melhor forma de se realizar os experimentos
 e quais hipósteses podemos buscar:
 
 ```{r loaddata2}
@@ -110,24 +109,29 @@ ggplot(rentabilidade_classificada, aes(x = Valor)) +
 
 Por meio destes histogramas podemos intuitivamente supor que existe de fato
 uma diferença do rendimento de cada uma das ações listadas, no entanto experimentos
-estatísticos devem ser realizados para poder afirmar tal suposta conclusão.
+estatísticos devem ser realizados para poder afirmar tal hipótese.
 
-## Análise de Variância (ANOVA)
+# Análise de Variância (ANOVA)
 
 A forma convencional de começar uma comparação entre diferentes fatores (neste caso ações) é por meio do teste ANOVA. Este teste é construído de forma a possuir um alto poder estatístico, tirando conclusões acerca da média de um conjunto de grupos ser igual como hipótese nula. Formalmente, podemos definir o experimento da seguinte forma:
 
 $$\begin{cases} H_0: Z_i = 0 &\\H_1: \mu_{imcf}<\mu_{imcm}\end{cases}$$
-### Número da Amostra
+
+## Número da Amostra
 
 Apesar de não ser possível conseguir novos dados para a execução dos
 testes, é relevante confirmar se a quantidade de dados aqui presentes consegue
-gerar o poder do teste esperado para nosso experimentos.
+gerar o poder do teste esperado para nosso experimentos. Vale notar que a relevância do fator $\delta$ foi tomado como o desvio padrão dos valores, sendo o fator de relevância mais natural considerando o problema em questão.
+
+Valores de $\alpha$ e $\beta$ utilizados são valores padrões na literatura, sendo valores de significância estatística consideráveis. O parâmetro $a$ refere-se ao número de grupos em questão, ou seja, 5 conjuntos de ações.
+
+O cálculo de $\tau$ manteve-se tal qual o exemplo fornecido durante a aula, supondo que apenas dois grupos possuem desvios referentes à média.
 
 ```{r loaddata3}
-a       <- 4
+a       <- 5
 alpha   <- 0.05
 sigma   <- sd(rentabilidade_classificada$Valor)
-delta   <- 1.618  # Razão áurea
+delta   <- sd(rentabilidade_classificada$Valor)
 beta    <- 0.2
 
 # Case 1: two levels symmetrically biased about the grand mean
@@ -135,7 +139,7 @@ tau <- c(-delta / 2,
          delta / 2, 
          rep(0, a - 2)) # define tau vector
 vartau <- var(tau)  # variance between groups
-power.anova.test(groups      = 4, 
+power.anova.test(groups      = 5, 
                  between.var = vartau, 
                  within.var  = sigma ^ 2, 
                  sig.level   = alpha, 
@@ -143,9 +147,10 @@ power.anova.test(groups      = 4,
 
 ```
 
-FALAR SE ESTÁ BOM OU NÃO E O QUE PODEMOS FAZER E SE OS TESTES CONTINUARÃO CONFIÁVEIS.
+O valor de n presente no teste é inferior ao número de dados que possuímos para cada
+grupo, com isso podemos assegurar que o resultado do Anova será fidedigno.
 
-### Teste ANOVA
+## Teste ANOVA
 
 Podemos realizar o teste utilizando pacotes próprios do R da seguinte forma:
 
@@ -157,7 +162,7 @@ summary.aov(my.model)
 
 O P valor resultante é extremamente baixo e abaixo do $\alpha$ definido, ou seja, podemos rejeitar a hipótese nula e concluir que de fato existem ações melhores que outras.
 
-### Premissas do Teste
+## Premissas do Teste
 
 Dotados dos resíduos do teste, podemos conferir as premissas específicas do próprio teste. Inicialmente, confiramos se os resíduos seguem de fato uma normal padrão
 
@@ -172,7 +177,7 @@ qqnorm(my.model$residuals)
 qqline(my.model$residuals)
 ```
 
-Podemos concluir que os resíduos de fato seguem suficientemente uma distribuição normal padrão. Por fim, precisamos de checar a igualdade de variâncias entre cada um dos fatores, ou seja, sua homoscedasticidade.
+Podemos concluir que os resíduos de fato seguem suficientemente bem uma distribuição normal padrão. Por fim, precisamos de checar a igualdade de variâncias entre cada um dos fatores, ou seja, sua homoscedasticidade.
 
 ```{r loaddata7}
 # Check homoscedasticity
@@ -181,9 +186,9 @@ fligner.test(rentabilidade_classificada$Valor ~ rentabilidade_classificada$Açã
 ```
 Novamente podemos confirmar a premissa do teste, sendo que o ANOVA se apresenta realmente como um teste confiável para este problema.
 
-## Comparações Múltiplas Entre Níveis
+# Comparações Múltiplas Entre Níveis
 
-Após a realização do teste ANOVA e a rejeição de $H_0$, conclui-se que pelo menos um dos níveis é significativamente diferente dos demais. Isso indica que uma ou mais ações apresentam resultados superiores às outras. Para identificar quais ações oferecem os melhores retornos, aplica-se o teste de Diferença Significativa Honesta (Honest Significant Difference, HSD) de Tukey, que realiza comparações entre todos os pares de níveis. Esse teste é escolhido em vez de um teste de um contra todos, pois, neste caso, não há um padrão específico a ser usado como referência. Por fim, os intervalos de confiança das diferenças entre os níveis são plotados para facilitar a interpretação dos resultados.
+Após a realização do teste ANOVA e a rejeição de $H_0$, conclui-se que pelo menos um dos níveis é significativamente diferente dos demais. Isso indica que uma ou mais ações apresentam resultados superiores às outras. Para identificar quais ações oferecem os melhores retornos, aplica-se o teste de Diferença Significativa Honesta (Honest Significant Difference, HSD) de Tukey, que realiza comparações entre todos os pares de níveis. Esse teste é escolhido em vez de um teste de um contra todos, pois, neste caso, não há um padrão específico a ser usado como referência. Por fim, os intervalos de confiança das diferenças entre os níveis são exibidos para facilitar a interpretação dos resultados.
 
 ```{r Multiple comparisons}
 
@@ -211,10 +216,10 @@ boxplot(rentabilidade,
         col = rainbow(5))
 ```
 
-Para verificar se o número de amostras utilizado é adequado para realizar o teste de comparação, foi conduzido um teste t considerando um nível de significância ($\alpha$) de 0,05, um poder estatístico de 0,8 e uma diferença mínima detectável ($\delta$) correspondente a um desvio padrão dos resíduos do modelo ANOVA.
+Para verificar se o número de amostras utilizado é adequado para realizar o teste de comparação, foi conduzido um teste t considerando um nível de significância ($\alpha$) de 0,05, um poder estatístico de 0,8 e uma diferença mínima detectável ($\delta$) correspondente a um desvio padrão dos dados das ações, o que pode ser tomado frente à homoscedasticidade dos grupos.
 
 ```{r power t test}
-sd<-sqrt(var(my.model$residuals))
+sd<-sd(rentabilidade_classificada$Valor)
 
 power.t.test(power = 0.8,
              delta = sd,
@@ -227,7 +232,7 @@ power.t.test(power = 0.8,
 O resultado indica que o número mínimo de amostras necessário para os parâmetros especificados é 17. Como foram utilizadas 35 amostras, o requisito é plenamente atendido, garantindo a validade dos testes realizados.
 
 
-## Discussões e Conclusões
+# Discussões e Conclusões
 Placeholder
 
 # Bibliografia

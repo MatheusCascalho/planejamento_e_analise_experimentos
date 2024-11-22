@@ -1,5 +1,5 @@
 # Carregar o arquivo CSV
-dados <- read.csv("DadosAcoesGrupoG.csv", header = FALSE)
+dados <- read.csv("/Users/henriquealvesbarbosa/Documents/planejamento-analise-experimentos/planejamento_e_analise_experimentos/EC02/DadosAcoesGrupoG.csv", header = FALSE)
 
 # Renomear as colunas
 colnames(dados) <- c("Ação 1", "Ação 2", "Ação 3", "Ação 4", "Ação 5")
@@ -47,12 +47,6 @@ my.model$residuals
 shapiro.test(my.model$residuals)
 
 
-# library(car)
-# png(filename = "../figs/paperqq.png",
-#     width = 600, height = 600, 
-#     bg = "transparent")
-
-
 qqnorm(my.model$residuals)
 qqline(my.model$residuals)
 
@@ -75,7 +69,7 @@ plot(mc1_CI,
      sub        = "- Dados da ação -",
      cex.axis   = 1.2,
      cex        = 2)
-
+summary(mc1)
 # A ação 5 e a 1 são as melhores! Recomendamos a 5 pois ela se sobressai mais
 # que a 1, que possui valores negativos conforme visto no histograma 
 
