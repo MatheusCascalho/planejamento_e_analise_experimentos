@@ -43,19 +43,18 @@ A escolha de um conjunto ideal de ações para serem investidas é um problema c
 no ramo de ciências atuariais, sendo que modelos capazes de prever um portfolio ótimo de
 investimento são continuamente estudados e aprimorados [@xidonas2020robust].
 
-Apesar de o ideal frente ao mercado acionário ser balancear a diversificação com 
-a escolha de um portfólio capaz de ser adiministrado de maneira tácita [@levivsauskait2010investment], é possível
+Apesar de o ideal no mercado acionário ser a diversificação equilibrada com a escolha de um portfólio administrável de forma eficiente [@levivsauskait2010investment], é possível
 surgirem situações em que a escolha de uma única ação frente a um conjunto seja tomada como um
 problema de decisão. Exemplos como esse podem ocorrer em fundos multimercados que necessitem
 de escolher uma única empresa para cada segmento de mercado de forma a manter as 
 regras estabelecidas pelo fundo em questão.
 
-Neste estudo de caso, avaliamos 5 ações de forma a identificar qual dentre elas pode ser considerada a melhor. Avaliamos questões pertinentes ao problema, tais como pressupostos assumidos, melhorias possiveis e futuros estudos.
+Neste estudo de caso, avaliamos 5 ações de forma a identificar qual dentre elas pode ser considerada a melhor. Avaliamos questões pertinentes ao problema, tais como pressupostos assumidos, melhorias possíveis e futuros estudos.
 
 # Análise Exploratória e Tratamento dos Dados
 
 Inicialmente, é necessário realizar uma transformação da base de dados fornecida
-para este estudo de caso. Como possuimos uma base de dados com o fechamento das ações em cada período, precisamos transformar estes dados de forma a conseguir analisar o ganho diário da ação. Para isto, os seguintes pressupostos foram assumidos:
+para este estudo de caso. Dado que nossa base de dados contém os preços de fechamento das ações para cada período, precisamos transformar estes dados de forma a conseguir analisar o ganho mensal da ação. Para isto, os seguintes pressupostos foram assumidos:
 
 * Considere que o preço de abertura de um dado mês é idêntico ao preço de fechamento da mesma ação no mês anterior.
 * Considere que as ações podem ser adquiridas de forma fracionária, se necessário, i.e., o montante financeiro será investido por completo em uma única ação.
@@ -86,7 +85,7 @@ for (i in 1:ncol(dados)) {
 
 É útil realizar uma análise exploratória nas distribuições de rendimento,
 de forma a compreendermos qual a melhor forma de se realizar os experimentos
-e quais hipósteses podemos buscar:
+e quais hipóteses podemos buscar:
 
 ```{r loaddata2}
 library(ggplot2)
@@ -113,9 +112,14 @@ estatísticos devem ser realizados para poder afirmar tal hipótese.
 
 # Análise de Variância (ANOVA)
 
-A forma convencional de começar uma comparação entre diferentes fatores (neste caso ações) é por meio do teste ANOVA. Este teste é construído de forma a possuir um alto poder estatístico, tirando conclusões acerca da média de um conjunto de grupos ser igual como hipótese nula. Formalmente, podemos definir o experimento da seguinte forma:
+A forma convencional de começar uma comparação entre diferentes fatores (neste caso ações) é por meio do teste ANOVA. Este teste é construído de forma a possuir um alto poder estatístico, tirando conclusões acerca da média de um conjunto de grupos ser igual como hipótese nula. O teste ANOVA utiliza o modelo dos efeitos de cada nível (no caso, cada ação, enumerada de 1 a 5) descrito como:
 
-$$\begin{cases} H_0: Z_i = 0 &\\H_1: \mu_{imcf}<\mu_{imcm}\end{cases}$$
+$$y_{ij} = \mu + \tau_i + \epsilon_{ij}$$
+Nesse modelo, a variável de resposta $y_{ij}$ é igual à média global, somado ao efeito no nível, $\tau_{i}$ e ao resíduo $\epsilon_{ij}$. Temos como premissa que os resíduos seguem uma distribuição normal padrão.
+
+Formalmente, podemos definir o experimento da seguinte forma:
+
+$$\begin{cases} H_0: \tau_i = 0, \forall i \in \{1,2,3,4,5\} &\\H_1: \exists \tau_i \neq 0 \end{cases}$$
 
 ## Número da Amostra
 
@@ -125,7 +129,11 @@ gerar o poder do teste esperado para nosso experimentos. Vale notar que a relev�
 
 Valores de $\alpha$ e $\beta$ utilizados são valores padrões na literatura, sendo valores de significância estatística consideráveis. O parâmetro $a$ refere-se ao número de grupos em questão, ou seja, 5 conjuntos de ações.
 
-O cálculo de $\tau$ manteve-se tal qual o exemplo fornecido durante a aula, supondo que apenas dois grupos possuem desvios referentes à média.
+No contexto deste estudo, assume-se que apenas dois grupos apresentam desvios em relação à média global, enquanto os demais têm valores nulos de $\tau$. Essa abordagem reflete uma situação onde as diferenças significativas estão concentradas em apenas dois níveis.
+
+O vetor $\tau$ foi construído de forma a representar essa suposição, com dois valores simetricamente opostos ($-\delta / 2$ e $\delta / 2$), enquanto os demais níveis são definidos como 0. A variância entre os grupos é então calculada com base nesse vetor, sendo um parâmetro fundamental para estimar o número de amostras necessárias para alcançar o poder estatístico desejado.
+
+O código que segue traduz essa abordagem:
 
 ```{r loaddata3}
 a       <- 5
@@ -148,7 +156,7 @@ power.anova.test(groups      = 5,
 ```
 
 O valor de n presente no teste é inferior ao número de dados que possuímos para cada
-grupo, com isso podemos assegurar que o resultado do Anova será fidedigno.
+grupo, com isso podemos assegurar um poder estatístico de 80% de não cometer erros do tipo II (Falso negativo).
 
 ## Teste ANOVA
 
@@ -164,7 +172,7 @@ O P valor resultante é extremamente baixo e abaixo do $\alpha$ definido, ou sej
 
 ## Premissas do Teste
 
-Dotados dos resíduos do teste, podemos conferir as premissas específicas do próprio teste. Inicialmente, confiramos se os resíduos seguem de fato uma normal padrão
+Dotados dos resíduos do teste, podemos conferir as premissas específicas do próprio teste. Inicialmente, verificamos se os resíduos seguem de fato uma normal padrão
 
 ```{r loaddata5}
 # Check normality
@@ -233,7 +241,16 @@ O resultado indica que o número mínimo de amostras necessário para os parâme
 
 
 # Discussões e Conclusões
-Placeholder
+
+O estudo de caso apresentou uma análise detalhada para a comparação do retorno médio de cinco ações utilizando ferramentas estatísticas, como o teste ANOVA e o teste de Diferença Significativa Honesta (HSD) de Tukey. Através da análise exploratória, constatamos variações nos retornos das ações, reforçando a necessidade de uma avaliação estatística formal para identificar diferenças significativas.
+
+Os resultados do teste ANOVA indicaram que há diferenças estatisticamente significativas entre os grupos analisados. Subsequentemente, o teste de Tukey identificou que a ação 5 se destacou em relação às demais, apresentando o maior valor mínimo e resultados positivos consistentes. No entanto, ao compará-la diretamente com a ação 1, o intervalo de confiança incluiu valores negativos, impossibilitando afirmar com 95% de confiança que a ação 5 é significativamente superior à ação 1.
+
+O número de amostras utilizado (35 por grupo) foi avaliado como adequado para garantir a validade estatística dos testes, superando o valor mínimo necessário de 17 amostras por grupo. Isso reforça a robustez dos resultados obtidos e a confiabilidade das conclusões.
+
+Embora os resultados sejam consistentes dentro das premissas assumidas, o estudo apresenta limitações, como a suposição de homoscedasticidade entre os grupos e a ausência de dados adicionais para avaliação de outros fatores que podem influenciar os retornos das ações. Estudos futuros poderiam explorar a inclusão de variáveis macroeconômicas, como taxa de juros ou volatilidade do mercado, para enriquecer a análise e refinar as conclusões.
+
+Em resumo, a metodologia empregada demonstrou ser eficaz na identificação de diferenças entre as ações analisadas, destacando a ação 5 como a mais promissora dentro do conjunto avaliado. Essa abordagem pode ser replicada em outros contextos de seleção de ativos, contribuindo para decisões de investimento mais embasadas e estratégicas.
 
 # Bibliografia
 
