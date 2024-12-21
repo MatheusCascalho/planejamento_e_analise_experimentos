@@ -191,3 +191,9 @@ duntest     <- glht(model,
                     linfct = mcp(Algorithm = "Dunnett"))
 
 summary(duntest)
+
+duntestCI   <- confint(duntest)
+
+par(mar = c(5, 8, 4, 2), las = 1)
+plot(duntestCI,
+     xlab = "Mean difference (log scale)")
