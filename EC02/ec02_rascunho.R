@@ -1,12 +1,12 @@
 # Carregar o arquivo CSV
-dados <- read.csv("/Users/henriquealvesbarbosa/Documents/planejamento-analise-experimentos/planejamento_e_analise_experimentos/EC02/DadosAcoesGrupoG.csv", header = FALSE)
+dados <- read.csv("DadosAcoesGrupoG.csv", header = FALSE)
 
 # Renomear as colunas
-colnames(dados) <- c("Ação 1", "Ação 2", "Ação 3", "Ação 4", "Ação 5")
+colnames(dados) <- c("1", "2", "3", "4", "5")
 
 # Criar um novo data.frame para rentabilidades
 rentabilidade <- data.frame(matrix(NA, nrow = nrow(dados), ncol = ncol(dados)))
-colnames(rentabilidade) <- paste0("Rentabilidade ", colnames(dados))
+colnames(rentabilidade) <- paste0("", colnames(dados))
 
 # Calcular a rentabilidade para cada coluna
 for (i in 1:ncol(dados)) {
