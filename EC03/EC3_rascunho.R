@@ -97,15 +97,46 @@ sample_iterations <- function(instance, algo1, algo2, se_threshold, n0, n_max) {
 ## estimativa do erro
 n_amostrar_para_erro = 10
 n_dimensoes_para_erro = 10
-SIGMA_phi = 3857629.7 # Desvio padrão das funções objetivo de 38 instâncias
 
 # estimativa de amostras
-se_threshold, 
+# se_threshold, 
 n0=2
 n_max=50
 amostras_teste=10
+se_threshold = 22838.192087
 
-dimensoes_teste = sample(dimensoes, amostras_teste)
+wrapper_config1 <- function(dimensao){
+  selpars <- list(name = "selection_standard")
+  stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
+  probpars <- list(name = "fn", xmin = rep(-5, dimensao), xmax = rep(10, dimensao))
+  popsize = 5 * dimensao
+  out <- ExpDE(mutpars = configuracoes[[1]]$mutpars,
+               recpars = configuracoes[[1]]$recpars,
+               popsize = popsize,
+               selpars = selpars,
+               stopcrit = stopcrit,
+               probpars = probpars,
+               showpars = list(show.iters = "dots", showevery = 20))
+  return(out$Fbest)
+}
+wrapper_config2 <- function(dimensao){
+  selpars <- list(name = "selection_standard")
+  stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
+  probpars <- list(name = "fn", xmin = rep(-5, dimensao), xmax = rep(10, dimensao))
+  popsize = 5 * dimensao
+  out <- ExpDE(mutpars = configuracoes[[2]]$mutpars,
+               recpars = configuracoes[[2]]$recpars,
+               popsize = popsize,
+               selpars = selpars,
+               stopcrit = stopcrit,
+               probpars = probpars,
+               showpars = list(show.iters = "dots", showevery = 20))
+  return(out$Fbest)
+}
+
+
+
+# dimensoes_teste = sample(dimensoes, amostras_teste)
 
 
 ###################################################################
@@ -119,17 +150,45 @@ repeticoes <- 1:n_amostrar_para_erro  # Número de repetições
 
 n_blocos = calc_instances(2, 0.5, power=0.8) # 2: n instancias, 0.5: tamanho de efeito mínimo; power: poder do teste
 dimensoes = seq(2,150,length.out=38)
+dimensoes_teste = sample(dimensoes, 10)  # amostragem para calculo de quantidade de repetições
+tamanho_amostras <- data.frame(
+  Dimensao = numeric(),    # Coluna tipo numérico
+  Iterations1 = numeric(), # Evita fatores (para colunas de texto)
+  Iterations2 = numeric() # Evita fatores (para colunas de texto)
+)
+for (dimensao in dimensoes_teste){
+  cat("Dimensao: ", dimensao)
+  si = sample_iterations(
+    instance = dimensao,
+    algo1 = wrapper_config1,
+    algo2 = wrapper_config2,
+    se_threshold = se_threshold,
+    n0 = n0,
+    n_max = n_max
+  )
+  cat("\nAmostra 1: ", si$n1,"| Amostra 2: ", si$n2, "\n")
+  tamanho_amostras[nrow(tamanho_amostras)+1,] <- list(dimensao, si$n1, si$n2)
+  
+}
+  
 
 # Parâmetros adicionais para o ExpDE
 resultados <- data.frame(matrix(ncol = length(configuracoes), nrow = length(dimensoes)))
+repeticoes_resultados <- data.frame(
+  Config = character(),   # Coluna tipo texto
+  Dimensao = numeric(),    # Coluna tipo numérico
+  Repeticao = numeric(),    # Coluna tipo double
+  Valor = double() # Evita fatores (para colunas de texto)
+)
 colnames(resultados) <- sapply(configuracoes, function(config) config$name)
 rownames(resultados) <- dimensoes
+repeticoes <- 1:48  # Número de repetições
 
 # Loop sobre dimensaoensões, configurações e repetições
 for (dimensao in dimensoes) {
-  probpars$dimensaoensions <- dimensao  # Atualiza o número de dimensaoensões no problema
   for (configuracao in configuracoes) {
     resultados_config <- c()  # Vetor para armazenar os resultados das repetições
+    i = 0
     for (repeticao in repeticoes) {
       selpars <- list(name = "selection_standard")
       stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
@@ -147,14 +206,17 @@ for (dimensao in dimensoes) {
       # Extract observation:
       resultados_config <- c(resultados_config, out$Fbest)  # Supondo que "fitness" seja uma métrica retornada
       cat("Configuracao", configuracao$name, "| dimensão: ", dimensao, "| resultado: ", resultados_config)
+      repeticoes_resultados[nrow(repeticoes_resultados)+1,] <- list(configuracao$name, dimensao, i, out$Fbest)
+      i = i+1
+      
       #print(resultados_config)
     }
     resultados[as.character(dimensao), configuracao$name] <- mean(resultados_config)
-    
   }
 }
 
 write.csv(resultados, "resultados_comparacao_algoritmo.csv")
+write.csv(repeticoes_resultados, "resultado_cada_repeticao.csv")
 
 novo_df <- data.frame(
   Dimensão = rep(rownames(resultados), times = ncol(resultados)),
@@ -167,6 +229,9 @@ write.csv(resultados, "resultados_comparacao_algoritmo_REORGANIZADO.csv")
 
 ################################################################################
 ######### TESTE DE BLOCAGEM ####################################################
+novo_df$dim_numeric <- as.numeric(novo_df$Dimensão)
+novo_df$Configuração <- as.factor(novo_df$Configuração)
+novo_df$Dimensão <- as.factor(novo_df$Dimensão)
 
 model <- aov(Resultado~Configuração+Dimensão,
              data = novo_df)
@@ -175,9 +240,11 @@ summary(model)
 summary.lm(model)$r.squared
 
 library(ggplot2)
+library(dplyr)
+arrange(novo_df, dim_numeric)
 
 # Análise da Configuração pela Dimensão
-p <- ggplot(aggdata, aes(x = Dimensão, 
+p <- ggplot(novo_df, aes(x = dim_numeric, 
                          y = Resultado, 
                          group = Configuração, 
                          colour = Configuração))
@@ -187,8 +254,15 @@ p + geom_line(linetype=2) + geom_point(size=5)
 ######### Teste POST-HOC ######################################################
 
 library(multcomp)
+repeticoes_resultados$Config <- as.factor(repeticoes_resultados$Config)
+repeticoes_resultados$Dimensao <- as.factor(repeticoes_resultados$Dimensao)
+model2 <- aov(Valor~Config+Dimensao,
+             data = repeticoes_resultados)
+
+######################
+## comparação da configuraçao #######
 duntest     <- glht(model,
-                    linfct = mcp(Algorithm = "Dunnett"))
+                    linfct = mcp(Configuração = "Dunnett"))
 
 summary(duntest)
 
@@ -196,4 +270,18 @@ duntestCI   <- confint(duntest)
 
 par(mar = c(5, 8, 4, 2), las = 1)
 plot(duntestCI,
-     xlab = "Mean difference (log scale)")
+     xlab = "Mean difference")
+
+
+######################
+## comparação da configuração #######
+duntest     <- glht(model2,
+                    linfct = mcp(Dimensao = "Dunnett"))
+
+summary(duntest)
+
+duntestCI   <- confint(duntest)
+
+par(mar = c(5, 8, 4, 2), las = 1)
+plot(duntestCI,
+     xlab = "Mean difference")
