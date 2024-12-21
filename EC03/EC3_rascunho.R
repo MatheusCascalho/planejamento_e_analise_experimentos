@@ -173,3 +173,21 @@ model <- aov(Resultado~Configuração+Dimensão,
 
 summary(model)
 summary.lm(model)$r.squared
+
+library(ggplot2)
+
+# Análise da Configuração pela Dimensão
+p <- ggplot(aggdata, aes(x = Dimensão, 
+                         y = Resultado, 
+                         group = Configuração, 
+                         colour = Configuração))
+p + geom_line(linetype=2) + geom_point(size=5)
+
+################################################################################
+######### Teste POST-HOC ######################################################
+
+library(multcomp)
+duntest     <- glht(model,
+                    linfct = mcp(Algorithm = "Dunnett"))
+
+summary(duntest)
