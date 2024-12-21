@@ -223,7 +223,7 @@ novo_df <- data.frame(
   Configuração = rep(colnames(resultados), each = nrow(resultados)),
   Resultado = as.vector(as.matrix(resultados))
 )
-write.csv(resultados, "resultados_comparacao_algoritmo_REORGANIZADO.csv")
+write.csv(novo_df, "resultados_comparacao_algoritmo_REORGANIZADO.csv")
 
 
 
@@ -285,3 +285,26 @@ duntestCI   <- confint(duntest)
 par(mar = c(5, 8, 4, 2), las = 1)
 plot(duntestCI,
      xlab = "Mean difference")
+
+
+#########################################################
+##### Checagem de premissas
+
+# Check normality
+shapiro.test(model$residuals)
+
+
+qqnorm(model$residuals)
+qqline(model$residuals)
+
+hist(model$residuals)
+
+plot(ecdf(model$residuals))
+dados_test <- rnorm(100)
+plot(ecdf(dados_test))
+
+
+# Check homoscedasticity
+fligner.test(novo_df$Resultado ~ novo_df$Configuração, 
+             data = novo_df)
+
