@@ -38,19 +38,22 @@ if (!require(reshape2, quietly = TRUE)){
 
 ```
 
-## Descrição do Problema - ATUALIZAR!!!
-A escolha de um conjunto ideal de ações para serem investidas é um problema comum
-no ramo de ciências atuariais, sendo que modelos capazes de prever um portfolio ótimo de
-investimento são continuamente estudados e aprimorados [@xidonas2020robust].
+## Descrição do Problema
+Em diversas situações, como no design de asas de aeronaves para maximizar a eficiência aerodinâmica \cite[della2019application] ou no treinamento de robôs para executar tarefas específicas \cite[grefenstette1994evolutionary], é necessário minimizar (ou maximizar) uma função de custo. Entretanto, quando não é possível encontrar uma solução analiticamente para seu ponto de mínimo (máximo), recorre-se a métodos heurísticos de otimização. Entre esses métodos destacam-se os algoritmos evolucionários \cite[holland1992adaptation], que simulam processos naturais de evolução, utilizando populações de possíveis soluções, inicialmente geradas de forma aleatória, para evoluir gradativamente em direção a respostas que melhor atendam ao problema em questão.
 
-Apesar de o ideal no mercado acionário ser a diversificação equilibrada com a escolha de um portfólio administrável de forma eficiente [@levivsauskait2010investment], é possível
-surgirem situações em que a escolha de uma única ação frente a um conjunto seja tomada como um
-problema de decisão. Exemplos como esse podem ocorrer em fundos multimercados que necessitem
-de escolher uma única empresa para cada segmento de mercado de forma a manter as 
-regras estabelecidas pelo fundo em questão.
+Um dos algoritmos evolucionários mais comuns e amplamente utilizados é o algoritmo de Evolução Diferencial \cite[price2006differential]. Nesse método, uma população inicial de vetores-soluções é gerada aleatoriamente, e cada indivíduo da população é avaliado com base na função de custo a ser otimizada. Durante várias iterações, ou épocas, os indivíduos passam por processos de mutação e cruzamento. A mutação introduz diversidade ao alterar características de forma aleatória, enquanto o cruzamento combina as melhores soluções, promovendo o desenvolvimento da população para um resultado ideal. Ao final do processo, o indivíduo com o melhor desempenho, ou "fit", é considerado a solução do problema.
 
-Neste estudo de caso, avaliamos 5 ações de forma a identificar qual dentre elas pode ser considerada a melhor. Avaliamos questões pertinentes ao problema, tais como pressupostos assumidos, melhorias possíveis e futuros estudos.
+Esse algoritmo, no entanto, apresenta múltiplos métodos de recombinação e mutação, assim como de seus hiperparâmetros, que influenciam diretamente seu funcionamento, podendo resultar em variações significativas de desempenho dependendo das configurações escolhidas. Neste trabalho, busca-se comparar o desempenho de duas configurações de hiperparâmetros aplicadas a dois algoritmos de Evolução Diferencial, avaliando a qualidade das soluções encontradas de forma independente do número de dimensões do problema. A tabela a seguir apresenta os métodos de recombinação e cruzamento utilizados em cada configuração, assim como seus respectivos hiperparâmetros.
 
+\[
+\begin{table}[]
+\begin{tabular}{ccc}
+Configuração & Método de Recombinação                                                                                 & Método de Mutação                                                          \\
+1            & Blend Alpha Beta Recombination for DE \cite[herrera2003taxonomy] com $\alpha=0$ e $\beta=0$                                 & Em indivíduos aleatórios, com fator de escala do vetor de diferenças $f=4$ \\
+2            & Recombinação Exponencial \cite[price2006differential] com probabilidade de cada ponto do vetor ser um ponto de corte $cr=0,6$ & Nos melhores indivíduos, com fator de escala do vetor de diferenças $f=2$ 
+\end{tabular}
+\end{table}
+\]
 
 # Análise Exploratória e Tratamento dos Dados - ATUALIZAR!!!
 
