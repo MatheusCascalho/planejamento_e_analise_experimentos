@@ -1,13 +1,12 @@
 ---
 title: 'Estudo de Caso 02: Avaliação e comparação do retorno médio de ações'
 author: "Joao P. L. Pinto, Thales H. de O. Gonçalves, Henrique A. Barbosa, \\
-Matheus C. dos Santos"
-date: "19 de Novembro de 2024"
+date: 19 de Novembro de 2024"
 output:
-  pdf_document:
-    fig_caption: true
   html_document:
     df_print: paged
+  pdf_document:
+    fig_caption: true
 editor_options:
   markdown:
     wrap: 72
@@ -39,7 +38,7 @@ if (!require(reshape2, quietly = TRUE)){
 
 ```
 
-## Descrição do Problema
+## Descrição do Problema - ATUALIZAR!!!
 A escolha de um conjunto ideal de ações para serem investidas é um problema comum
 no ramo de ciências atuariais, sendo que modelos capazes de prever um portfolio ótimo de
 investimento são continuamente estudados e aprimorados [@xidonas2020robust].
@@ -52,7 +51,8 @@ regras estabelecidas pelo fundo em questão.
 
 Neste estudo de caso, avaliamos 5 ações de forma a identificar qual dentre elas pode ser considerada a melhor. Avaliamos questões pertinentes ao problema, tais como pressupostos assumidos, melhorias possíveis e futuros estudos.
 
-# Análise Exploratória e Tratamento dos Dados
+
+# Análise Exploratória e Tratamento dos Dados - ATUALIZAR!!!
 
 Inicialmente, é necessário realizar uma transformação da base de dados fornecida
 para este estudo de caso. Dado que nossa base de dados contém os preços de fechamento das ações para cada período, precisamos transformar estes dados de forma a conseguir analisar o ganho mensal da ação. Para isto, os seguintes pressupostos foram assumidos:
@@ -111,7 +111,27 @@ Por meio destes histogramas podemos intuitivamente supor que existe de fato
 uma diferença do rendimento de cada uma das ações listadas, no entanto experimentos
 estatísticos devem ser realizados para poder afirmar tal hipótese.
 
-# Análise de Variância (ANOVA)
+
+
+# Definição de quantidade de amostras
+O planejamento da quantidade de amostras de resultado para cada dimensão é um passo importante para alcançar melhores
+resultados na análise de experimentos, uma vez que com uma quantidade insuficiente de amostras corremos o risco de observar o efeito da variação das amostras se sobrepondo a variação das dimensões e das configuraçãoes dos algoritmos. Conforme proposto por [@campelo2019sample] implementamos um algoritmo iterativo para definir o tamanho de amostras necessária para cada dimensão do problema. O processo se deu da seguinte forma:
+
+* Calculamos a quantidade de dimensões necessárias ($n_{blocos}$) para que o teste tenha poder estatístico de 80%
+* Selecionamos a quantidade $n_{blocos}$ de dimensões igualmente espaçadas entre sí partindo de 2 a 150 dimensões.
+
+Depois de definir as dimensões, partimos para a definição da quantidade de amostras por dimensão:
+* Definimos o desvio padrão máximo desejado ($se*$): 
+  * selecionamos 10 dimensões aleatórias;
+  * executamos, para cada dimensão de teste e para cada configuração, 10 repetições do algoritmo ExpDE e armazenamos os resultados. 
+  * Calculamos o desvio padrão dos resultados e calculamos o coeficiente de variaçãod e cada dimensão ($CV = \frac{\sigma}{\mu}$) e selecionamos o desvio padrão da amostra que obteve o menor coeficiente de variação. No caso, $se*= 22838.19$
+* Selecionamos 10 dimensões aleatórias e calculamos a quantidade de iterações necessária para que os resultados obtidos para essa dimensão tenham no máximo o desvio padrão especificado $se*$ especificado. A quantidade mínima definida foi de 2 iterações e a máxima de 50 iterações, considerando a inviabilidade de executar mais de 50 iterações em cada dimensão e iteração.
+* Após obter a quantidade de iterações de cada dimensão, selecionamos a maior quantidade de repetições e definimos como a quantidade de todas a dimensões, com o objetivo de garantir que no pior caso ainda teremos um bom nível de confiança e poder do teste, e conseguentemente para todas as outras dimensões. A quantidade de repetições definida foi de 48 repetições por dimensão-configuração.
+
+O algoritmo implmentado é apresentado em [@campelo2019sample] e implementado em um script R separado (EC3_expecificacao_tamanho_amostras.R)
+
+
+# Análise de Variância (ANOVA) - ATUALIZAR!!!
 
 A forma convencional de começar uma comparação entre diferentes fatores (neste caso ações) é por meio do teste ANOVA. Este teste é construído de forma a possuir um alto poder estatístico, tirando conclusões acerca da média de um conjunto de grupos ser igual como hipótese nula. O teste ANOVA utiliza o modelo dos efeitos de cada nível (no caso, cada ação, enumerada de 1 a 5) descrito como:
 
@@ -195,7 +215,7 @@ fligner.test(rentabilidade_classificada$Valor ~ rentabilidade_classificada$Açã
 ```
 Novamente podemos confirmar a premissa do teste, sendo que o ANOVA se apresenta realmente como um teste confiável para este problema.
 
-# Comparações Múltiplas Entre Níveis
+# Comparações Múltiplas Entre Níveis - ATUALIZAR!!!
 
 Após a realização do teste ANOVA e a rejeição de $H_0$, conclui-se que pelo menos um dos níveis é significativamente diferente dos demais. Isso indica que uma ou mais ações apresentam resultados superiores às outras. Para identificar quais ações oferecem os melhores retornos, aplica-se o teste de Diferença Significativa Honesta (Honest Significant Difference, HSD) de Tukey, que realiza comparações entre todos os pares de níveis. Esse teste é escolhido em vez de um teste de um contra todos, pois, neste caso, não há um padrão específico a ser usado como referência. Por fim, os intervalos de confiança das diferenças entre os níveis são exibidos para facilitar a interpretação dos resultados.
 
@@ -241,7 +261,7 @@ power.t.test(power = 0.8,
 O resultado indica que o número mínimo de amostras necessário para os parâmetros especificados é 17. Como foram utilizadas 35 amostras, o requisito é plenamente atendido, garantindo a validade dos testes realizados.
 
 
-# Discussões e Conclusões
+# Discussões e Conclusões - ATUALIZAR!!!
 
 O estudo de caso apresentou uma análise detalhada para a comparação do retorno médio de cinco ações utilizando ferramentas estatísticas, como o teste ANOVA e o teste de Diferença Significativa Honesta (HSD) de Tukey. Através da análise exploratória, constatamos variações nos retornos das ações, reforçando a necessidade de uma avaliação estatística formal para identificar diferenças significativas.
 
