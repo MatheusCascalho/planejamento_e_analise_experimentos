@@ -114,6 +114,16 @@ Por meio destes histogramas podemos intuitivamente supor que existe de fato
 uma diferença do rendimento de cada uma das ações listadas, no entanto experimentos
 estatísticos devem ser realizados para poder afirmar tal hipótese.
 
+# Quantidade de Dimensões
+
+Apesar de existirem 148 grupos presentes no problema, considerando cada grupo como uma dimensão de resolução do algoritmo, não há uma necessidade efetiva de serem testados todos os grupos de variações. Para isso, podemos definir o poder do teste, assim como o número de grupos presentes no experimento, de forma a descobrir o número de instâncias necessárias.
+
+No caso, temos que o número de grupos condiz com a quantidade de configurações do algoritmo, ou seja, duas. Além disto, seguindo o padrão expresso na literatura, temos que $\beta = 0.8$. O tamanho de efeito mínimo relevante foi definido como 0.5, uma proposta baseada no decaimento lento da função de Rosenbrock, conseguindo detectar dificuldades de caminhar em bacias de atração com gradientes pouco significativos.
+
+O código utilizado foi baseado na biblioteca CAISEr, tal como apresentado em [@campello2019sample] e [@campelo2020sample].
+
+## ALTERAR O CÓDIGO ABAIXO DE FORMA A EXTRUTURAR NO CONTEXTO GERAL
+n_blocos = calc_instances(2, 0.5, power=0.8)
 
 
 # Definição de quantidade de amostras
@@ -132,7 +142,6 @@ Depois de definir as dimensões, partimos para a definição da quantidade de am
 * Após obter a quantidade de iterações de cada dimensão, selecionamos a maior quantidade de repetições e definimos como a quantidade de todas a dimensões, com o objetivo de garantir que no pior caso ainda teremos um bom nível de confiança e poder do teste, e conseguentemente para todas as outras dimensões. A quantidade de repetições definida foi de 48 repetições por dimensão-configuração.
 
 O algoritmo implmentado é apresentado em [@campelo2019sample] e implementado em um script R separado (EC3_expecificacao_tamanho_amostras.R)
-
 
 # Análise de Variância (ANOVA) - ATUALIZAR!!!
 
