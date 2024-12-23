@@ -43,7 +43,7 @@ Em diversas situações, como no design de asas de aeronaves para maximizar a ef
 
 Um dos algoritmos evolucionários mais comuns e amplamente utilizados é o algoritmo de Evolução Diferencial \cite[price2006differential]. Nesse método, uma população inicial de vetores-soluções é gerada aleatoriamente, e cada indivíduo da população é avaliado com base na função de custo a ser otimizada. Durante várias iterações, ou épocas, os indivíduos passam por processos de mutação e cruzamento. A mutação introduz diversidade ao alterar características de forma aleatória, enquanto o cruzamento combina as melhores soluções, promovendo o desenvolvimento da população para um melhor resultado. Ao final do processo, o indivíduo com o melhor desempenho, ou "fit", é considerado a solução do problema.
 
-Esse algoritmo, no entanto, apresenta múltiplos métodos de recombinação e mutação, assim como diversos hiperparâmetros, que influenciam diretamente seu funcionamento, podendo resultar em variações significativas de desempenho dependendo das configurações escolhidas. Neste trabalho, busca-se comparar o desempenho de duas configurações distintas aplicadas a dois algoritmos de Evolução Diferencial, avaliando a qualidade das soluções encontradas de forma independente do número de dimensões do problema. A tabela a seguir apresenta os métodos de recombinação e cruzamento utilizados em cada configuração, assim como seus respectivos hiperparâmetros.
+Esse algoritmo, no entanto, apresenta múltiplos métodos de recombinação e mutação, assim como diversos hiperparâmetros, que influenciam diretamente seu funcionamento, podendo resultar em variações significativas de desempenho dependendo das configurações escolhidas. Neste trabalho, busca-se comparar o desempenho de duas configurações distintas aplicadas a dois algoritmos de Evolução Diferencial, avaliando a qualidade das soluções encontradas de forma independente do número de dimensões do problema. A tabela a seguir apresenta os métodos de recombinação e cruzamento utilizados em cada configuração do algoritmo, assim como seus respectivos hiperparâmetros.
 
 \[
 \begin{table}[]
@@ -55,68 +55,29 @@ Configuração & Método de Recombinação                                      
 \end{table}
 \]
 
-A função de custo que deseja-se minimizar no contexto desse trabalho é a função Rosembrock [ref] para os limites $-5\le x_i \le 10$, $i=1,...,dim$ para um problema de $dim$ dimensões. O tamanho da população e o número máximo de iterações do algoritmo são dependentes de $dim$, sendo esses valores $5*dim$ e $100*dim$, respectivamente.
+A função de custo que deseja-se minimizar no contexto desse trabalho é a função Rosembrock para os limites $-5\le x_i \le 10$, $i=1,...,dim$ para um problema de $dim \in [2,150]$ dimensões. O tamanho da população e o número máximo de iterações do algoritmo são dependentes de $dim$, sendo esses valores $5*dim$ e $100*dim$, respectivamente. Os parâmetros experimentais dados para este estudo são:
 
-# Análise Exploratória e Obtenção dos Dados - ATUALIZAR!!!
+- Mínima diferença de importância prática (padronizada): $d^*=0.5$
+- Significância desejada: $\alpha=0.05$
+- Potência mínima desejada: $1-\beta=0.8$
 
-Primeiramente, coleta-s
+# Design dos Experimentos
 
-Inicialmente, é necessário realizar uma transformação da base de dados fornecida
-para este estudo de caso. Dado que nossa base de dados contém os preços de fechamento das ações para cada período, precisamos transformar estes dados de forma a conseguir analisar o ganho mensal da ação. Para isto, os seguintes pressupostos foram assumidos:
+Conforme descrito na seção anterior, este estudo tem como objetivo comparar o desempenho de duas configurações distintas do algoritmo de evolução diferencial no contexto de minimização da função Rosenbrock, considerando problemas com dimensões variando de 2 a 150. Para isso, busca-se:
 
-* Considere que o preço de abertura de um dado mês é idêntico ao preço de fechamento da mesma ação no mês anterior.
-* Considere que as ações podem ser adquiridas de forma fracionária, se necessário, i.e., o montante financeiro será investido por completo em uma única ação.
+- Verificar se existe uma diferença estatisticamente significativa no desempenho médio entre as duas configurações avaliadas; e
+- Identificar qual das configurações apresenta o melhor desempenho, caso uma diferença seja constatada.
 
-A partir destes pressupostos, transformamos nossa base de dados através da seguinte fórmula:
+A hipótese nula estabelecida neste estudo é que os dois níveis comparados não apresentam diferenças significativas na média de seus desempenhos. Essa hipótese será rejeitada caso seja identificada alguma diferença estatisticamente significativa. No entanto, o desempenho dos algoritmos varia em função da dimensão do problema, um efeito indesejado para a comparação dos níveis. Essa variabilidade dificulta assumir que as condições experimentais sejam homogêneas, tornando inadequado o uso do teste ANOVA simples para verificar diferenças na média entre os níveis comparados.
 
-$$Var_i = \frac{Preço_i - Preço_{i-1}}{Preço_{i-1}}$$
+Para isolar o efeito da dimensão do problema e tornar o experimento mais robusto e generalizável, emprega-se uma estratégia de blocagem com base no número de dimensões do problema. Nesse contexto, cada bloco corresponde a uma dimensão dentro do intervalo [2,150]. Formalmente, o modelo estatístico é definido como:
 
-Podemos realizar isto utilizando o seguinte código:
+$$y_{ij}=\mu+\tau_i+\beta_j+\epsilon_{ij}\begin{cases}i=1,...,a &\\j=1,...,b\end{cases}$$
+onde $y_{ij}$ é uma observação da amostra, $\mu$ é a média da amostra, $\tau_i$ o tamanho do efeito devido aos níveis, $\beta_j$ o efeito dos blocos, $\epsilon_{ij}$ o resíduo, e $a$ e $b$ o número de níveis e o número de blocos, respectivamente. No teste, o interesse está exclusivamente no fator experimental referente aos níveis, de modo que a hipótese é formulada da seguinte forma:
 
-```{r loaddata}
-file_path <- file.path(getwd(), "DadosAcoesGrupoG.csv")
-dados <- read.csv(file_path, header = FALSE)
+$$\begin{cases} H_0: \tau_{i} = 0, \forall i=1,...,a&\\H_1: \exists \tau_{i}\neq0\end{cases}$$
 
-# Renomear as colunas
-colnames(dados) <- c("1", "2", "3", "4", "5")
-
-# Criar um novo data.frame para rentabilidades
-rentabilidade <- data.frame(matrix(NA, nrow = nrow(dados), ncol = ncol(dados)))
-colnames(rentabilidade) <- paste0("", colnames(dados))
-
-# Calcular a rentabilidade para cada coluna
-for (i in 1:ncol(dados)) {
-  # Cálculo da rentabilidade: (valor atual - valor anterior) / valor anterior
-  rentabilidade[1:(nrow(dados) - 1), i] <- (dados[1:(nrow(dados) - 1), i] - dados[2:nrow(dados), i]) / dados[2:nrow(dados), i]
-}
-```
-
-É útil realizar uma análise exploratória nas distribuições de rendimento,
-de forma a compreendermos qual a melhor forma de se realizar os experimentos
-e quais hipóteses podemos buscar:
-
-```{r loaddata2}
-library(ggplot2)
-library(reshape2)
-
-# Transformar o data frame em formato longo para usar com ggplot
-# rentabilidade
-rentabilidade <- na.omit(rentabilidade)
-rentabilidade_classificada <- melt(rentabilidade*100, variable.name = "Ação", value.name = "Valor")
-
-rentabilidade_classificada$Ação <- as.factor(rentabilidade_classificada$Ação)
-
-# Plotar histogramas para cada coluna
-ggplot(rentabilidade_classificada, aes(x = Valor)) +
-  geom_histogram(binwidth = 1, fill = "lightblue", color = "black") +
-  facet_wrap(~Ação, scales = "free") +
-  labs(title = "Histogramas das Ações", x = "Valores", y = "Frequência") +
-  theme_minimal()
-```
-
-Por meio destes histogramas podemos intuitivamente supor que existe de fato
-uma diferença do rendimento de cada uma das ações listadas, no entanto experimentos
-estatísticos devem ser realizados para poder afirmar tal hipótese.
+Para isso, é necessário determinar o número de dimensões a serem blocadas e a quantidade de amostras por blocos para se obter os parâmetros experimentais desejados, especificados na seção anterior.
 
 # Quantidade de Dimensões
 
