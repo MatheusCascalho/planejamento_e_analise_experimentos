@@ -110,7 +110,7 @@ O algoritmo implmentado é apresentado em [@campelo2019sample] e implementado em
 
 # Análise de Variância (ANOVA) - ATUALIZAR!!!
 
-A forma convencional de começar uma comparação entre diferentes fatores (neste caso ações) é por meio do teste ANOVA. Este teste é construído de forma a possuir um alto poder estatístico, tirando conclusões acerca da média de um conjunto de grupos ser igual como hipótese nula. O teste ANOVA utiliza o modelo dos efeitos de cada nível (no caso, cada ação, enumerada de 1 a 5) descrito como:
+A forma convencional de começar uma comparação entre diferentes fatores (neste caso, as configurações do algoritmo) é por meio do teste ANOVA. Este teste é construído de forma a possuir um alto poder estatístico, tirando conclusões acerca da média de um conjunto de grupos ser igual como hipótese nula. O teste ANOVA utiliza o modelo dos efeitos de cada nível (no caso, cada ação, enumerada de 1 a 5) descrito como:
 
 $$y_{ij} = \mu + \tau_i + \epsilon_{ij}$$
 Nesse modelo, a variável de resposta $y_{ij}$ é igual à média global, somado ao efeito no nível, $\tau_{i}$ e ao resíduo $\epsilon_{ij}$. Temos como premissa que os resíduos seguem uma distribuição normal padrão.
@@ -156,7 +156,7 @@ power.anova.test(groups      = 5,
 O valor de n presente no teste é inferior ao número de dados que possuímos para cada
 grupo, com isso podemos assegurar um poder estatístico de 80% de não cometer erros do tipo II (Falso negativo).
 
-## Teste ANOVA
+## Teste ANOVA - ATUALIZAR!!!
 
 Podemos realizar o teste utilizando pacotes próprios do R da seguinte forma:
 
@@ -174,68 +174,66 @@ Dotados dos resíduos do teste, podemos conferir as premissas específicas do pr
 
 ```{r loaddata5}
 # Check normality
-shapiro.test(my.model$residuals)
+shapiro.test(model$residuals)
 
+```
+
+```{r plotnormaldata}
+plot(ecdf(model$residuals))
+dados_test <- rnorm(100)
+plot(ecdf(dados_test))
 ```
 
 ```{r loaddata6}
-qqnorm(my.model$residuals)
-qqline(my.model$residuals)
+qqnorm(model$residuals)
+qqline(model$residuals)
 ```
 
-Podemos concluir que os resíduos de fato seguem suficientemente bem uma distribuição normal padrão. Por fim, precisamos de checar a igualdade de variâncias entre cada um dos fatores, ou seja, sua homoscedasticidade.
+Podemos concluir que os resíduos de fato seguem suficientemente bem uma distribuição normal padrão, com um certo comportamento divergente nas caudas. Por fim, precisamos checar a igualdade de variâncias entre cada um dos fatores, ou seja, sua homoscedasticidade.
 
 ```{r loaddata7}
 # Check homoscedasticity
-fligner.test(rentabilidade_classificada$Valor ~ rentabilidade_classificada$Ação, 
-             data = rentabilidade_classificada)
+fligner.test(novo_df$Resultado ~ novo_df$Configuração, 
+             data = novo_df)
 ```
-Novamente podemos confirmar a premissa do teste, sendo que o ANOVA se apresenta realmente como um teste confiável para este problema.
+Novamente podemos confirmar a premissa do teste, sendo que o ANOVA com blocos se apresenta realmente como um teste confiável para este problema.
 
-# Comparações Múltiplas Entre Níveis - ATUALIZAR!!!
+# Comparação Entre os Níveis
 
-Após a realização do teste ANOVA e a rejeição de $H_0$, conclui-se que pelo menos um dos níveis é significativamente diferente dos demais. Isso indica que uma ou mais ações apresentam resultados superiores às outras. Para identificar quais ações oferecem os melhores retornos, aplica-se o teste de Diferença Significativa Honesta (Honest Significant Difference, HSD) de Tukey, que realiza comparações entre todos os pares de níveis. Esse teste é escolhido em vez de um teste de um contra todos, pois, neste caso, não há um padrão específico a ser usado como referência. Por fim, os intervalos de confiança das diferenças entre os níveis são exibidos para facilitar a interpretação dos resultados.
+Após a realização do teste aleatorizado com blocos, e a rejeição de $H_0$, conclui-se que os níveis são significativamente diferentes entre si, independentemente do número de dimensões do problema. Isso indica que uma configuração de algoritmo apresenta desempenho superior ao outro.
 
-```{r Multiple comparisons}
+Para um experimento com apenas dois níveis, o ideal é executar um teste t pareado. No entanto, como o problema em questão é um caso particular de uma comparação múltipla com apenas dois níveis, para identificar qual configuração oferece o melhor desempenho, decidiu-se por aplicar um teste post-hoc de Dunnett de todos os grupos contra um. Esse teste, na prática, equivale a um teste t quando se trata de apenas dois níveis. Por fim, o intervalo de confiança da diferença entre os níveis é exibido para facilitar a interpretação dos resultados.
 
-# Situation 1: all vs. all
+```{r Comparison}
+
+# Situation: all vs. one
 library(multcomp)
-# rentabilidade_classificada.Ação <- rentabilidade_classificada$Ação
+## comparação da configuraçao #######
+duntest     <- glht(model,
+                    linfct = mcp(Configuração = "Dunnett"))
 
-m <- mcp(Ação="Tukey")
-mc1    <- glht(my.model, linfct=m)
-mc1_CI <- confint(mc1, level = 0.95)
-plot(mc1_CI, 
-     xlab       = "Rentabilidade da ação",
-     sub        = "- Dados da ação -",
-     cex.axis   = 1.2,
-     cex        = 2)
+summary(duntest)
+
+duntestCI   <- confint(duntest)
+
+par(mar = c(5, 8, 4, 2), las = 1)
+plot(duntestCI,
+     xlab = "Mean difference")
+
+## comparação da configuração #######
+duntest     <- glht(model2,
+                    linfct = mcp(Dimensao = "Dunnett"))
+
+summary(duntest)
+
+duntestCI   <- confint(duntest)
+
+par(mar = c(5, 8, 4, 2), las = 1)
+plot(duntestCI,
+     xlab = "Mean difference")
 ```
 
-É perceptível que os intervalos mais positivos são resultados das diferenças entre a ação 5 e as demais, indicando que ela se sobressai em relação às outras. No entanto, ao compará-la com a ação 1, parte do intervalo de confiança inclui valores negativos, impossibilitando concluir, com 95% de confiança, que a ação 5 é mais vantajosa que a ação 1. Observando o boxplot abaixo, percebe-se que a ação 5 apresenta o maior valor mínimo entre as duas. Com base nesse critério, a ação 5 foi escolhida como a mais benéfica.
-
-```{r boxplot}
-boxplot(rentabilidade,
-        main = "Rentabilidade de cada Ação",
-        xlab = "Ação",
-        ylab = "Rentabilidade",
-        col = rainbow(5))
-```
-
-Para verificar se o número de amostras utilizado é adequado para realizar o teste de comparação, foi conduzido um teste t considerando um nível de significância ($\alpha$) de 0,05, um poder estatístico de 0,8 e uma diferença mínima detectável ($\delta$) correspondente a um desvio padrão dos dados das ações, o que pode ser tomado frente à homoscedasticidade dos grupos.
-
-```{r power t test}
-sd<-sd(rentabilidade_classificada$Valor)
-
-power.t.test(power = 0.8,
-             delta = sd,
-             sd = sd,
-             sig.level = 0.05,
-             type = "two.sample",
-             alternative = "two.sided")
-```
-
-O resultado indica que o número mínimo de amostras necessário para os parâmetros especificados é 17. Como foram utilizadas 35 amostras, o requisito é plenamente atendido, garantindo a validade dos testes realizados.
+É claramente perceptível que a diferença média de desempenho entre as configurações 2 e 1 é negativa em todo o intervalo de confiança, indicando que a configuração 2 sobressai em relação à configuração 1. Com base nisso, a configuração 2 foi selecionada como a de melhor desempenho.
 
 
 # Discussões e Conclusões - ATUALIZAR!!!
