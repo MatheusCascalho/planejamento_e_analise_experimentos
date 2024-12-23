@@ -55,7 +55,11 @@ Configuração & Método de Recombinação                                      
 \end{table}
 \]
 
-# Análise Exploratória e Tratamento dos Dados - ATUALIZAR!!!
+A função de custo que deseja-se minimizar no contexto desse trabalho é a função Rosembrock [ref] para os limites $-5\le x_i \le 10$, $i=1,...,dim$ para um problema de $dim$ dimensões. O tamanho da população e o número máximo de iterações do algoritmo são dependentes de $dim$, sendo esses valores $5*dim$ e $100*dim$, respectivamente.
+
+# Análise Exploratória e Obtenção dos Dados - ATUALIZAR!!!
+
+Primeiramente, coleta-s
 
 Inicialmente, é necessário realizar uma transformação da base de dados fornecida
 para este estudo de caso. Dado que nossa base de dados contém os preços de fechamento das ações para cada período, precisamos transformar estes dados de forma a conseguir analisar o ganho mensal da ação. Para isto, os seguintes pressupostos foram assumidos:
