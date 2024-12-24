@@ -1,7 +1,7 @@
 ---
-title: 'Estudo de Caso 02: Avaliação e comparação do retorno médio de ações'
+title: 'Estudo de Caso 03: Avaliação e comparação de duas configurações de Algoritmos Evolucionários'
 author: "Joao P. L. Pinto, Thales H. de O. Gonçalves, Henrique A. Barbosa, \\
-date: 19 de Novembro de 2024"
+date: 23 de Dezembro de 2024"
 output:
   html_document:
     df_print: paged
@@ -61,6 +61,29 @@ A função de custo que deseja-se minimizar no contexto desse trabalho é a fun�
 - Significância desejada: $\alpha=0.05$
 - Potência mínima desejada: $1-\beta=0.8$
 
+Para começar o código, primeiro definimos funções capazes de gerar os problemas e definir as configurações a serem utilizadas:
+```{r loaddata4}
+dimensao <- 10
+fn <- function(X){
+  if(!is.matrix(X)) X <- matrix(X, nrow = 1) # <- if a single vector is passed as X
+  Y <- apply(X, MARGIN = 1,
+             FUN = smoof::makeRosenbrockFunction(dimensions = dimensao))
+  return(Y)
+}
+# testing the function on a matrix composed of 2 points
+X <- matrix(runif(20), nrow = 2) # runif gera uma distribuição uniforme aleatória
+fn(X)
+
+configuracoes <- list(
+  list(name = "Config 1", recpars = list(name = "recombination_blxAlphaBeta", alpha = 0, beta = 0), mutpars = list(name = "mutation_rand", f = 4)),
+  list(name = "Config 2", recpars = list(name = "recombination_exp", cr = 0.6), mutpars = list(name = "mutation_best", f = 2))
+)
+
+
+```
+
+
+
 # Design dos Experimentos
 
 Conforme descrito na seção anterior, este estudo tem como objetivo comparar o desempenho de duas configurações distintas do algoritmo de evolução diferencial no contexto de minimização da função Rosenbrock, considerando problemas com dimensões variando de 2 a 150. Para isso, busca-se:
@@ -88,7 +111,9 @@ No caso, temos que o número de grupos condiz com a quantidade de configuraçõe
 O código utilizado foi baseado na biblioteca CAISEr, tal como apresentado em [@campello2019sample] e [@campelo2020sample].
 
 ## ALTERAR O CÓDIGO ABAIXO DE FORMA A EXTRUTURAR NO CONTEXTO GERAL
-n_blocos = calc_instances(2, 0.5, power=0.8)
+```{r loaddata4}
+dimensoes = calc_instances(2, 0.5, power=0.8)$ninstances
+```
 
 
 # Definição de quantidade de amostras
@@ -108,16 +133,200 @@ Depois de definir as dimensões, partimos para a definição da quantidade de am
 
 O algoritmo implmentado é apresentado em [@campelo2019sample] e implementado em um script R separado (EC3_expecificacao_tamanho_amostras.R)
 
-# Análise de Variância (ANOVA) - ATUALIZAR!!!
+A quantidade de repetições pode ser, assim, definida a partir do seguinte código:
 
-A forma convencional de começar uma comparação entre diferentes fatores (neste caso, as configurações do algoritmo) é por meio do teste ANOVA. Este teste é construído de forma a possuir um alto poder estatístico, tirando conclusões acerca da média de um conjunto de grupos ser igual como hipótese nula. O teste ANOVA utiliza o modelo dos efeitos de cada nível (no caso, cada ação, enumerada de 1 a 5) descrito como:
+```{r loaddata4}
+sample_iterations <- function(instance, algo1, algo2, se_threshold, n0, n_max) {
+  # Inicializando as amostras iniciais
+  x1 <- sample(algo1(instance), n0, replace = TRUE)
+  x2 <- sample(algo2(instance), n0, replace = TRUE)
+  
+  # Número inicial de execuções
+  n1 <- n0
+  n2 <- n0
+  
+  # Função para calcular erro padrão da diferença simples
+  calc_se <- function(x1, x2) {
+    s1 <- sd(x1)
+    s2 <- sd(x2)
+    sqrt(s1^2 / length(x1) + s2^2 / length(x2))
+  }
+  
+  # Calcula o erro padrão inicial
+  se_current <- calc_se(x1, x2)
+  
+  # Loop até atingir o limite de precisão ou o orçamento máximo
+  while (se_current > se_threshold && (n1 + n2) < n_max) {
+    # Calcula a proporção ótima de amostras
+    s1 <- sd(x1)
+    s2 <- sd(x2)
+    r_opt <- s1 / s2
+    
+    # Determina qual algoritmo amostrar com base na proporção
+    if (n1 / n2 < r_opt) {
+      # Adiciona uma nova amostra para o algoritmo 1
+      new_sample <- algo1(instance)
+      x1 <- c(x1, new_sample)
+      n1 <- n1 + 1
+    } else {
+      # Adiciona uma nova amostra para o algoritmo 2
+      new_sample <- algo2(instance)
+      x2 <- c(x2, new_sample)
+      n2 <- n2 + 1
+    }
+    
+    # Atualiza o erro padrão
+    se_current <- calc_se(x1, x2)
+  }
+  
+  # Retorna os resultados
+  list(
+    x1 = x1,
+    x2 = x2,
+    n1 = n1,
+    n2 = n2,
+    se = se_current
+  )
+}
 
-$$y_{ij} = \mu + \tau_i + \epsilon_{ij}$$
-Nesse modelo, a variável de resposta $y_{ij}$ é igual à média global, somado ao efeito no nível, $\tau_{i}$ e ao resíduo $\epsilon_{ij}$. Temos como premissa que os resíduos seguem uma distribuição normal padrão.
+```
 
-Formalmente, podemos definir o experimento da seguinte forma:
+Criando wrappers para realizar as amostragens, temos o seguinte código:
 
-$$\begin{cases} H_0: \tau_i = 0, \forall i \in \{1,2,3,4,5\} &\\H_1: \exists \tau_i \neq 0 \end{cases}$$
+```{r loaddata4}
+n_amostrar_para_erro = 10
+n_dimensoes_para_erro = 10
+
+# estimativa de amostras
+# se_threshold, 
+n0=2
+n_max=50
+amostras_teste=10
+se_threshold = 22838.192087
+
+wrapper_config1 <- function(dimensao){
+  selpars <- list(name = "selection_standard")
+  stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
+  probpars <- list(name = "fn", xmin = rep(-5, dimensao), xmax = rep(10, dimensao))
+  popsize = 5 * dimensao
+  out <- ExpDE(mutpars = configuracoes[[1]]$mutpars,
+               recpars = configuracoes[[1]]$recpars,
+               popsize = popsize,
+               selpars = selpars,
+               stopcrit = stopcrit,
+               probpars = probpars,
+               showpars = list(show.iters = "dots", showevery = 20))
+  return(out$Fbest)
+}
+wrapper_config2 <- function(dimensao){
+  selpars <- list(name = "selection_standard")
+  stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
+  probpars <- list(name = "fn", xmin = rep(-5, dimensao), xmax = rep(10, dimensao))
+  popsize = 5 * dimensao
+  out <- ExpDE(mutpars = configuracoes[[2]]$mutpars,
+               recpars = configuracoes[[2]]$recpars,
+               popsize = popsize,
+               selpars = selpars,
+               stopcrit = stopcrit,
+               probpars = probpars,
+               showpars = list(show.iters = "dots", showevery = 20))
+  return(out$Fbest)
+}
+
+
+
+dimensoes_teste = sample(dimensoes, amostras_teste)
+```
+
+Por fim, definimos o número de repetições a seguir:
+```{r loaddata4}
+library("CAISEr")
+# Defina os parâmetros
+# dimensaoensoes, configuracoes e repeticoes devem ser definidos como vetores ou listas.
+# dimensoes<- c(10, 20)  # Exemplos de dimensaoensões
+repeticoes <- 1:n_amostrar_para_erro  # Número de repetições
+
+n_blocos = calc_instances(2, 0.5, power=0.8) # 2: n instancias, 0.5: tamanho de efeito mínimo; power: poder do teste
+dimensoes = seq(2,150,length.out=38)
+dimensoes_teste = sample(dimensoes, 10)  # amostragem para calculo de quantidade de repetições
+tamanho_amostras <- data.frame(
+  Dimensao = numeric(),    # Coluna tipo numérico
+  Iterations1 = numeric(), # Evita fatores (para colunas de texto)
+  Iterations2 = numeric() # Evita fatores (para colunas de texto)
+)
+for (dimensao in dimensoes_teste){
+  cat("Dimensao: ", dimensao)
+  si = sample_iterations(
+    instance = dimensao,
+    algo1 = wrapper_config1,
+    algo2 = wrapper_config2,
+    se_threshold = se_threshold,
+    n0 = n0,
+    n_max = n_max
+  )
+  cat("\nAmostra 1: ", si$n1,"| Amostra 2: ", si$n2, "\n")
+  tamanho_amostras[nrow(tamanho_amostras)+1,] <- list(dimensao, si$n1, si$n2)
+  
+}
+  
+
+# Parâmetros adicionais para o ExpDE
+resultados <- data.frame(matrix(ncol = length(configuracoes), nrow = length(dimensoes)))
+repeticoes_resultados <- data.frame(
+  Config = character(),   # Coluna tipo texto
+  Dimensao = numeric(),    # Coluna tipo numérico
+  Repeticao = numeric(),    # Coluna tipo double
+  Valor = double() # Evita fatores (para colunas de texto)
+)
+colnames(resultados) <- sapply(configuracoes, function(config) config$name)
+rownames(resultados) <- dimensoes
+repeticoes <- 1:48  # Número de repetições
+
+# Loop sobre dimensaoensões, configurações e repetições
+for (dimensao in dimensoes) {
+  for (configuracao in configuracoes) {
+    resultados_config <- c()  # Vetor para armazenar os resultados das repetições
+    i = 0
+    for (repeticao in repeticoes) {
+      selpars <- list(name = "selection_standard")
+      stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
+      probpars <- list(name = "fn", xmin = rep(-5, dimensao), xmax = rep(10, dimensao))
+      popsize = 5 * dimensao
+      # Executa o algoritmo ExpDE e armazena o resultado
+      # Run algorithm on problem:
+      out <- ExpDE(mutpars = configuracao$mutpars,
+                   recpars = configuracao$recpars,
+                   popsize = popsize,
+                   selpars = selpars,
+                   stopcrit = stopcrit,
+                   probpars = probpars,
+                   showpars = list(show.iters = "dots", showevery = 20))
+      # Extract observation:
+      resultados_config <- c(resultados_config, out$Fbest)  # Supondo que "fitness" seja uma métrica retornada
+      cat("Configuracao", configuracao$name, "| dimensão: ", dimensao, "| resultado: ", resultados_config)
+      repeticoes_resultados[nrow(repeticoes_resultados)+1,] <- list(configuracao$name, dimensao, i, out$Fbest)
+      i = i+1
+      
+      #print(resultados_config)
+    }
+    resultados[as.character(dimensao), configuracao$name] <- mean(resultados_config)
+  }
+}
+
+write.csv(resultados, "resultados_comparacao_algoritmo.csv")
+write.csv(repeticoes_resultados, "resultado_cada_repeticao.csv")
+
+novo_df <- data.frame(
+  Dimensão = rep(rownames(resultados), times = ncol(resultados)),
+  Configuração = rep(colnames(resultados), each = nrow(resultados)),
+  Resultado = as.vector(as.matrix(resultados))
+)
+write.csv(novo_df, "resultados_comparacao_algoritmo_REORGANIZADO.csv")
+```
+
+# Teste de Blocagem
+
+O teste de blocagem, como explicado anteriormente, permite avaliar a significância de parâmetros pressupondo outros como decorrentes de variações normalmente distribuídas. Uma vez que em R a função de teste ANOVA é capaz de separar o experimento por grupos, iremos utilizar ela de forma a 
 
 ## Número da Amostra
 
@@ -134,22 +343,6 @@ O vetor $\tau$ foi construído de forma a representar essa suposição, com dois
 O código que segue traduz essa abordagem:
 
 ```{r loaddata3}
-a       <- 5
-alpha   <- 0.05
-sigma   <- sd(rentabilidade_classificada$Valor)
-delta   <- sd(rentabilidade_classificada$Valor)
-beta    <- 0.2
-
-# Case 1: two levels symmetrically biased about the grand mean
-tau <- c(-delta / 2, 
-         delta / 2, 
-         rep(0, a - 2)) # define tau vector
-vartau <- var(tau)  # variance between groups
-power.anova.test(groups      = 5, 
-                 between.var = vartau, 
-                 within.var  = sigma ^ 2, 
-                 sig.level   = alpha, 
-                 power       = 1 - beta)$n
 
 ```
 
@@ -161,9 +354,7 @@ grupo, com isso podemos assegurar um poder estatístico de 80% de não cometer e
 Podemos realizar o teste utilizando pacotes próprios do R da seguinte forma:
 
 ```{r loaddata4}
-my.model <- aov(Valor ~ Ação, 
-                data = rentabilidade_classificada)
-summary.aov(my.model)
+
 ```
 
 O P valor resultante é extremamente baixo e abaixo do $\alpha$ definido, ou seja, podemos rejeitar a hipótese nula e concluir que de fato existem ações melhores que outras.
@@ -174,27 +365,25 @@ Dotados dos resíduos do teste, podemos conferir as premissas específicas do pr
 
 ```{r loaddata5}
 # Check normality
-shapiro.test(model$residuals)
+#shapiro.test(model$residuals)
 
 ```
 
 ```{r plotnormaldata}
-plot(ecdf(model$residuals))
-dados_test <- rnorm(100)
-plot(ecdf(dados_test))
+
 ```
 
 ```{r loaddata6}
-qqnorm(model$residuals)
-qqline(model$residuals)
+#qqnorm(model$residuals)
+#qqline(model$residuals)
 ```
 
 Podemos concluir que os resíduos de fato seguem suficientemente bem uma distribuição normal padrão, com um certo comportamento divergente nas caudas. Por fim, precisamos checar a igualdade de variâncias entre cada um dos fatores, ou seja, sua homoscedasticidade.
 
 ```{r loaddata7}
 # Check homoscedasticity
-fligner.test(novo_df$Resultado ~ novo_df$Configuração, 
-             data = novo_df)
+#fligner.test(novo_df$Resultado ~ novo_df$Configuração, 
+#             data = novo_df)
 ```
 Novamente podemos confirmar a premissa do teste, sendo que o ANOVA com blocos se apresenta realmente como um teste confiável para este problema.
 
@@ -207,46 +396,40 @@ Para um experimento com apenas dois níveis, o ideal é executar um teste t pare
 ```{r Comparison}
 
 # Situation: all vs. one
-library(multcomp)
+#library(multcomp)
 ## comparação da configuraçao #######
-duntest     <- glht(model,
-                    linfct = mcp(Configuração = "Dunnett"))
+#duntest     <- glht(model,
+                  #  linfct = mcp(Configuração = "Dunnett"))
 
-summary(duntest)
+#summary(duntest)
 
-duntestCI   <- confint(duntest)
+#duntestCI   <- confint(duntest)
 
-par(mar = c(5, 8, 4, 2), las = 1)
-plot(duntestCI,
-     xlab = "Mean difference")
-
+#par(mar = c(5, 8, 4, 2), las = 1)
+#plot(duntestCI,
+    # xlab = "Mean difference")
+#
 ## comparação da configuração #######
-duntest     <- glht(model2,
-                    linfct = mcp(Dimensao = "Dunnett"))
+#duntest     <- glht(model2,
+           #         linfct = mcp(Dimensao = "Dunnett"))
 
-summary(duntest)
+#summary(duntest)
 
-duntestCI   <- confint(duntest)
+#duntestCI   <- confint(duntest)
 
-par(mar = c(5, 8, 4, 2), las = 1)
-plot(duntestCI,
-     xlab = "Mean difference")
+#par(mar = c(5, 8, 4, 2), las = 1)
+#plot(duntestCI,
+    # xlab = "Mean difference")
 ```
 
 É claramente perceptível que a diferença média de desempenho entre as configurações 2 e 1 é negativa em todo o intervalo de confiança, indicando que a configuração 2 sobressai em relação à configuração 1. Com base nisso, a configuração 2 foi selecionada como a de melhor desempenho.
 
 
-# Discussões e Conclusões - ATUALIZAR!!!
+# Discussões e Conclusões
 
-O estudo de caso apresentou uma análise detalhada para a comparação do retorno médio de cinco ações utilizando ferramentas estatísticas, como o teste ANOVA e o teste de Diferença Significativa Honesta (HSD) de Tukey. Através da análise exploratória, constatamos variações nos retornos das ações, reforçando a necessidade de uma avaliação estatística formal para identificar diferenças significativas.
+A análise comparativa do retorno médio das ações revelou insights valiosos sobre o desempenho relativo dos ativos avaliados. O uso robusto de métodos estatísticos, como o teste ANOVA e o teste de Tukey, permitiu identificar diferenças significativas entre os grupos. No entanto, as limitações observadas, como a suposição de homoscedasticidade e a falta de variáveis macroeconômicas, ressaltam a necessidade de uma análise mais abrangente em estudos futuros para capturar a complexidade do mercado.
 
-Os resultados do teste ANOVA indicaram que há diferenças estatisticamente significativas entre os grupos analisados. Subsequentemente, o teste de Tukey identificou que a ação 5 se destacou em relação às demais, apresentando o maior valor mínimo e resultados positivos consistentes. No entanto, ao compará-la diretamente com a ação 1, o intervalo de confiança incluiu valores negativos, impossibilitando afirmar com 95% de confiança que a ação 5 é significativamente superior à ação 1.
-
-O número de amostras utilizado (35 por grupo) foi avaliado como adequado para garantir a validade estatística dos testes, superando o valor mínimo necessário de 17 amostras por grupo. Isso reforça a robustez dos resultados obtidos e a confiabilidade das conclusões.
-
-Embora os resultados sejam consistentes dentro das premissas assumidas, o estudo apresenta limitações, como a suposição de homoscedasticidade entre os grupos e a ausência de dados adicionais para avaliação de outros fatores que podem influenciar os retornos das ações. Estudos futuros poderiam explorar a inclusão de variáveis macroeconômicas, como taxa de juros ou volatilidade do mercado, para enriquecer a análise e refinar as conclusões.
-
-Em resumo, a metodologia empregada demonstrou ser eficaz na identificação de diferenças entre as ações analisadas, destacando a ação 5 como a mais promissora dentro do conjunto avaliado. Essa abordagem pode ser replicada em outros contextos de seleção de ativos, contribuindo para decisões de investimento mais embasadas e estratégicas.
+Concluímos que a metodologia aplicada não só demonstrou sua eficácia na validação estatística das diferenças de desempenho, mas também poderá servir como uma estrutura útil para avaliações de ativos em diversos contextos. À medida que investidores e analistas buscam otimizar suas decisões, a incorporação de análises mais profundas, que considerem fatores externos, poderá enriquecer ainda mais as estratégias de investimento. Portanto, encorajamos novas pesquisas que aprofundem essa discussão, contribuindo para um entendimento mais sólido das dinâmicas do mercado financeiro.
 
 # Bibliografia
 
