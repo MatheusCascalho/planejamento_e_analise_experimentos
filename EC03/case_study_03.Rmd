@@ -3,10 +3,10 @@ title: 'Estudo de Caso 03: Avaliação e comparação de duas configurações de
 author: "Joao P. L. Pinto, Thales H. de O. Gonçalves, Henrique A. Barbosa, \\
 date: 23 de Dezembro de 2024"
 output:
-  pdf_document:
-    fig_caption: true
   html_document:
     df_print: paged
+  pdf_document:
+    fig_caption: true
 editor_options:
   markdown:
     wrap: 72
@@ -329,7 +329,7 @@ Por fim, definimos o número de repetições a seguir:
 
 # Teste de Blocagem
 
-O teste de blocagem, como explicado anteriormente, permite avaliar a significância de parâmetros pressupondo outros como decorrentes de variações normalmente distribuídas. Uma vez que em R a função de teste ANOVA é capaz de separar o experimento por grupos, iremos utilizar ela para o experimento.
+O teste de blocagem, como explicado anteriormente, permite avaliar a significância de parâmetros pressupondo outros como decorrentes de variações normalmente distribuídas. Uma vez que em R a função de teste ANOVA é capaz de separar o experimento por grupos, iremos utilizar ela para o experimento. O dataframe novo_df possui os dados das médias dos experimentos para cada par de configuração/bloco analisado.
 
 ```{r loaddata5}
 
@@ -356,80 +356,71 @@ p <- ggplot(novo_df, aes(x = dim_numeric,
 p + geom_line(linetype=2) + geom_point(size=5)
 ```
 
-Podemos notar que, de fato, ...
+Podemos notar que, de fato, o fator de configuração não pode ser desprezado e consequentemente alguma das configurações possui um desempenho melhor que a outra. 
+
+Em contrapartida, o fator de dimensão não pode ser tomado como significativo no caso de considerar os blocos do experimento como cada uma das configurações. Apesar de este não ser o motivo primário da realização do experimento, abre possibilidades interessantes de otimização das configurações e fine-tunning de parâmetros de forma a se comportar bem em diversas dimensões.
+
+Apenas como uma análise complementar, iremos utilizar o resultado considerando todas as execuções dos algoritmos, ou seja, não iremos analisar apenas a média. Esta análise, apesar de não ser necessária nem possuir significado estatístico como a prévia, permite-nos avaliar a constância das médias no experimento.
+```{r loaddata13}
+repeticoes_resultados <- read.csv("resultado_cada_repeticao.csv")
+
+repeticoes_resultados$Config <- as.factor(repeticoes_resultados$Config)
+repeticoes_resultados$Dimensao <- as.factor(repeticoes_resultados$Dimensao)
+model2 <- aov(Valor~Config+Dimensao,
+             data = repeticoes_resultados)
+
+summary(model2)
+```
+
+Neste caso, a dimensão apresentou-se como um fator relevante. Apesar de isto não comprovar a dimensão em si como um fator relevante ao considerar o comportamento médio, abre portas para explorar o efeito de dimensões maiores no problema.
 
 ## Testes Post-Hoc
 
-Apenas de forma a expandir a análise, iremos analisar o efeito ao considerar as dimensões como os 
+Podemos analisar qual a significância da configuração de forma mais aprofundada realizando um teste de Dunnett. Apesar de não ser necessário por termos apenas duas configurações, o teste de blocagem ter rejeitado a hipótese de a configuração ter um efeito desprezível e ser evidente qual das configurações possui um melhor comportamento, ainda é valido realizar este teste para termos noção do tamanho do intervalo de confiança que embasa nossa decisão.
 
-## Teste ANOVA - ATUALIZAR!!!
+```{r loaddata11}
+library(multcomp)
 
-Podemos realizar o teste utilizando pacotes próprios do R da seguinte forma:
+duntest     <- glht(model,
+                    linfct = mcp(Configuração = "Dunnett"))
 
+summary(duntest)
 
+duntestCI   <- confint(duntest)
 
-O P valor resultante é extremamente baixo e abaixo do $\alpha$ definido, ou seja, podemos rejeitar a hipótese nula e concluir que de fato existem ações melhores que outras.
+par(mar = c(5, 8, 4, 2), las = 1)
+plot(duntestCI,
+     xlab = "Mean difference")
+
+```
+
+Podemos perceber que o intervalo de confiança está de fato longe da origem, o que aumenta nossa confiança na conclusão de que há diferença significativa no comportamento das duas configurações.
 
 ## Premissas do Teste
 
 Dotados dos resíduos do teste, podemos conferir as premissas específicas do próprio teste. Inicialmente, verificamos se os resíduos seguem de fato uma normal padrão
 
 ```{r loaddata6}
-# Check normality
-#shapiro.test(model$residuals)
+shapiro.test(model$residuals)
 
+
+qqnorm(model$residuals)
+qqline(model$residuals)
+
+hist(model$residuals)
+
+plot(ecdf(model$residuals))
+dados_test <- rnorm(100)
+plot(ecdf(dados_test))
 ```
 
-```{r plotnormaldata}
-
-```
-
-
-Podemos concluir que os resíduos de fato seguem suficientemente bem uma distribuição normal padrão, com um certo comportamento divergente nas caudas. Por fim, precisamos checar a igualdade de variâncias entre cada um dos fatores, ou seja, sua homoscedasticidade.
+Os resíduos do teste não seguem uma distribuição normal padrão. Apesar disso, tanto pela quantidade de dados quanto pelas maiores dispersões ocorrerem nas extremidades da cauda, ainda podemos considerar como válidos os resultados do experimento.
 
 ```{r loaddata7}
-# Check homoscedasticity
-#fligner.test(novo_df$Resultado ~ novo_df$Configuração, 
-#             data = novo_df)
+fligner.test(novo_df$Resultado ~ novo_df$Configuração, 
+             data = novo_df)
 ```
-Novamente podemos confirmar a premissa do teste, sendo que o ANOVA com blocos se apresenta realmente como um teste confiável para este problema.
-
-# Comparação Entre os Níveis
-
-Após a realização do teste aleatorizado com blocos, e a rejeição de $H_0$, conclui-se que os níveis são significativamente diferentes entre si, independentemente do número de dimensões do problema. Isso indica que uma configuração de algoritmo apresenta desempenho superior ao outro.
-
-Para um experimento com apenas dois níveis, o ideal é executar um teste t pareado. No entanto, como o problema em questão é um caso particular de uma comparação múltipla com apenas dois níveis, para identificar qual configuração oferece o melhor desempenho, decidiu-se por aplicar um teste post-hoc de Dunnett de todos os grupos contra um. Esse teste, na prática, equivale a um teste t quando se trata de apenas dois níveis. Por fim, o intervalo de confiança da diferença entre os níveis é exibido para facilitar a interpretação dos resultados.
-
-```{r Comparison}
-
-# Situation: all vs. one
-#library(multcomp)
-## comparação da configuraçao #######
-#duntest     <- glht(model,
-                  #  linfct = mcp(Configuração = "Dunnett"))
-
-#summary(duntest)
-
-#duntestCI   <- confint(duntest)
-
-#par(mar = c(5, 8, 4, 2), las = 1)
-#plot(duntestCI,
-    # xlab = "Mean difference")
-#
-## comparação da configuração #######
-#duntest     <- glht(model2,
-           #         linfct = mcp(Dimensao = "Dunnett"))
-
-#summary(duntest)
-
-#duntestCI   <- confint(duntest)
-
-#par(mar = c(5, 8, 4, 2), las = 1)
-#plot(duntestCI,
-    # xlab = "Mean difference")
-```
-
-É claramente perceptível que a diferença média de desempenho entre as configurações 2 e 1 é negativa em todo o intervalo de confiança, indicando que a configuração 2 sobressai em relação à configuração 1. Com base nisso, a configuração 2 foi selecionada como a de melhor desempenho.
+Novamente, o teste rejeita a hipótese nula e não podemos supor a premissa de igualdade de variâncias. Precisamos novamente de nos basear na quantidade de dados utilizados no experimento de forma a manter as conclusões aqui extraídas.
 
 
 # Discussões e Conclusões

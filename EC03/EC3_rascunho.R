@@ -136,7 +136,7 @@ wrapper_config2 <- function(dimensao){
 
 
 
-# dimensoes_teste = sample(dimensoes, amostras_teste)
+dimensoes_teste = sample(dimensoes, amostras_teste)
 
 
 ###################################################################
