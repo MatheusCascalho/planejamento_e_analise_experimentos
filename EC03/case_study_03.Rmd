@@ -3,10 +3,10 @@ title: 'Estudo de Caso 03: Avaliação e comparação de duas configurações de
 author: "Joao P. L. Pinto, Thales H. de O. Gonçalves, Henrique A. Barbosa, \\
 date: 23 de Dezembro de 2024"
 output:
-  html_document:
-    df_print: paged
   pdf_document:
     fig_caption: true
+  html_document:
+    df_print: paged
 editor_options:
   markdown:
     wrap: 72
@@ -39,9 +39,9 @@ if (!require(reshape2, quietly = TRUE)){
 ```
 
 ## Descrição do Problema
-Em diversas situações, como no design de asas de aeronaves para maximizar a eficiência aerodinâmica \cite[della2019application] ou no treinamento de robôs para executar tarefas específicas \cite[grefenstette1994evolutionary], é necessário minimizar (ou maximizar) uma função de custo de interesse. Entretanto, quando não é possível encontrar uma solução analiticamente para seu ponto de mínimo (máximo), recorre-se a métodos heurísticos de otimização. Entre esses métodos destacam-se os algoritmos evolucionários \cite[holland1992adaptation], que simulam processos naturais de evolução, utilizando populações de possíveis soluções, inicialmente geradas de forma aleatória, para evoluir gradativamente em direção a respostas que melhor atendam ao problema em questão.
+Em diversas situações, como no design de asas de aeronaves para maximizar a eficiência aerodinâmica [@della2019application] ou no treinamento de robôs para executar tarefas específicas [@grefenstette1994evolutionary], é necessário minimizar (ou maximizar) uma função de custo de interesse. Entretanto, quando não é possível encontrar uma solução analiticamente para seu ponto de mínimo (máximo), recorre-se a métodos heurísticos de otimização. Entre esses métodos destacam-se os algoritmos evolucionários [@holland1992adaptation], que simulam processos naturais de evolução, utilizando populações de possíveis soluções, inicialmente geradas de forma aleatória, para evoluir gradativamente em direção a respostas que melhor atendam ao problema em questão.
 
-Um dos algoritmos evolucionários mais comuns e amplamente utilizados é o algoritmo de Evolução Diferencial \cite[price2006differential]. Nesse método, uma população inicial de vetores-soluções é gerada aleatoriamente, e cada indivíduo da população é avaliado com base na função de custo a ser otimizada. Durante várias iterações, ou épocas, os indivíduos passam por processos de mutação e cruzamento. A mutação introduz diversidade ao alterar características de forma aleatória, enquanto o cruzamento combina as melhores soluções, promovendo o desenvolvimento da população para um melhor resultado. Ao final do processo, o indivíduo com o melhor desempenho, ou "fit", é considerado a solução do problema.
+Um dos algoritmos evolucionários mais comuns e amplamente utilizados é o algoritmo de Evolução Diferencial [@price2006differential]. Nesse método, uma população inicial de vetores-soluções é gerada aleatoriamente, e cada indivíduo da população é avaliado com base na função de custo a ser otimizada. Durante várias iterações, ou épocas, os indivíduos passam por processos de mutação e cruzamento. A mutação introduz diversidade ao alterar características de forma aleatória, enquanto o cruzamento combina as melhores soluções, promovendo o desenvolvimento da população para um melhor resultado. Ao final do processo, o indivíduo com o melhor desempenho, ou "fit", é considerado a solução do problema.
 
 Esse algoritmo, no entanto, apresenta múltiplos métodos de recombinação e mutação, assim como diversos hiperparâmetros, que influenciam diretamente seu funcionamento, podendo resultar em variações significativas de desempenho dependendo das configurações escolhidas. Neste trabalho, busca-se comparar o desempenho de duas configurações distintas aplicadas a dois algoritmos de Evolução Diferencial, avaliando a qualidade das soluções encontradas de forma independente do número de dimensões do problema. A tabela a seguir apresenta os métodos de recombinação e cruzamento utilizados em cada configuração do algoritmo, assim como seus respectivos hiperparâmetros.
 
@@ -73,6 +73,10 @@ fn <- function(X){
 # testing the function on a matrix composed of 2 points
 X <- matrix(runif(20), nrow = 2) # runif gera uma distribuição uniforme aleatória
 fn(X)
+
+
+suppressPackageStartupMessages(library(ExpDE))
+
 
 configuracoes <- list(
   list(name = "Config 1", recpars = list(name = "recombination_blxAlphaBeta", alpha = 0, beta = 0), mutpars = list(name = "mutation_rand", f = 4)),
@@ -108,10 +112,10 @@ Apesar de existirem 148 grupos presentes no problema, considerando cada grupo co
 
 No caso, temos que o número de grupos condiz com a quantidade de configurações do algoritmo, ou seja, duas. Além disto, seguindo o padrão expresso na literatura, temos que $\beta = 0.8$. O tamanho de efeito mínimo relevante foi definido como 0.5, uma proposta baseada no decaimento lento da função de Rosenbrock, conseguindo detectar dificuldades de caminhar em bacias de atração com gradientes pouco significativos.
 
-O código utilizado foi baseado na biblioteca CAISEr, tal como apresentado em [@campello2019sample] e [@campelo2020sample].
+O código utilizado foi baseado na biblioteca CAISEr, tal como apresentado em [@campelo2019sample] e [@campelo2020sample].
 
-## ALTERAR O CÓDIGO ABAIXO DE FORMA A EXTRUTURAR NO CONTEXTO GERAL
-```{r loaddata4}
+```{r loaddata1}
+library("CAISEr")
 dimensoes = calc_instances(2, 0.5, power=0.8)$ninstances
 ```
 
@@ -135,7 +139,7 @@ O algoritmo implmentado é apresentado em [@campelo2019sample] e implementado em
 
 A quantidade de repetições pode ser, assim, definida a partir do seguinte código:
 
-```{r loaddata4}
+```{r loaddata2}
 sample_iterations <- function(instance, algo1, algo2, se_threshold, n0, n_max) {
   # Inicializando as amostras iniciais
   x1 <- sample(algo1(instance), n0, replace = TRUE)
@@ -193,7 +197,7 @@ sample_iterations <- function(instance, algo1, algo2, se_threshold, n0, n_max) {
 
 Criando wrappers para realizar as amostragens, temos o seguinte código:
 
-```{r loaddata4}
+```{r loaddata3}
 n_amostrar_para_erro = 10
 n_dimensoes_para_erro = 10
 
@@ -239,123 +243,130 @@ dimensoes_teste = sample(dimensoes, amostras_teste)
 ```
 
 Por fim, definimos o número de repetições a seguir:
-```{r loaddata4}
-library("CAISEr")
-# Defina os parâmetros
-# dimensaoensoes, configuracoes e repeticoes devem ser definidos como vetores ou listas.
-# dimensoes<- c(10, 20)  # Exemplos de dimensaoensões
-repeticoes <- 1:n_amostrar_para_erro  # Número de repetições
-
-n_blocos = calc_instances(2, 0.5, power=0.8) # 2: n instancias, 0.5: tamanho de efeito mínimo; power: poder do teste
-dimensoes = seq(2,150,length.out=38)
-dimensoes_teste = sample(dimensoes, 10)  # amostragem para calculo de quantidade de repetições
-tamanho_amostras <- data.frame(
-  Dimensao = numeric(),    # Coluna tipo numérico
-  Iterations1 = numeric(), # Evita fatores (para colunas de texto)
-  Iterations2 = numeric() # Evita fatores (para colunas de texto)
-)
-for (dimensao in dimensoes_teste){
-  cat("Dimensao: ", dimensao)
-  si = sample_iterations(
-    instance = dimensao,
-    algo1 = wrapper_config1,
-    algo2 = wrapper_config2,
-    se_threshold = se_threshold,
-    n0 = n0,
-    n_max = n_max
-  )
-  cat("\nAmostra 1: ", si$n1,"| Amostra 2: ", si$n2, "\n")
-  tamanho_amostras[nrow(tamanho_amostras)+1,] <- list(dimensao, si$n1, si$n2)
-  
-}
-  
-
-# Parâmetros adicionais para o ExpDE
-resultados <- data.frame(matrix(ncol = length(configuracoes), nrow = length(dimensoes)))
-repeticoes_resultados <- data.frame(
-  Config = character(),   # Coluna tipo texto
-  Dimensao = numeric(),    # Coluna tipo numérico
-  Repeticao = numeric(),    # Coluna tipo double
-  Valor = double() # Evita fatores (para colunas de texto)
-)
-colnames(resultados) <- sapply(configuracoes, function(config) config$name)
-rownames(resultados) <- dimensoes
-repeticoes <- 1:48  # Número de repetições
-
-# Loop sobre dimensaoensões, configurações e repetições
-for (dimensao in dimensoes) {
-  for (configuracao in configuracoes) {
-    resultados_config <- c()  # Vetor para armazenar os resultados das repetições
-    i = 0
-    for (repeticao in repeticoes) {
-      selpars <- list(name = "selection_standard")
-      stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
-      probpars <- list(name = "fn", xmin = rep(-5, dimensao), xmax = rep(10, dimensao))
-      popsize = 5 * dimensao
-      # Executa o algoritmo ExpDE e armazena o resultado
-      # Run algorithm on problem:
-      out <- ExpDE(mutpars = configuracao$mutpars,
-                   recpars = configuracao$recpars,
-                   popsize = popsize,
-                   selpars = selpars,
-                   stopcrit = stopcrit,
-                   probpars = probpars,
-                   showpars = list(show.iters = "dots", showevery = 20))
-      # Extract observation:
-      resultados_config <- c(resultados_config, out$Fbest)  # Supondo que "fitness" seja uma métrica retornada
-      cat("Configuracao", configuracao$name, "| dimensão: ", dimensao, "| resultado: ", resultados_config)
-      repeticoes_resultados[nrow(repeticoes_resultados)+1,] <- list(configuracao$name, dimensao, i, out$Fbest)
-      i = i+1
-      
-      #print(resultados_config)
-    }
-    resultados[as.character(dimensao), configuracao$name] <- mean(resultados_config)
-  }
-}
-
-write.csv(resultados, "resultados_comparacao_algoritmo.csv")
-write.csv(repeticoes_resultados, "resultado_cada_repeticao.csv")
-
-novo_df <- data.frame(
-  Dimensão = rep(rownames(resultados), times = ncol(resultados)),
-  Configuração = rep(colnames(resultados), each = nrow(resultados)),
-  Resultado = as.vector(as.matrix(resultados))
-)
-write.csv(novo_df, "resultados_comparacao_algoritmo_REORGANIZADO.csv")
+```{r loaddata10}
+# # Defina os parâmetros
+# # dimensaoensoes, configuracoes e repeticoes devem ser definidos como vetores ou listas.
+# # dimensoes<- c(10, 20)  # Exemplos de dimensaoensões
+# repeticoes <- 1:n_amostrar_para_erro  # Número de repetições
+# 
+# n_blocos = calc_instances(2, 0.5, power=0.8) # 2: n instancias, 0.5: tamanho de efeito mínimo; power: poder do teste
+# dimensoes = seq(2,150,length.out=38)
+# dimensoes_teste = sample(dimensoes, 10)  # amostragem para calculo de quantidade de repetições
+# tamanho_amostras <- data.frame(
+#   Dimensao = numeric(),    # Coluna tipo numérico
+#   Iterations1 = numeric(), # Evita fatores (para colunas de texto)
+#   Iterations2 = numeric() # Evita fatores (para colunas de texto)
+# )
+# for (dimensao in dimensoes_teste){
+#   cat("Dimensao: ", dimensao)
+#   si = sample_iterations(
+#     instance = dimensao,
+#     algo1 = wrapper_config1,
+#     algo2 = wrapper_config2,
+#     se_threshold = se_threshold,
+#     n0 = n0,
+#     n_max = n_max
+#   )
+#   cat("\nAmostra 1: ", si$n1,"| Amostra 2: ", si$n2, "\n")
+#   tamanho_amostras[nrow(tamanho_amostras)+1,] <- list(dimensao, si$n1, si$n2)
+#   
+# }
+#   
+# 
+# # Parâmetros adicionais para o ExpDE
+# resultados <- data.frame(matrix(ncol = length(configuracoes), nrow = length(dimensoes)))
+# repeticoes_resultados <- data.frame(
+#   Config = character(),   # Coluna tipo texto
+#   Dimensao = numeric(),    # Coluna tipo numérico
+#   Repeticao = numeric(),    # Coluna tipo double
+#   Valor = double() # Evita fatores (para colunas de texto)
+# )
+# colnames(resultados) <- sapply(configuracoes, function(config) config$name)
+# rownames(resultados) <- dimensoes
+# repeticoes <- 1:48  # Número de repetições
+# 
+# # Loop sobre dimensaoensões, configurações e repetições
+# for (dimensao in dimensoes) {
+#   for (configuracao in configuracoes) {
+#     resultados_config <- c()  # Vetor para armazenar os resultados das repetições
+#     i = 0
+#     for (repeticao in repeticoes) {
+#       selpars <- list(name = "selection_standard")
+#       stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
+#       probpars <- list(name = "fn", xmin = rep(-5, dimensao), xmax = rep(10, dimensao))
+#       popsize = 5 * dimensao
+#       # Executa o algoritmo ExpDE e armazena o resultado
+#       # Run algorithm on problem:
+#       out <- ExpDE(mutpars = configuracao$mutpars,
+#                    recpars = configuracao$recpars,
+#                    popsize = popsize,
+#                    selpars = selpars,
+#                    stopcrit = stopcrit,
+#                    probpars = probpars,
+#                    showpars = list(show.iters = "dots", showevery = 20))
+#       # Extract observation:
+#       resultados_config <- c(resultados_config, out$Fbest)  # Supondo que "fitness" seja uma métrica retornada
+#       cat("Configuracao", configuracao$name, "| dimensão: ", dimensao, "| resultado: ", resultados_config)
+#       repeticoes_resultados[nrow(repeticoes_resultados)+1,] <- list(configuracao$name, dimensao, i, out$Fbest)
+#       i = i+1
+#       
+#       #print(resultados_config)
+#     }
+#     resultados[as.character(dimensao), configuracao$name] <- mean(resultados_config)
+#   }
+# }
+# 
+# write.csv(resultados, "resultados_comparacao_algoritmo.csv")
+# write.csv(repeticoes_resultados, "resultado_cada_repeticao.csv")
+# 
+# novo_df <- data.frame(
+#   Dimensão = rep(rownames(resultados), times = ncol(resultados)),
+#   Configuração = rep(colnames(resultados), each = nrow(resultados)),
+#   Resultado = as.vector(as.matrix(resultados))
+# )
+# write.csv(novo_df, "resultados_comparacao_algoritmo_REORGANIZADO.csv")
 ```
 
 # Teste de Blocagem
 
-O teste de blocagem, como explicado anteriormente, permite avaliar a significância de parâmetros pressupondo outros como decorrentes de variações normalmente distribuídas. Uma vez que em R a função de teste ANOVA é capaz de separar o experimento por grupos, iremos utilizar ela de forma a 
+O teste de blocagem, como explicado anteriormente, permite avaliar a significância de parâmetros pressupondo outros como decorrentes de variações normalmente distribuídas. Uma vez que em R a função de teste ANOVA é capaz de separar o experimento por grupos, iremos utilizar ela para o experimento.
 
-## Número da Amostra
+```{r loaddata5}
 
-Apesar de não ser possível conseguir novos dados para a execução dos
-testes, é relevante confirmar se a quantidade de dados aqui presentes consegue
-gerar o poder do teste esperado para nosso experimentos. Vale notar que a relevância do fator $\delta$ foi tomado como o desvio padrão dos valores, sendo o fator de relevância mais natural considerando o problema em questão.
+novo_df <- read.csv('resultados_comparacao_algoritmo_REORGANIZADO.csv')
+novo_df$dim_numeric <- as.numeric(novo_df$Dimensão)
+novo_df$Configuração <- as.factor(novo_df$Configuração)
+novo_df$Dimensão <- as.factor(novo_df$Dimensão)
 
-Valores de $\alpha$ e $\beta$ utilizados são valores padrões na literatura, sendo valores de significância estatística consideráveis. O parâmetro $a$ refere-se ao número de grupos em questão, ou seja, 5 conjuntos de ações.
+model <- aov(Resultado~Configuração+Dimensão,
+             data = novo_df)
 
-No contexto deste estudo, assume-se que apenas dois grupos apresentam desvios em relação à média global, enquanto os demais têm valores nulos de $\tau$. Essa abordagem reflete uma situação onde as diferenças significativas estão concentradas em apenas dois níveis.
+summary(model)
+summary.lm(model)$r.squared
 
-O vetor $\tau$ foi construído de forma a representar essa suposição, com dois valores simetricamente opostos ($-\delta / 2$ e $\delta / 2$), enquanto os demais níveis são definidos como 0. A variância entre os grupos é então calculada com base nesse vetor, sendo um parâmetro fundamental para estimar o número de amostras necessárias para alcançar o poder estatístico desejado.
+library(ggplot2)
+library(dplyr)
+arrange(novo_df, dim_numeric)
 
-O código que segue traduz essa abordagem:
-
-```{r loaddata3}
-
+# Análise da Configuração pela Dimensão
+p <- ggplot(novo_df, aes(x = dim_numeric, 
+                         y = Resultado, 
+                         group = Configuração, 
+                         colour = Configuração))
+p + geom_line(linetype=2) + geom_point(size=5)
 ```
 
-O valor de n presente no teste é inferior ao número de dados que possuímos para cada
-grupo, com isso podemos assegurar um poder estatístico de 80% de não cometer erros do tipo II (Falso negativo).
+Podemos notar que, de fato, ...
+
+## Testes Post-Hoc
+
+Apenas de forma a expandir a análise, iremos analisar o efeito ao considerar as dimensões como os 
 
 ## Teste ANOVA - ATUALIZAR!!!
 
 Podemos realizar o teste utilizando pacotes próprios do R da seguinte forma:
 
-```{r loaddata4}
 
-```
 
 O P valor resultante é extremamente baixo e abaixo do $\alpha$ definido, ou seja, podemos rejeitar a hipótese nula e concluir que de fato existem ações melhores que outras.
 
@@ -363,7 +374,7 @@ O P valor resultante é extremamente baixo e abaixo do $\alpha$ definido, ou sej
 
 Dotados dos resíduos do teste, podemos conferir as premissas específicas do próprio teste. Inicialmente, verificamos se os resíduos seguem de fato uma normal padrão
 
-```{r loaddata5}
+```{r loaddata6}
 # Check normality
 #shapiro.test(model$residuals)
 
@@ -373,10 +384,6 @@ Dotados dos resíduos do teste, podemos conferir as premissas específicas do pr
 
 ```
 
-```{r loaddata6}
-#qqnorm(model$residuals)
-#qqline(model$residuals)
-```
 
 Podemos concluir que os resíduos de fato seguem suficientemente bem uma distribuição normal padrão, com um certo comportamento divergente nas caudas. Por fim, precisamos checar a igualdade de variâncias entre cada um dos fatores, ou seja, sua homoscedasticidade.
 

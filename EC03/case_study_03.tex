@@ -1,0 +1,918 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Estudo de Caso 03: Avaliação e comparação de duas configurações de Algoritmos Evolucionários},
+  pdfauthor={Joao P. L. Pinto, Thales H. de O. Gonçalves, Henrique A. Barbosa, ~date: 23 de Dezembro de 2024},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Estudo de Caso 03: Avaliação e comparação de duas configurações
+de Algoritmos Evolucionários}
+\author{Joao P. L. Pinto, Thales H. de O. Gonçalves, Henrique A.
+Barbosa, ~date: 23 de Dezembro de 2024}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{verbatim}
+## Registered S3 method overwritten by 'GGally':
+##   method from   
+##   +.gg   ggplot2
+\end{verbatim}
+
+\hypertarget{descriuxe7uxe3o-do-problema}{%
+\subsection{Descrição do Problema}\label{descriuxe7uxe3o-do-problema}}
+
+Em diversas situações, como no design de asas de aeronaves para
+maximizar a eficiência aerodinâmica {[}1{]} ou no treinamento de robôs
+para executar tarefas específicas {[}2{]}, é necessário minimizar (ou
+maximizar) uma função de custo de interesse. Entretanto, quando não é
+possível encontrar uma solução analiticamente para seu ponto de mínimo
+(máximo), recorre-se a métodos heurísticos de otimização. Entre esses
+métodos destacam-se os algoritmos evolucionários {[}3{]}, que simulam
+processos naturais de evolução, utilizando populações de possíveis
+soluções, inicialmente geradas de forma aleatória, para evoluir
+gradativamente em direção a respostas que melhor atendam ao problema em
+questão.
+
+Um dos algoritmos evolucionários mais comuns e amplamente utilizados é o
+algoritmo de Evolução Diferencial {[}4{]}. Nesse método, uma população
+inicial de vetores-soluções é gerada aleatoriamente, e cada indivíduo da
+população é avaliado com base na função de custo a ser otimizada.
+Durante várias iterações, ou épocas, os indivíduos passam por processos
+de mutação e cruzamento. A mutação introduz diversidade ao alterar
+características de forma aleatória, enquanto o cruzamento combina as
+melhores soluções, promovendo o desenvolvimento da população para um
+melhor resultado. Ao final do processo, o indivíduo com o melhor
+desempenho, ou ``fit'', é considerado a solução do problema.
+
+Esse algoritmo, no entanto, apresenta múltiplos métodos de recombinação
+e mutação, assim como diversos hiperparâmetros, que influenciam
+diretamente seu funcionamento, podendo resultar em variações
+significativas de desempenho dependendo das configurações escolhidas.
+Neste trabalho, busca-se comparar o desempenho de duas configurações
+distintas aplicadas a dois algoritmos de Evolução Diferencial, avaliando
+a qualidade das soluções encontradas de forma independente do número de
+dimensões do problema. A tabela a seguir apresenta os métodos de
+recombinação e cruzamento utilizados em cada configuração do algoritmo,
+assim como seus respectivos hiperparâmetros.
+
+\[
+\begin{table}[]
+\begin{tabular}{ccc}
+Configuração & Método de Recombinação                                                                                 & Método de Mutação                                                          \\
+1            & Blend Alpha Beta Recombination for DE \cite[herrera2003taxonomy] com $\alpha=0$ e $\beta=0$                                 & Em indivíduos aleatórios, com fator de escala do vetor de diferenças $f=4$ \\
+2            & Recombinação Exponencial \cite[price2006differential] com probabilidade de cada ponto do vetor ser um ponto de corte $cr=0,6$ & Nos melhores indivíduos, com fator de escala do vetor de diferenças $f=2$ 
+\end{tabular}
+\end{table}
+\]
+
+A função de custo que deseja-se minimizar no contexto desse trabalho é a
+função Rosembrock para os limites \(-5\le x_i \le 10\), \(i=1,...,dim\)
+para um problema de \(dim \in [2,150]\) dimensões. O tamanho da
+população e o número máximo de iterações do algoritmo são dependentes de
+\(dim\), sendo esses valores \(5*dim\) e \(100*dim\), respectivamente.
+Os parâmetros experimentais dados para este estudo são:
+
+\begin{itemize}
+\tightlist
+\item
+  Mínima diferença de importância prática (padronizada): \(d^*=0.5\)
+\item
+  Significância desejada: \(\alpha=0.05\)
+\item
+  Potência mínima desejada: \(1-\beta=0.8\)
+\end{itemize}
+
+Para começar o código, primeiro definimos funções capazes de gerar os
+problemas e definir as configurações a serem utilizadas:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dimensao }\OtherTok{\textless{}{-}} \DecValTok{10}
+\NormalTok{fn }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(X)\{}
+  \ControlFlowTok{if}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.matrix}\NormalTok{(X)) X }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(X, }\AttributeTok{nrow =} \DecValTok{1}\NormalTok{) }\CommentTok{\# \textless{}{-} if a single vector is passed as X}
+\NormalTok{  Y }\OtherTok{\textless{}{-}} \FunctionTok{apply}\NormalTok{(X, }\AttributeTok{MARGIN =} \DecValTok{1}\NormalTok{,}
+             \AttributeTok{FUN =}\NormalTok{ smoof}\SpecialCharTok{::}\FunctionTok{makeRosenbrockFunction}\NormalTok{(}\AttributeTok{dimensions =}\NormalTok{ dimensao))}
+  \FunctionTok{return}\NormalTok{(Y)}
+\NormalTok{\}}
+\CommentTok{\# testing the function on a matrix composed of 2 points}
+\NormalTok{X }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{runif}\NormalTok{(}\DecValTok{20}\NormalTok{), }\AttributeTok{nrow =} \DecValTok{2}\NormalTok{) }\CommentTok{\# runif gera uma distribuição uniforme aleatória}
+\FunctionTok{fn}\NormalTok{(X)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 100.3285 154.3380
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{suppressPackageStartupMessages}\NormalTok{(}\FunctionTok{library}\NormalTok{(ExpDE))}
+
+
+\NormalTok{configuracoes }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+  \FunctionTok{list}\NormalTok{(}\AttributeTok{name =} \StringTok{"Config 1"}\NormalTok{, }\AttributeTok{recpars =} \FunctionTok{list}\NormalTok{(}\AttributeTok{name =} \StringTok{"recombination\_blxAlphaBeta"}\NormalTok{, }\AttributeTok{alpha =} \DecValTok{0}\NormalTok{, }\AttributeTok{beta =} \DecValTok{0}\NormalTok{), }\AttributeTok{mutpars =} \FunctionTok{list}\NormalTok{(}\AttributeTok{name =} \StringTok{"mutation\_rand"}\NormalTok{, }\AttributeTok{f =} \DecValTok{4}\NormalTok{)),}
+  \FunctionTok{list}\NormalTok{(}\AttributeTok{name =} \StringTok{"Config 2"}\NormalTok{, }\AttributeTok{recpars =} \FunctionTok{list}\NormalTok{(}\AttributeTok{name =} \StringTok{"recombination\_exp"}\NormalTok{, }\AttributeTok{cr =} \FloatTok{0.6}\NormalTok{), }\AttributeTok{mutpars =} \FunctionTok{list}\NormalTok{(}\AttributeTok{name =} \StringTok{"mutation\_best"}\NormalTok{, }\AttributeTok{f =} \DecValTok{2}\NormalTok{))}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{design-dos-experimentos}{%
+\section{Design dos Experimentos}\label{design-dos-experimentos}}
+
+Conforme descrito na seção anterior, este estudo tem como objetivo
+comparar o desempenho de duas configurações distintas do algoritmo de
+evolução diferencial no contexto de minimização da função Rosenbrock,
+considerando problemas com dimensões variando de 2 a 150. Para isso,
+busca-se:
+
+\begin{itemize}
+\tightlist
+\item
+  Verificar se existe uma diferença estatisticamente significativa no
+  desempenho médio entre as duas configurações avaliadas; e
+\item
+  Identificar qual das configurações apresenta o melhor desempenho, caso
+  uma diferença seja constatada.
+\end{itemize}
+
+A hipótese nula estabelecida neste estudo é que os dois níveis
+comparados não apresentam diferenças significativas na média de seus
+desempenhos. Essa hipótese será rejeitada caso seja identificada alguma
+diferença estatisticamente significativa. No entanto, o desempenho dos
+algoritmos varia em função da dimensão do problema, um efeito indesejado
+para a comparação dos níveis. Essa variabilidade dificulta assumir que
+as condições experimentais sejam homogêneas, tornando inadequado o uso
+do teste ANOVA simples para verificar diferenças na média entre os
+níveis comparados.
+
+Para isolar o efeito da dimensão do problema e tornar o experimento mais
+robusto e generalizável, emprega-se uma estratégia de blocagem com base
+no número de dimensões do problema. Nesse contexto, cada bloco
+corresponde a uma dimensão dentro do intervalo {[}2,150{]}. Formalmente,
+o modelo estatístico é definido como:
+
+\[y_{ij}=\mu+\tau_i+\beta_j+\epsilon_{ij}\begin{cases}i=1,...,a &\\j=1,...,b\end{cases}\]
+onde \(y_{ij}\) é uma observação da amostra, \(\mu\) é a média da
+amostra, \(\tau_i\) o tamanho do efeito devido aos níveis, \(\beta_j\) o
+efeito dos blocos, \(\epsilon_{ij}\) o resíduo, e \(a\) e \(b\) o número
+de níveis e o número de blocos, respectivamente. No teste, o interesse
+está exclusivamente no fator experimental referente aos níveis, de modo
+que a hipótese é formulada da seguinte forma:
+
+\[\begin{cases} H_0: \tau_{i} = 0, \forall i=1,...,a&\\H_1: \exists \tau_{i}\neq0\end{cases}\]
+
+Para isso, é necessário determinar o número de dimensões a serem
+blocadas e a quantidade de amostras por blocos para se obter os
+parâmetros experimentais desejados, especificados na seção anterior.
+
+\hypertarget{quantidade-de-dimensuxf5es}{%
+\section{Quantidade de Dimensões}\label{quantidade-de-dimensuxf5es}}
+
+Apesar de existirem 148 grupos presentes no problema, considerando cada
+grupo como uma dimensão de resolução do algoritmo, não há uma
+necessidade efetiva de serem testados todos os grupos de variações. Para
+isso, podemos definir o poder do teste, assim como o número de grupos
+presentes no experimento, de forma a descobrir o número de instâncias
+necessárias.
+
+No caso, temos que o número de grupos condiz com a quantidade de
+configurações do algoritmo, ou seja, duas. Além disto, seguindo o padrão
+expresso na literatura, temos que \(\beta = 0.8\). O tamanho de efeito
+mínimo relevante foi definido como 0.5, uma proposta baseada no
+decaimento lento da função de Rosenbrock, conseguindo detectar
+dificuldades de caminhar em bacias de atração com gradientes pouco
+significativos.
+
+O código utilizado foi baseado na biblioteca CAISEr, tal como
+apresentado em {[}5{]} e {[}6{]}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(}\StringTok{"CAISEr"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## CAISEr version 1.0.16
+## Not compatible with code developed for 0.X.Y versions
+## If needed, please visit https://git.io/fjFwf for version 0.3.3
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dimensoes }\OtherTok{=} \FunctionTok{calc\_instances}\NormalTok{(}\DecValTok{2}\NormalTok{, }\FloatTok{0.5}\NormalTok{, }\AttributeTok{power=}\FloatTok{0.8}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ninstances}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{definiuxe7uxe3o-de-quantidade-de-amostras}{%
+\section{Definição de quantidade de
+amostras}\label{definiuxe7uxe3o-de-quantidade-de-amostras}}
+
+O planejamento da quantidade de amostras de resultado para cada dimensão
+é um passo importante para alcançar melhores resultados na análise de
+experimentos, uma vez que com uma quantidade insuficiente de amostras
+corremos o risco de observar o efeito da variação das amostras se
+sobrepondo a variação das dimensões e das configuraçãoes dos algoritmos.
+Conforme proposto por {[}5{]} implementamos um algoritmo iterativo para
+definir o tamanho de amostras necessária para cada dimensão do problema.
+O processo se deu da seguinte forma:
+
+\begin{itemize}
+\tightlist
+\item
+  Calculamos a quantidade de dimensões necessárias (\(n_{blocos}\)) para
+  que o teste tenha poder estatístico de 80\%
+\item
+  Selecionamos a quantidade \(n_{blocos}\) de dimensões igualmente
+  espaçadas entre sí partindo de 2 a 150 dimensões.
+\end{itemize}
+
+Depois de definir as dimensões, partimos para a definição da quantidade
+de amostras por dimensão: * Definimos o desvio padrão máximo desejado
+(\(se*\)): * selecionamos 10 dimensões aleatórias; * executamos, para
+cada dimensão de teste e para cada configuração, 10 repetições do
+algoritmo ExpDE e armazenamos os resultados. * Calculamos o desvio
+padrão dos resultados e calculamos o coeficiente de variaçãod e cada
+dimensão (\(CV = \frac{\sigma}{\mu}\)) e selecionamos o desvio padrão da
+amostra que obteve o menor coeficiente de variação. No caso,
+\(se*= 22838.19\) * Selecionamos 10 dimensões aleatórias e calculamos a
+quantidade de iterações necessária para que os resultados obtidos para
+essa dimensão tenham no máximo o desvio padrão especificado \(se*\)
+especificado. A quantidade mínima definida foi de 2 iterações e a máxima
+de 50 iterações, considerando a inviabilidade de executar mais de 50
+iterações em cada dimensão e iteração. * Após obter a quantidade de
+iterações de cada dimensão, selecionamos a maior quantidade de
+repetições e definimos como a quantidade de todas a dimensões, com o
+objetivo de garantir que no pior caso ainda teremos um bom nível de
+confiança e poder do teste, e conseguentemente para todas as outras
+dimensões. A quantidade de repetições definida foi de 48 repetições por
+dimensão-configuração.
+
+O algoritmo implmentado é apresentado em {[}5{]} e implementado em um
+script R separado (EC3\_expecificacao\_tamanho\_amostras.R)
+
+A quantidade de repetições pode ser, assim, definida a partir do
+seguinte código:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sample\_iterations }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(instance, algo1, algo2, se\_threshold, n0, n\_max) \{}
+  \CommentTok{\# Inicializando as amostras iniciais}
+\NormalTok{  x1 }\OtherTok{\textless{}{-}} \FunctionTok{sample}\NormalTok{(}\FunctionTok{algo1}\NormalTok{(instance), n0, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{  x2 }\OtherTok{\textless{}{-}} \FunctionTok{sample}\NormalTok{(}\FunctionTok{algo2}\NormalTok{(instance), n0, }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{)}
+  
+  \CommentTok{\# Número inicial de execuções}
+\NormalTok{  n1 }\OtherTok{\textless{}{-}}\NormalTok{ n0}
+\NormalTok{  n2 }\OtherTok{\textless{}{-}}\NormalTok{ n0}
+  
+  \CommentTok{\# Função para calcular erro padrão da diferença simples}
+\NormalTok{  calc\_se }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x1, x2) \{}
+\NormalTok{    s1 }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(x1)}
+\NormalTok{    s2 }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(x2)}
+    \FunctionTok{sqrt}\NormalTok{(s1}\SpecialCharTok{\^{}}\DecValTok{2} \SpecialCharTok{/} \FunctionTok{length}\NormalTok{(x1) }\SpecialCharTok{+}\NormalTok{ s2}\SpecialCharTok{\^{}}\DecValTok{2} \SpecialCharTok{/} \FunctionTok{length}\NormalTok{(x2))}
+\NormalTok{  \}}
+  
+  \CommentTok{\# Calcula o erro padrão inicial}
+\NormalTok{  se\_current }\OtherTok{\textless{}{-}} \FunctionTok{calc\_se}\NormalTok{(x1, x2)}
+  
+  \CommentTok{\# Loop até atingir o limite de precisão ou o orçamento máximo}
+  \ControlFlowTok{while}\NormalTok{ (se\_current }\SpecialCharTok{\textgreater{}}\NormalTok{ se\_threshold }\SpecialCharTok{\&\&}\NormalTok{ (n1 }\SpecialCharTok{+}\NormalTok{ n2) }\SpecialCharTok{\textless{}}\NormalTok{ n\_max) \{}
+    \CommentTok{\# Calcula a proporção ótima de amostras}
+\NormalTok{    s1 }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(x1)}
+\NormalTok{    s2 }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{(x2)}
+\NormalTok{    r\_opt }\OtherTok{\textless{}{-}}\NormalTok{ s1 }\SpecialCharTok{/}\NormalTok{ s2}
+    
+    \CommentTok{\# Determina qual algoritmo amostrar com base na proporção}
+    \ControlFlowTok{if}\NormalTok{ (n1 }\SpecialCharTok{/}\NormalTok{ n2 }\SpecialCharTok{\textless{}}\NormalTok{ r\_opt) \{}
+      \CommentTok{\# Adiciona uma nova amostra para o algoritmo 1}
+\NormalTok{      new\_sample }\OtherTok{\textless{}{-}} \FunctionTok{algo1}\NormalTok{(instance)}
+\NormalTok{      x1 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(x1, new\_sample)}
+\NormalTok{      n1 }\OtherTok{\textless{}{-}}\NormalTok{ n1 }\SpecialCharTok{+} \DecValTok{1}
+\NormalTok{    \} }\ControlFlowTok{else}\NormalTok{ \{}
+      \CommentTok{\# Adiciona uma nova amostra para o algoritmo 2}
+\NormalTok{      new\_sample }\OtherTok{\textless{}{-}} \FunctionTok{algo2}\NormalTok{(instance)}
+\NormalTok{      x2 }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(x2, new\_sample)}
+\NormalTok{      n2 }\OtherTok{\textless{}{-}}\NormalTok{ n2 }\SpecialCharTok{+} \DecValTok{1}
+\NormalTok{    \}}
+    
+    \CommentTok{\# Atualiza o erro padrão}
+\NormalTok{    se\_current }\OtherTok{\textless{}{-}} \FunctionTok{calc\_se}\NormalTok{(x1, x2)}
+\NormalTok{  \}}
+  
+  \CommentTok{\# Retorna os resultados}
+  \FunctionTok{list}\NormalTok{(}
+    \AttributeTok{x1 =}\NormalTok{ x1,}
+    \AttributeTok{x2 =}\NormalTok{ x2,}
+    \AttributeTok{n1 =}\NormalTok{ n1,}
+    \AttributeTok{n2 =}\NormalTok{ n2,}
+    \AttributeTok{se =}\NormalTok{ se\_current}
+\NormalTok{  )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Criando wrappers para realizar as amostragens, temos o seguinte código:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{n\_amostrar\_para\_erro }\OtherTok{=} \DecValTok{10}
+\NormalTok{n\_dimensoes\_para\_erro }\OtherTok{=} \DecValTok{10}
+
+\CommentTok{\# estimativa de amostras}
+\CommentTok{\# se\_threshold, }
+\NormalTok{n0}\OtherTok{=}\DecValTok{2}
+\NormalTok{n\_max}\OtherTok{=}\DecValTok{50}
+\NormalTok{amostras\_teste}\OtherTok{=}\DecValTok{10}
+\NormalTok{se\_threshold }\OtherTok{=} \FloatTok{22838.192087}
+
+\NormalTok{wrapper\_config1 }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(dimensao)\{}
+\NormalTok{  selpars }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{name =} \StringTok{"selection\_standard"}\NormalTok{)}
+\NormalTok{  stopcrit }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{names =} \StringTok{"stop\_maxeval"}\NormalTok{, }\AttributeTok{maxevals =} \DecValTok{5000} \SpecialCharTok{*}\NormalTok{ dimensao, }\AttributeTok{maxiter =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ dimensao)}
+\NormalTok{  probpars }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{name =} \StringTok{"fn"}\NormalTok{, }\AttributeTok{xmin =} \FunctionTok{rep}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{5}\NormalTok{, dimensao), }\AttributeTok{xmax =} \FunctionTok{rep}\NormalTok{(}\DecValTok{10}\NormalTok{, dimensao))}
+\NormalTok{  popsize }\OtherTok{=} \DecValTok{5} \SpecialCharTok{*}\NormalTok{ dimensao}
+\NormalTok{  out }\OtherTok{\textless{}{-}} \FunctionTok{ExpDE}\NormalTok{(}\AttributeTok{mutpars =}\NormalTok{ configuracoes[[}\DecValTok{1}\NormalTok{]]}\SpecialCharTok{$}\NormalTok{mutpars,}
+               \AttributeTok{recpars =}\NormalTok{ configuracoes[[}\DecValTok{1}\NormalTok{]]}\SpecialCharTok{$}\NormalTok{recpars,}
+               \AttributeTok{popsize =}\NormalTok{ popsize,}
+               \AttributeTok{selpars =}\NormalTok{ selpars,}
+               \AttributeTok{stopcrit =}\NormalTok{ stopcrit,}
+               \AttributeTok{probpars =}\NormalTok{ probpars,}
+               \AttributeTok{showpars =} \FunctionTok{list}\NormalTok{(}\AttributeTok{show.iters =} \StringTok{"dots"}\NormalTok{, }\AttributeTok{showevery =} \DecValTok{20}\NormalTok{))}
+  \FunctionTok{return}\NormalTok{(out}\SpecialCharTok{$}\NormalTok{Fbest)}
+\NormalTok{\}}
+\NormalTok{wrapper\_config2 }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(dimensao)\{}
+\NormalTok{  selpars }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{name =} \StringTok{"selection\_standard"}\NormalTok{)}
+\NormalTok{  stopcrit }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{names =} \StringTok{"stop\_maxeval"}\NormalTok{, }\AttributeTok{maxevals =} \DecValTok{5000} \SpecialCharTok{*}\NormalTok{ dimensao, }\AttributeTok{maxiter =} \DecValTok{100} \SpecialCharTok{*}\NormalTok{ dimensao)}
+\NormalTok{  probpars }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}\AttributeTok{name =} \StringTok{"fn"}\NormalTok{, }\AttributeTok{xmin =} \FunctionTok{rep}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{5}\NormalTok{, dimensao), }\AttributeTok{xmax =} \FunctionTok{rep}\NormalTok{(}\DecValTok{10}\NormalTok{, dimensao))}
+\NormalTok{  popsize }\OtherTok{=} \DecValTok{5} \SpecialCharTok{*}\NormalTok{ dimensao}
+\NormalTok{  out }\OtherTok{\textless{}{-}} \FunctionTok{ExpDE}\NormalTok{(}\AttributeTok{mutpars =}\NormalTok{ configuracoes[[}\DecValTok{2}\NormalTok{]]}\SpecialCharTok{$}\NormalTok{mutpars,}
+               \AttributeTok{recpars =}\NormalTok{ configuracoes[[}\DecValTok{2}\NormalTok{]]}\SpecialCharTok{$}\NormalTok{recpars,}
+               \AttributeTok{popsize =}\NormalTok{ popsize,}
+               \AttributeTok{selpars =}\NormalTok{ selpars,}
+               \AttributeTok{stopcrit =}\NormalTok{ stopcrit,}
+               \AttributeTok{probpars =}\NormalTok{ probpars,}
+               \AttributeTok{showpars =} \FunctionTok{list}\NormalTok{(}\AttributeTok{show.iters =} \StringTok{"dots"}\NormalTok{, }\AttributeTok{showevery =} \DecValTok{20}\NormalTok{))}
+  \FunctionTok{return}\NormalTok{(out}\SpecialCharTok{$}\NormalTok{Fbest)}
+\NormalTok{\}}
+
+
+
+\NormalTok{dimensoes\_teste }\OtherTok{=} \FunctionTok{sample}\NormalTok{(dimensoes, amostras\_teste)}
+\end{Highlighting}
+\end{Shaded}
+
+Por fim, definimos o número de repetições a seguir:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# \# Defina os parâmetros}
+\CommentTok{\# \# dimensaoensoes, configuracoes e repeticoes devem ser definidos como vetores ou listas.}
+\CommentTok{\# \# dimensoes\textless{}{-} c(10, 20)  \# Exemplos de dimensaoensões}
+\CommentTok{\# repeticoes \textless{}{-} 1:n\_amostrar\_para\_erro  \# Número de repetições}
+\CommentTok{\# }
+\CommentTok{\# n\_blocos = calc\_instances(2, 0.5, power=0.8) \# 2: n instancias, 0.5: tamanho de efeito mínimo; power: poder do teste}
+\CommentTok{\# dimensoes = seq(2,150,length.out=38)}
+\CommentTok{\# dimensoes\_teste = sample(dimensoes, 10)  \# amostragem para calculo de quantidade de repetições}
+\CommentTok{\# tamanho\_amostras \textless{}{-} data.frame(}
+\CommentTok{\#   Dimensao = numeric(),    \# Coluna tipo numérico}
+\CommentTok{\#   Iterations1 = numeric(), \# Evita fatores (para colunas de texto)}
+\CommentTok{\#   Iterations2 = numeric() \# Evita fatores (para colunas de texto)}
+\CommentTok{\# )}
+\CommentTok{\# for (dimensao in dimensoes\_teste)\{}
+\CommentTok{\#   cat("Dimensao: ", dimensao)}
+\CommentTok{\#   si = sample\_iterations(}
+\CommentTok{\#     instance = dimensao,}
+\CommentTok{\#     algo1 = wrapper\_config1,}
+\CommentTok{\#     algo2 = wrapper\_config2,}
+\CommentTok{\#     se\_threshold = se\_threshold,}
+\CommentTok{\#     n0 = n0,}
+\CommentTok{\#     n\_max = n\_max}
+\CommentTok{\#   )}
+\CommentTok{\#   cat("\textbackslash{}nAmostra 1: ", si$n1,"| Amostra 2: ", si$n2, "\textbackslash{}n")}
+\CommentTok{\#   tamanho\_amostras[nrow(tamanho\_amostras)+1,] \textless{}{-} list(dimensao, si$n1, si$n2)}
+\CommentTok{\#   }
+\CommentTok{\# \}}
+\CommentTok{\#   }
+\CommentTok{\# }
+\CommentTok{\# \# Parâmetros adicionais para o ExpDE}
+\CommentTok{\# resultados \textless{}{-} data.frame(matrix(ncol = length(configuracoes), nrow = length(dimensoes)))}
+\CommentTok{\# repeticoes\_resultados \textless{}{-} data.frame(}
+\CommentTok{\#   Config = character(),   \# Coluna tipo texto}
+\CommentTok{\#   Dimensao = numeric(),    \# Coluna tipo numérico}
+\CommentTok{\#   Repeticao = numeric(),    \# Coluna tipo double}
+\CommentTok{\#   Valor = double() \# Evita fatores (para colunas de texto)}
+\CommentTok{\# )}
+\CommentTok{\# colnames(resultados) \textless{}{-} sapply(configuracoes, function(config) config$name)}
+\CommentTok{\# rownames(resultados) \textless{}{-} dimensoes}
+\CommentTok{\# repeticoes \textless{}{-} 1:48  \# Número de repetições}
+\CommentTok{\# }
+\CommentTok{\# \# Loop sobre dimensaoensões, configurações e repetições}
+\CommentTok{\# for (dimensao in dimensoes) \{}
+\CommentTok{\#   for (configuracao in configuracoes) \{}
+\CommentTok{\#     resultados\_config \textless{}{-} c()  \# Vetor para armazenar os resultados das repetições}
+\CommentTok{\#     i = 0}
+\CommentTok{\#     for (repeticao in repeticoes) \{}
+\CommentTok{\#       selpars \textless{}{-} list(name = "selection\_standard")}
+\CommentTok{\#       stopcrit \textless{}{-} list(names = "stop\_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)}
+\CommentTok{\#       probpars \textless{}{-} list(name = "fn", xmin = rep({-}5, dimensao), xmax = rep(10, dimensao))}
+\CommentTok{\#       popsize = 5 * dimensao}
+\CommentTok{\#       \# Executa o algoritmo ExpDE e armazena o resultado}
+\CommentTok{\#       \# Run algorithm on problem:}
+\CommentTok{\#       out \textless{}{-} ExpDE(mutpars = configuracao$mutpars,}
+\CommentTok{\#                    recpars = configuracao$recpars,}
+\CommentTok{\#                    popsize = popsize,}
+\CommentTok{\#                    selpars = selpars,}
+\CommentTok{\#                    stopcrit = stopcrit,}
+\CommentTok{\#                    probpars = probpars,}
+\CommentTok{\#                    showpars = list(show.iters = "dots", showevery = 20))}
+\CommentTok{\#       \# Extract observation:}
+\CommentTok{\#       resultados\_config \textless{}{-} c(resultados\_config, out$Fbest)  \# Supondo que "fitness" seja uma métrica retornada}
+\CommentTok{\#       cat("Configuracao", configuracao$name, "| dimensão: ", dimensao, "| resultado: ", resultados\_config)}
+\CommentTok{\#       repeticoes\_resultados[nrow(repeticoes\_resultados)+1,] \textless{}{-} list(configuracao$name, dimensao, i, out$Fbest)}
+\CommentTok{\#       i = i+1}
+\CommentTok{\#       }
+\CommentTok{\#       \#print(resultados\_config)}
+\CommentTok{\#     \}}
+\CommentTok{\#     resultados[as.character(dimensao), configuracao$name] \textless{}{-} mean(resultados\_config)}
+\CommentTok{\#   \}}
+\CommentTok{\# \}}
+\CommentTok{\# }
+\CommentTok{\# write.csv(resultados, "resultados\_comparacao\_algoritmo.csv")}
+\CommentTok{\# write.csv(repeticoes\_resultados, "resultado\_cada\_repeticao.csv")}
+\CommentTok{\# }
+\CommentTok{\# novo\_df \textless{}{-} data.frame(}
+\CommentTok{\#   Dimensão = rep(rownames(resultados), times = ncol(resultados)),}
+\CommentTok{\#   Configuração = rep(colnames(resultados), each = nrow(resultados)),}
+\CommentTok{\#   Resultado = as.vector(as.matrix(resultados))}
+\CommentTok{\# )}
+\CommentTok{\# write.csv(novo\_df, "resultados\_comparacao\_algoritmo\_REORGANIZADO.csv")}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{teste-de-blocagem}{%
+\section{Teste de Blocagem}\label{teste-de-blocagem}}
+
+O teste de blocagem, como explicado anteriormente, permite avaliar a
+significância de parâmetros pressupondo outros como decorrentes de
+variações normalmente distribuídas. Uma vez que em R a função de teste
+ANOVA é capaz de separar o experimento por grupos, iremos utilizar ela
+para o experimento.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{novo\_df }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}resultados\_comparacao\_algoritmo\_REORGANIZADO.csv\textquotesingle{}}\NormalTok{)}
+\NormalTok{novo\_df}\SpecialCharTok{$}\NormalTok{dim\_numeric }\OtherTok{\textless{}{-}} \FunctionTok{as.numeric}\NormalTok{(novo\_df}\SpecialCharTok{$}\NormalTok{Dimensão)}
+\NormalTok{novo\_df}\SpecialCharTok{$}\NormalTok{Configuração }\OtherTok{\textless{}{-}} \FunctionTok{as.factor}\NormalTok{(novo\_df}\SpecialCharTok{$}\NormalTok{Configuração)}
+\NormalTok{novo\_df}\SpecialCharTok{$}\NormalTok{Dimensão }\OtherTok{\textless{}{-}} \FunctionTok{as.factor}\NormalTok{(novo\_df}\SpecialCharTok{$}\NormalTok{Dimensão)}
+
+\NormalTok{model }\OtherTok{\textless{}{-}} \FunctionTok{aov}\NormalTok{(Resultado}\SpecialCharTok{\textasciitilde{}}\NormalTok{Configuração}\SpecialCharTok{+}\NormalTok{Dimensão,}
+             \AttributeTok{data =}\NormalTok{ novo\_df)}
+
+\FunctionTok{summary}\NormalTok{(model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##              Df    Sum Sq   Mean Sq F value   Pr(>F)    
+## Configuração  1 4.065e+14 4.065e+14  61.592 2.17e-09 ***
+## Dimensão     37 2.993e+14 8.091e+12   1.226    0.269    
+## Residuals    37 2.442e+14 6.600e+12                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary.lm}\NormalTok{(model)}\SpecialCharTok{$}\NormalTok{r.squared}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.742961
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'dplyr' was built under R version 4.3.1
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{arrange}\NormalTok{(novo\_df, dim\_numeric)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##     X Dimensão Configuração    Resultado dim_numeric
+## 1   1        2     Config 1 5.856602e-03           2
+## 2  39        2     Config 2 8.826468e+00           2
+## 3   2        6     Config 1 1.512644e+02           6
+## 4  40        6     Config 2 1.008537e+00           6
+## 5   3       10     Config 1 1.412772e+04          10
+## 6  41       10     Config 2 4.390087e+00          10
+## 7   4       14     Config 1 9.505052e+04          14
+## 8  42       14     Config 2 1.253657e+01          14
+## 9   5       18     Config 1 2.075306e+05          18
+## 10 43       18     Config 2 2.591185e+01          18
+## 11  6       22     Config 1 3.602024e+05          22
+## 12 44       22     Config 2 5.375207e+01          22
+## 13  7       26     Config 1 4.745100e+05          26
+## 14 45       26     Config 2 1.092262e+02          26
+## 15  8       30     Config 1 6.308779e+05          30
+## 16 46       30     Config 2 1.925378e+02          30
+## 17  9       34     Config 1 7.854299e+05          34
+## 18 47       34     Config 2 3.088857e+02          34
+## 19 10       38     Config 1 9.481202e+05          38
+## 20 48       38     Config 2 5.183842e+02          38
+## 21 11       42     Config 1 1.132068e+06          42
+## 22 49       42     Config 2 8.304513e+02          42
+## 23 12       46     Config 1 1.269470e+06          46
+## 24 50       46     Config 2 1.404740e+03          46
+## 25 13       50     Config 1 1.502814e+06          50
+## 26 51       50     Config 2 2.289142e+03          50
+## 27 14       54     Config 1 1.776029e+06          54
+## 28 52       54     Config 2 3.519046e+03          54
+## 29 15       58     Config 1 2.393564e+06          58
+## 30 53       58     Config 2 5.623412e+03          58
+## 31 16       62     Config 1 3.122677e+06          62
+## 32 54       62     Config 2 8.041244e+03          62
+## 33 17       66     Config 1 3.697113e+06          66
+## 34 55       66     Config 2 1.144929e+04          66
+## 35 18       70     Config 1 4.254641e+06          70
+## 36 56       70     Config 2 1.684007e+04          70
+## 37 19       74     Config 1 4.447887e+06          74
+## 38 57       74     Config 2 2.260578e+04          74
+## 39 20       78     Config 1 4.890662e+06          78
+## 40 58       78     Config 2 3.150046e+04          78
+## 41 21       82     Config 1 5.377763e+06          82
+## 42 59       82     Config 2 3.990159e+04          82
+## 43 22       86     Config 1 5.496084e+06          86
+## 44 60       86     Config 2 5.292520e+04          86
+## 45 23       90     Config 1 5.877277e+06          90
+## 46 61       90     Config 2 7.110297e+04          90
+## 47 24       94     Config 1 6.285707e+06          94
+## 48 62       94     Config 2 8.789523e+04          94
+## 49 25       98     Config 1 6.770550e+06          98
+## 50 63       98     Config 2 1.165097e+05          98
+## 51 26      102     Config 1 6.990572e+06         102
+## 52 64      102     Config 2 1.411040e+05         102
+## 53 27      106     Config 1 7.288578e+06         106
+## 54 65      106     Config 2 1.693954e+05         106
+## 55 28      110     Config 1 7.697371e+06         110
+## 56 66      110     Config 2 2.042806e+05         110
+## 57 29      114     Config 1 8.146577e+06         114
+## 58 67      114     Config 2 2.426795e+05         114
+## 59 30      118     Config 1 8.453790e+06         118
+## 60 68      118     Config 2 2.861395e+05         118
+## 61 31      122     Config 1 8.884875e+06         122
+## 62 69      122     Config 2 3.326667e+05         122
+## 63 32      126     Config 1 9.220712e+06         126
+## 64 70      126     Config 2 3.843706e+05         126
+## 65 33      130     Config 1 9.541219e+06         130
+## 66 71      130     Config 2 4.358276e+05         130
+## 67 34      134     Config 1 1.002466e+07         134
+## 68 72      134     Config 2 4.992748e+05         134
+## 69 35      138     Config 1 1.022628e+07         138
+## 70 73      138     Config 2 5.562384e+05         138
+## 71 36      142     Config 1 1.070613e+07         142
+## 72 74      142     Config 2 6.302891e+05         142
+## 73 37      146     Config 1 1.119975e+07         146
+## 74 75      146     Config 2 6.863231e+05         146
+## 75 38      150     Config 1 1.138022e+07         150
+## 76 76      150     Config 2 7.579296e+05         150
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Análise da Configuração pela Dimensão}
+\NormalTok{p }\OtherTok{\textless{}{-}} \FunctionTok{ggplot}\NormalTok{(novo\_df, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ dim\_numeric, }
+                         \AttributeTok{y =}\NormalTok{ Resultado, }
+                         \AttributeTok{group =}\NormalTok{ Configuração, }
+                         \AttributeTok{colour =}\NormalTok{ Configuração))}
+\NormalTok{p }\SpecialCharTok{+} \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{linetype=}\DecValTok{2}\NormalTok{) }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size=}\DecValTok{5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{case_study_03_files/figure-latex/loaddata5-1.pdf}
+
+Podemos notar que, de fato, \ldots{}
+
+\hypertarget{testes-post-hoc}{%
+\subsection{Testes Post-Hoc}\label{testes-post-hoc}}
+
+Apenas de forma a expandir a análise, iremos analisar o efeito ao
+considerar as dimensões como os
+
+\hypertarget{teste-anova---atualizar}{%
+\subsection{Teste ANOVA - ATUALIZAR!!!}\label{teste-anova---atualizar}}
+
+Podemos realizar o teste utilizando pacotes próprios do R da seguinte
+forma:
+
+O P valor resultante é extremamente baixo e abaixo do \(\alpha\)
+definido, ou seja, podemos rejeitar a hipótese nula e concluir que de
+fato existem ações melhores que outras.
+
+\hypertarget{premissas-do-teste}{%
+\subsection{Premissas do Teste}\label{premissas-do-teste}}
+
+Dotados dos resíduos do teste, podemos conferir as premissas específicas
+do próprio teste. Inicialmente, verificamos se os resíduos seguem de
+fato uma normal padrão
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Check normality}
+\CommentTok{\#shapiro.test(model$residuals)}
+\end{Highlighting}
+\end{Shaded}
+
+Podemos concluir que os resíduos de fato seguem suficientemente bem uma
+distribuição normal padrão, com um certo comportamento divergente nas
+caudas. Por fim, precisamos checar a igualdade de variâncias entre cada
+um dos fatores, ou seja, sua homoscedasticidade.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Check homoscedasticity}
+\CommentTok{\#fligner.test(novo\_df$Resultado \textasciitilde{} novo\_df$Configuração, }
+\CommentTok{\#             data = novo\_df)}
+\end{Highlighting}
+\end{Shaded}
+
+Novamente podemos confirmar a premissa do teste, sendo que o ANOVA com
+blocos se apresenta realmente como um teste confiável para este
+problema.
+
+\hypertarget{comparauxe7uxe3o-entre-os-nuxedveis}{%
+\section{Comparação Entre os
+Níveis}\label{comparauxe7uxe3o-entre-os-nuxedveis}}
+
+Após a realização do teste aleatorizado com blocos, e a rejeição de
+\(H_0\), conclui-se que os níveis são significativamente diferentes
+entre si, independentemente do número de dimensões do problema. Isso
+indica que uma configuração de algoritmo apresenta desempenho superior
+ao outro.
+
+Para um experimento com apenas dois níveis, o ideal é executar um teste
+t pareado. No entanto, como o problema em questão é um caso particular
+de uma comparação múltipla com apenas dois níveis, para identificar qual
+configuração oferece o melhor desempenho, decidiu-se por aplicar um
+teste post-hoc de Dunnett de todos os grupos contra um. Esse teste, na
+prática, equivale a um teste t quando se trata de apenas dois níveis.
+Por fim, o intervalo de confiança da diferença entre os níveis é exibido
+para facilitar a interpretação dos resultados.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Situation: all vs. one}
+\CommentTok{\#library(multcomp)}
+\DocumentationTok{\#\# comparação da configuraçao \#\#\#\#\#\#\#}
+\CommentTok{\#duntest     \textless{}{-} glht(model,}
+                  \CommentTok{\#  linfct = mcp(Configuração = "Dunnett"))}
+
+\CommentTok{\#summary(duntest)}
+
+\CommentTok{\#duntestCI   \textless{}{-} confint(duntest)}
+
+\CommentTok{\#par(mar = c(5, 8, 4, 2), las = 1)}
+\CommentTok{\#plot(duntestCI,}
+    \CommentTok{\# xlab = "Mean difference")}
+\CommentTok{\#}
+\DocumentationTok{\#\# comparação da configuração \#\#\#\#\#\#\#}
+\CommentTok{\#duntest     \textless{}{-} glht(model2,}
+           \CommentTok{\#         linfct = mcp(Dimensao = "Dunnett"))}
+
+\CommentTok{\#summary(duntest)}
+
+\CommentTok{\#duntestCI   \textless{}{-} confint(duntest)}
+
+\CommentTok{\#par(mar = c(5, 8, 4, 2), las = 1)}
+\CommentTok{\#plot(duntestCI,}
+    \CommentTok{\# xlab = "Mean difference")}
+\end{Highlighting}
+\end{Shaded}
+
+É claramente perceptível que a diferença média de desempenho entre as
+configurações 2 e 1 é negativa em todo o intervalo de confiança,
+indicando que a configuração 2 sobressai em relação à configuração 1.
+Com base nisso, a configuração 2 foi selecionada como a de melhor
+desempenho.
+
+\hypertarget{discussuxf5es-e-conclusuxf5es}{%
+\section{Discussões e Conclusões}\label{discussuxf5es-e-conclusuxf5es}}
+
+A análise comparativa do retorno médio das ações revelou insights
+valiosos sobre o desempenho relativo dos ativos avaliados. O uso robusto
+de métodos estatísticos, como o teste ANOVA e o teste de Tukey, permitiu
+identificar diferenças significativas entre os grupos. No entanto, as
+limitações observadas, como a suposição de homoscedasticidade e a falta
+de variáveis macroeconômicas, ressaltam a necessidade de uma análise
+mais abrangente em estudos futuros para capturar a complexidade do
+mercado.
+
+Concluímos que a metodologia aplicada não só demonstrou sua eficácia na
+validação estatística das diferenças de desempenho, mas também poderá
+servir como uma estrutura útil para avaliações de ativos em diversos
+contextos. À medida que investidores e analistas buscam otimizar suas
+decisões, a incorporação de análises mais profundas, que considerem
+fatores externos, poderá enriquecer ainda mais as estratégias de
+investimento. Portanto, encorajamos novas pesquisas que aprofundem essa
+discussão, contribuindo para um entendimento mais sólido das dinâmicas
+do mercado financeiro.
+
+\hypertarget{bibliografia}{%
+\section*{Bibliografia}\label{bibliografia}}
+\addcontentsline{toc}{section}{Bibliografia}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{0}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-della2019application}{}}%
+\CSLLeftMargin{{[}1{]} }%
+\CSLRightInline{P. Della Vecchia, L. Stingo, F. Nicolosi, A. De Marco,
+E. Daniele, and E. D???Amato, {``Application of game theory and
+evolutionary algorithm to the regional turboprop aircraft wing
+optimization,''} \emph{Evolutionary and deterministic methods for design
+optimization and control with applications to industrial and societal
+problems}, pp. 403--418, 2019.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-grefenstette1994evolutionary}{}}%
+\CSLLeftMargin{{[}2{]} }%
+\CSLRightInline{J. Grefenstette and A. Schultz, {``An evolutionary
+approach to learning in robots,''} in \emph{Machine learning workshop on
+robot learning}, Citeseer, 1994, pp. 659--662.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-holland1992adaptation}{}}%
+\CSLLeftMargin{{[}3{]} }%
+\CSLRightInline{J. H. Holland, \emph{Adaptation in natural and
+artificial systems: An introductory analysis with applications to
+biology, control, and artificial intelligence}. MIT press, 1992.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-price2006differential}{}}%
+\CSLLeftMargin{{[}4{]} }%
+\CSLRightInline{K. Price, \emph{Differential evolution: A practical
+approach to global optimization}. Springer Science \& Business Media,
+2006.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-campelo2019sample}{}}%
+\CSLLeftMargin{{[}5{]} }%
+\CSLRightInline{F. Campelo and F. Takahashi, {``Sample size estimation
+for power and accuracy in the experimental comparison of algorithms,''}
+\emph{Journal of Heuristics}, vol. 25, pp. 305--338, 2019.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-campelo2020sample}{}}%
+\CSLLeftMargin{{[}6{]} }%
+\CSLRightInline{F. Campelo and E. F. Wanner, {``Sample size calculations
+for the experimental comparison of multiple algorithms on multiple
+problem instances,''} \emph{Journal of Heuristics}, vol. 26, no. 6, pp.
+851--883, 2020.}
+
+\end{CSLReferences}
+
+\end{document}
