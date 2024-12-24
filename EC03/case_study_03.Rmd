@@ -425,9 +425,12 @@ Novamente, o teste rejeita a hipótese nula e não podemos supor a premissa de i
 
 # Discussões e Conclusões
 
-A análise comparativa do retorno médio das ações revelou insights valiosos sobre o desempenho relativo dos ativos avaliados. O uso robusto de métodos estatísticos, como o teste ANOVA e o teste de Tukey, permitiu identificar diferenças significativas entre os grupos. No entanto, as limitações observadas, como a suposição de homoscedasticidade e a falta de variáveis macroeconômicas, ressaltam a necessidade de uma análise mais abrangente em estudos futuros para capturar a complexidade do mercado.
+Os resultados do estudo demonstram diferenças significativas no desempenho médio das duas configurações do algoritmo de Evolução Diferencial na minimização da função Rosenbrock, com a Configuração 2 apresentando desempenho superior em termos de consistência e convergência para valores ótimos. A abordagem experimental adotada, utilizando blocagem para isolar o efeito da dimensão do problema, revelou-se eficaz para controlar a variabilidade entre os experimentos, permitindo uma análise robusta e estatisticamente válida.
 
-Concluímos que a metodologia aplicada não só demonstrou sua eficácia na validação estatística das diferenças de desempenho, mas também poderá servir como uma estrutura útil para avaliações de ativos em diversos contextos. À medida que investidores e analistas buscam otimizar suas decisões, a incorporação de análises mais profundas, que considerem fatores externos, poderá enriquecer ainda mais as estratégias de investimento. Portanto, encorajamos novas pesquisas que aprofundem essa discussão, contribuindo para um entendimento mais sólido das dinâmicas do mercado financeiro.
+Embora os resultados confirmem a relevância da escolha de métodos de recombinação e mutação, o impacto da dimensão do problema sobre o desempenho, observado nos testes complementares, sugere que futuras investigações devem explorar a adaptação dinâmica de hiperparâmetros para melhorar a eficiência em problemas de maior escala.
+
+Apesar de limitações como a não normalidade dos resíduos e a heterogeneidade das variâncias, a robustez dos dados coletados permite validar as conclusões aqui apresentadas. Este trabalho contribui para o entendimento e aprimoramento de algoritmos evolucionários, oferecendo uma base sólida para o desenvolvimento de configurações mais otimizadas em aplicações práticas.
+
 
 # Bibliografia
 
