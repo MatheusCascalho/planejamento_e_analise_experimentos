@@ -2,87 +2,126 @@ suppressWarnings(suppressPackageStartupMessages(library(smoof)))
 
 library(ggplot2)
 library(dplyr)
+library(multcomp)
 
 ################################################################################
-######### TESTE DE BLOCAGEM ####################################################
+######### GERAÇÃO E TRANFORMAÇÃO DOS DADOS ####################################################
 
-novo_df <- read.csv('/Users/henriquealvesbarbosa/Documents/planejamento-analise-experimentos/planejamento_e_analise_experimentos/Trabalho Final/resultados_comparacao_algoritmo_REORGANIZADO.csv')
-repeticoes_resultados <- read.csv("/Users/henriquealvesbarbosa/Documents/planejamento-analise-experimentos/planejamento_e_analise_experimentos/Trabalho Final/resultado_cada_repeticao.csv")
+df <- read.csv('/Users/henriquealvesbarbosa/Documents/planejamento-analise-experimentos/planejamento_e_analise_experimentos/Trabalho Final/Consolidated_Errors_Data.csv')
+df$runway_frame <- as.factor(df$runway_frame)
+df$frame <- as.numeric(df$frame)
+df$error_pitch <- as.numeric(df$error_pitch)
+df$error_roll <- as.numeric(df$error_roll)
+df$error_distance <- as.numeric(df$error_distance)
+df$model <- as.factor(df$model)
 
-novo_df$dim_numeric <- as.numeric(novo_df$Dimensão)
-novo_df$Configuração <- as.factor(novo_df$Configuração)
-novo_df$Dimensão <- as.factor(novo_df$Dimensão)
+################################################################################
+######### INÍCIO TESTES PITCH ######################################################
 
-model <- aov(Resultado~Configuração+Dimensão,
-             data = novo_df)
+model_aov <- aov(error_pitch~model+runway_frame,
+             data = df)
 
-summary(model)
-summary.lm(model)$r.squared
+summary(model_aov)
+summary.lm(model_aov)$r.squared
 
-arrange(novo_df, dim_numeric)
+arrange(df, runway_frame)
 
 # Análise da Configuração pela Dimensão
-p <- ggplot(novo_df, aes(x = dim_numeric, 
-                         y = Resultado, 
-                         group = Configuração, 
-                         colour = Configuração))
-p + geom_line(linetype=2) + geom_point(size=5)
+p <- ggplot(df, aes(x = frame, 
+                         y = error_pitch, 
+                         group = model, 
+                         colour = model))
+
+p + geom_line(linetype=2) + geom_point(size=5) + ggtitle("Título Personalizado") +
+  theme(plot.title = element_text(size = 16, color = "black", hjust = 0.5))
 
 ################################################################################
 ######### Teste POST-HOC ######################################################
 
-library(multcomp)
-repeticoes_resultados$Config <- as.factor(repeticoes_resultados$Config)
-repeticoes_resultados$Dimensao <- as.factor(repeticoes_resultados$Dimensao)
-model2 <- aov(Valor~Config+Dimensao,
-             data = repeticoes_resultados)
-
-######################
 ## comparação da configuraçao #######
-duntest     <- glht(model,
-                    linfct = mcp(Configuração = "Dunnett"))
+tuktest     <- glht(model_aov,
+                    linfct = mcp(model = "Tukey"))
 
-summary(duntest)
+summary(tuktest)
 
-duntestCI   <- confint(duntest)
-
-par(mar = c(5, 8, 4, 2), las = 1)
-plot(duntestCI,
-     xlab = "Mean difference")
-
-
-######################
-## comparação da configuração #######
-duntest     <- glht(model2,
-                    linfct = mcp(Dimensao = "Dunnett"))
-
-summary(duntest)
-
-duntestCI   <- confint(duntest)
+tuktestCI   <- confint(tuktest)
 
 par(mar = c(5, 8, 4, 2), las = 1)
-plot(duntestCI,
+plot(tuktestCI,
      xlab = "Mean difference")
 
+# Analisando o PITCH, 2 e PNP são os melhores
 
-#########################################################
-##### Checagem de premissas
+################################################################################
+######### INÍCIO TESTES ROLL ######################################################
 
-# Check normality
-shapiro.test(model$residuals)
+model_aov <- aov(error_roll~model+runway_frame,
+                 data = df)
 
+summary(model_aov)
+summary.lm(model_aov)$r.squared
 
-qqnorm(model$residuals)
-qqline(model$residuals)
+arrange(df, runway_frame)
 
-hist(model$residuals)
+# Análise da Configuração pela Dimensão
+p <- ggplot(df, aes(x = frame, 
+                    y = error_roll, 
+                    group = model, 
+                    colour = model))
 
-plot(ecdf(model$residuals))
-dados_test <- rnorm(100)
-plot(ecdf(dados_test))
+p + geom_line(linetype=2) + geom_point(size=5) + ggtitle("Título Personalizado") +
+  theme(plot.title = element_text(size = 16, color = "black", hjust = 0.5))
 
+################################################################################
+######### Teste POST-HOC ######################################################
 
-# Check homoscedasticity
-fligner.test(novo_df$Resultado ~ novo_df$Configuração, 
-             data = novo_df)
+## comparação da configuraçao #######
+tuktest     <- glht(model_aov,
+                    linfct = mcp(model = "Tukey"))
 
+summary(tuktest)
+
+tuktestCI   <- confint(tuktest)
+
+par(mar = c(5, 8, 4, 2), las = 1)
+plot(tuktestCI,
+     xlab = "Mean difference", main="Comparação Configurações - Roll")
+
+# Analisando o ROLL, 2 e PNP são os melhores
+
+################################################################################
+######### INÍCIO TESTES DISTANCE ######################################################
+
+model_aov <- aov(error_distance~model+runway_frame,
+                 data = df)
+
+summary(model_aov)
+summary.lm(model_aov)$r.squared
+
+arrange(df, runway_frame)
+
+# Análise da Configuração pela Dimensão
+p <- ggplot(df, aes(x = frame, 
+                    y = error_distance, 
+                    group = model, 
+                    colour = model))
+
+p + geom_line(linetype=2) + geom_point(size=5) + ggtitle("Título Personalizado") +
+  theme(plot.title = element_text(size = 16, color = "black", hjust = 0.5))
+
+################################################################################
+######### Teste POST-HOC ######################################################
+
+## comparação da configuraçao #######
+tuktest     <- glht(model_aov,
+                    linfct = mcp(model = "Tukey"))
+
+summary(tuktest)
+
+tuktestCI   <- confint(tuktest)
+
+par(mar = c(5, 8, 4, 2), las = 1)
+plot(tuktestCI,
+     xlab = "Mean difference")
+
+# Analisando o DISTANCE, PNP é o melhor

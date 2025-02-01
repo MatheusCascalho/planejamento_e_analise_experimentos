@@ -1730,18 +1730,11 @@ fn &lt;- function(X){
 # testing the function on a matrix composed of 2 points
 X &lt;- matrix(runif(20), nrow = 2) # runif gera uma distribuição uniforme aleatória
 fn(X)</code></pre>
-<<<<<<< HEAD
 <pre><code>## [1] 172.2560 187.3057</code></pre>
 <pre class="r"><code>suppressPackageStartupMessages(library(ExpDE))
 
 
 configuracoes &lt;- list(
-=======
-<pre><code>## [1] 123.7619 146.0324</code></pre>
-<pre class="r"><code>suppressPackageStartupMessages(library(ExpDE))</code></pre>
-<pre><code>## Warning: pacote &#39;ExpDE&#39; foi compilado no R versão 4.4.2</code></pre>
-<pre class="r"><code>configuracoes &lt;- list(
->>>>>>> 94709e788d4f3096e1f3a3b3812c1670ebac6fd6
   list(name = &quot;Config 1&quot;, recpars = list(name = &quot;recombination_blxAlphaBeta&quot;, alpha = 0, beta = 0), mutpars = list(name = &quot;mutation_rand&quot;, f = 4)),
   list(name = &quot;Config 2&quot;, recpars = list(name = &quot;recombination_exp&quot;, cr = 0.6), mutpars = list(name = &quot;mutation_best&quot;, f = 2))
 )</code></pre>
