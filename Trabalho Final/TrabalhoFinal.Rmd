@@ -1,0 +1,436 @@
+---
+title: 'Estudo de Caso 03: Avaliação e comparação de duas configurações de Algoritmos Evolucionários'
+author: "Joao P. L. Pinto, Thales H. de O. Gonçalves, Henrique A. Barbosa, \\
+date: 23 de Dezembro de 2024"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    fig_caption: true
+editor_options:
+  markdown:
+    wrap: 72
+bibliography: references.bib
+csl: ieee.csl
+---
+
+```{r setup,results='hide',warning=FALSE,echo=FALSE}
+# A few initial definitions just to make sure all required packages are installed. Change as needed.
+# NOTE: It may echo some weird messages to the PDF on the first compile (package installation messages). Run twice and the problem will (hopefully) go away.
+if (!require(ggplot2, quietly = TRUE)){
+      install.packages("ggplot2")
+      }
+if (!require(devtools, quietly = TRUE)){
+      install.packages("devtools")
+      }
+ if (!require(broom, quietly = TRUE)){
+       devtools::install_github("dgrtwo/broom")
+      }
+if (!require(GGally, quietly = TRUE)){
+      install.packages("GGally")
+}
+if (!require(ggplot2, quietly = TRUE)){
+      install.packages("ggplot2")
+}
+if (!require(reshape2, quietly = TRUE)){
+      install.packages("reshape2")
+}
+
+```
+
+## Descrição do Problema
+Em diversas situações, como no design de asas de aeronaves para maximizar a eficiência aerodinâmica [@della2019application] ou no treinamento de robôs para executar tarefas específicas [@grefenstette1994evolutionary], é necessário minimizar (ou maximizar) uma função de custo de interesse. Entretanto, quando não é possível encontrar uma solução analiticamente para seu ponto de mínimo (máximo), recorre-se a métodos heurísticos de otimização. Entre esses métodos destacam-se os algoritmos evolucionários [@holland1992adaptation], que simulam processos naturais de evolução, utilizando populações de possíveis soluções, inicialmente geradas de forma aleatória, para evoluir gradativamente em direção a respostas que melhor atendam ao problema em questão.
+
+Um dos algoritmos evolucionários mais comuns e amplamente utilizados é o algoritmo de Evolução Diferencial [@price2006differential]. Nesse método, uma população inicial de vetores-soluções é gerada aleatoriamente, e cada indivíduo da população é avaliado com base na função de custo a ser otimizada. Durante várias iterações, ou épocas, os indivíduos passam por processos de mutação e cruzamento. A mutação introduz diversidade ao alterar características de forma aleatória, enquanto o cruzamento combina as melhores soluções, promovendo o desenvolvimento da população para um melhor resultado. Ao final do processo, o indivíduo com o melhor desempenho, ou "fit", é considerado a solução do problema.
+
+Esse algoritmo, no entanto, apresenta múltiplos métodos de recombinação e mutação, assim como diversos hiperparâmetros, que influenciam diretamente seu funcionamento, podendo resultar em variações significativas de desempenho dependendo das configurações escolhidas. Neste trabalho, busca-se comparar o desempenho de duas configurações distintas aplicadas a dois algoritmos de Evolução Diferencial, avaliando a qualidade das soluções encontradas de forma independente do número de dimensões do problema. A tabela a seguir apresenta os métodos de recombinação e cruzamento utilizados em cada configuração do algoritmo, assim como seus respectivos hiperparâmetros.
+
+\[
+\begin{table}[]
+\begin{tabular}{ccc}
+Configuração & Método de Recombinação                                                                                 & Método de Mutação                                                          \\
+1            & Blend Alpha Beta Recombination for DE \cite[herrera2003taxonomy] com $\alpha=0$ e $\beta=0$                                 & Em indivíduos aleatórios, com fator de escala do vetor de diferenças $f=4$ \\
+2            & Recombinação Exponencial \cite[price2006differential] com probabilidade de cada ponto do vetor ser um ponto de corte $cr=0,6$ & Nos melhores indivíduos, com fator de escala do vetor de diferenças $f=2$ 
+\end{tabular}
+\end{table}
+\]
+
+A função de custo que deseja-se minimizar no contexto desse trabalho é a função Rosembrock para os limites $-5\le x_i \le 10$, $i=1,...,dim$ para um problema de $dim \in [2,150]$ dimensões. O tamanho da população e o número máximo de iterações do algoritmo são dependentes de $dim$, sendo esses valores $5*dim$ e $100*dim$, respectivamente. Os parâmetros experimentais dados para este estudo são:
+
+- Mínima diferença de importância prática (padronizada): $d^*=0.5$
+- Significância desejada: $\alpha=0.05$
+- Potência mínima desejada: $1-\beta=0.8$
+
+Para começar o código, primeiro definimos funções capazes de gerar os problemas e definir as configurações a serem utilizadas:
+```{r loaddata4}
+dimensao <- 10
+fn <- function(X){
+  if(!is.matrix(X)) X <- matrix(X, nrow = 1) # <- if a single vector is passed as X
+  Y <- apply(X, MARGIN = 1,
+             FUN = smoof::makeRosenbrockFunction(dimensions = dimensao))
+  return(Y)
+}
+# testing the function on a matrix composed of 2 points
+X <- matrix(runif(20), nrow = 2) # runif gera uma distribuição uniforme aleatória
+fn(X)
+
+
+suppressPackageStartupMessages(library(ExpDE))
+
+
+configuracoes <- list(
+  list(name = "Config 1", recpars = list(name = "recombination_blxAlphaBeta", alpha = 0, beta = 0), mutpars = list(name = "mutation_rand", f = 4)),
+  list(name = "Config 2", recpars = list(name = "recombination_exp", cr = 0.6), mutpars = list(name = "mutation_best", f = 2))
+)
+
+
+```
+
+
+
+# Design dos Experimentos
+
+Conforme descrito na seção anterior, este estudo tem como objetivo comparar o desempenho de duas configurações distintas do algoritmo de evolução diferencial no contexto de minimização da função Rosenbrock, considerando problemas com dimensões variando de 2 a 150. Para isso, busca-se:
+
+- Verificar se existe uma diferença estatisticamente significativa no desempenho médio entre as duas configurações avaliadas; e
+- Identificar qual das configurações apresenta o melhor desempenho, caso uma diferença seja constatada.
+
+A hipótese nula estabelecida neste estudo é que os dois níveis comparados não apresentam diferenças significativas na média de seus desempenhos. Essa hipótese será rejeitada caso seja identificada alguma diferença estatisticamente significativa. No entanto, o desempenho dos algoritmos varia em função da dimensão do problema, um efeito indesejado para a comparação dos níveis. Essa variabilidade dificulta assumir que as condições experimentais sejam homogêneas, tornando inadequado o uso do teste ANOVA simples para verificar diferenças na média entre os níveis comparados.
+
+Para isolar o efeito da dimensão do problema e tornar o experimento mais robusto e generalizável, emprega-se uma estratégia de blocagem com base no número de dimensões do problema. Nesse contexto, cada bloco corresponde a uma dimensão dentro do intervalo [2,150]. Formalmente, o modelo estatístico é definido como:
+
+$$y_{ij}=\mu+\tau_i+\beta_j+\epsilon_{ij}\begin{cases}i=1,...,a &\\j=1,...,b\end{cases}$$
+onde $y_{ij}$ é uma observação da amostra, $\mu$ é a média da amostra, $\tau_i$ o tamanho do efeito devido aos níveis, $\beta_j$ o efeito dos blocos, $\epsilon_{ij}$ o resíduo, e $a$ e $b$ o número de níveis e o número de blocos, respectivamente. No teste, o interesse está exclusivamente no fator experimental referente aos níveis, de modo que a hipótese é formulada da seguinte forma:
+
+$$\begin{cases} H_0: \tau_{i} = 0, \forall i=1,...,a&\\H_1: \exists \tau_{i}\neq0\end{cases}$$
+
+Para isso, é necessário determinar o número de dimensões a serem blocadas e a quantidade de amostras por blocos para se obter os parâmetros experimentais desejados, especificados na seção anterior.
+
+# Quantidade de Dimensões
+
+Apesar de existirem 148 grupos presentes no problema, considerando cada grupo como uma dimensão de resolução do algoritmo, não há uma necessidade efetiva de serem testados todos os grupos de variações. Para isso, podemos definir o poder do teste, assim como o número de grupos presentes no experimento, de forma a descobrir o número de instâncias necessárias.
+
+No caso, temos que o número de grupos condiz com a quantidade de configurações do algoritmo, ou seja, duas. Além disto, seguindo o padrão expresso na literatura, temos que $\beta = 0.8$. O tamanho de efeito mínimo relevante foi definido como 0.5, uma proposta baseada no decaimento lento da função de Rosenbrock, conseguindo detectar dificuldades de caminhar em bacias de atração com gradientes pouco significativos.
+
+O código utilizado foi baseado na biblioteca CAISEr, tal como apresentado em [@campelo2019sample] e [@campelo2020sample].
+
+```{r loaddata1}
+library("CAISEr")
+dimensoes = calc_instances(2, 0.5, power=0.8)$ninstances
+```
+
+
+# Definição de quantidade de amostras
+O planejamento da quantidade de amostras de resultado para cada dimensão é um passo importante para alcançar melhores
+resultados na análise de experimentos, uma vez que com uma quantidade insuficiente de amostras corremos o risco de observar o efeito da variação das amostras se sobrepondo a variação das dimensões e das configuraçãoes dos algoritmos. Conforme proposto por [@campelo2019sample] implementamos um algoritmo iterativo para definir o tamanho de amostras necessária para cada dimensão do problema. O processo se deu da seguinte forma:
+
+* Calculamos a quantidade de dimensões necessárias ($n_{blocos}$) para que o teste tenha poder estatístico de 80%
+* Selecionamos a quantidade $n_{blocos}$ de dimensões igualmente espaçadas entre sí partindo de 2 a 150 dimensões.
+
+Depois de definir as dimensões, partimos para a definição da quantidade de amostras por dimensão:
+* Definimos o desvio padrão máximo desejado ($se*$): 
+  * selecionamos 10 dimensões aleatórias;
+  * executamos, para cada dimensão de teste e para cada configuração, 10 repetições do algoritmo ExpDE e armazenamos os resultados. 
+  * Calculamos o desvio padrão dos resultados e calculamos o coeficiente de variaçãod e cada dimensão ($CV = \frac{\sigma}{\mu}$) e selecionamos o desvio padrão da amostra que obteve o menor coeficiente de variação. No caso, $se*= 22838.19$
+* Selecionamos 10 dimensões aleatórias e calculamos a quantidade de iterações necessária para que os resultados obtidos para essa dimensão tenham no máximo o desvio padrão especificado $se*$ especificado. A quantidade mínima definida foi de 2 iterações e a máxima de 50 iterações, considerando a inviabilidade de executar mais de 50 iterações em cada dimensão e iteração.
+* Após obter a quantidade de iterações de cada dimensão, selecionamos a maior quantidade de repetições e definimos como a quantidade de todas a dimensões, com o objetivo de garantir que no pior caso ainda teremos um bom nível de confiança e poder do teste, e conseguentemente para todas as outras dimensões. A quantidade de repetições definida foi de 48 repetições por dimensão-configuração.
+
+O algoritmo implmentado é apresentado em [@campelo2019sample] e implementado em um script R separado (EC3_expecificacao_tamanho_amostras.R)
+
+A quantidade de repetições pode ser, assim, definida a partir do seguinte código:
+
+```{r loaddata2}
+sample_iterations <- function(instance, algo1, algo2, se_threshold, n0, n_max) {
+  # Inicializando as amostras iniciais
+  x1 <- sample(algo1(instance), n0, replace = TRUE)
+  x2 <- sample(algo2(instance), n0, replace = TRUE)
+  
+  # Número inicial de execuções
+  n1 <- n0
+  n2 <- n0
+  
+  # Função para calcular erro padrão da diferença simples
+  calc_se <- function(x1, x2) {
+    s1 <- sd(x1)
+    s2 <- sd(x2)
+    sqrt(s1^2 / length(x1) + s2^2 / length(x2))
+  }
+  
+  # Calcula o erro padrão inicial
+  se_current <- calc_se(x1, x2)
+  
+  # Loop até atingir o limite de precisão ou o orçamento máximo
+  while (se_current > se_threshold && (n1 + n2) < n_max) {
+    # Calcula a proporção ótima de amostras
+    s1 <- sd(x1)
+    s2 <- sd(x2)
+    r_opt <- s1 / s2
+    
+    # Determina qual algoritmo amostrar com base na proporção
+    if (n1 / n2 < r_opt) {
+      # Adiciona uma nova amostra para o algoritmo 1
+      new_sample <- algo1(instance)
+      x1 <- c(x1, new_sample)
+      n1 <- n1 + 1
+    } else {
+      # Adiciona uma nova amostra para o algoritmo 2
+      new_sample <- algo2(instance)
+      x2 <- c(x2, new_sample)
+      n2 <- n2 + 1
+    }
+    
+    # Atualiza o erro padrão
+    se_current <- calc_se(x1, x2)
+  }
+  
+  # Retorna os resultados
+  list(
+    x1 = x1,
+    x2 = x2,
+    n1 = n1,
+    n2 = n2,
+    se = se_current
+  )
+}
+
+```
+
+Criando wrappers para realizar as amostragens, temos o seguinte código:
+
+```{r loaddata3}
+n_amostrar_para_erro = 10
+n_dimensoes_para_erro = 10
+
+# estimativa de amostras
+# se_threshold, 
+n0=2
+n_max=50
+amostras_teste=10
+se_threshold = 22838.192087
+
+wrapper_config1 <- function(dimensao){
+  selpars <- list(name = "selection_standard")
+  stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
+  probpars <- list(name = "fn", xmin = rep(-5, dimensao), xmax = rep(10, dimensao))
+  popsize = 5 * dimensao
+  out <- ExpDE(mutpars = configuracoes[[1]]$mutpars,
+               recpars = configuracoes[[1]]$recpars,
+               popsize = popsize,
+               selpars = selpars,
+               stopcrit = stopcrit,
+               probpars = probpars,
+               showpars = list(show.iters = "dots", showevery = 20))
+  return(out$Fbest)
+}
+wrapper_config2 <- function(dimensao){
+  selpars <- list(name = "selection_standard")
+  stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
+  probpars <- list(name = "fn", xmin = rep(-5, dimensao), xmax = rep(10, dimensao))
+  popsize = 5 * dimensao
+  out <- ExpDE(mutpars = configuracoes[[2]]$mutpars,
+               recpars = configuracoes[[2]]$recpars,
+               popsize = popsize,
+               selpars = selpars,
+               stopcrit = stopcrit,
+               probpars = probpars,
+               showpars = list(show.iters = "dots", showevery = 20))
+  return(out$Fbest)
+}
+
+
+
+dimensoes_teste = sample(dimensoes, amostras_teste)
+```
+
+Por fim, definimos o número de repetições a seguir:
+```{r loaddata10}
+# # Defina os parâmetros
+# # dimensaoensoes, configuracoes e repeticoes devem ser definidos como vetores ou listas.
+# # dimensoes<- c(10, 20)  # Exemplos de dimensaoensões
+# repeticoes <- 1:n_amostrar_para_erro  # Número de repetições
+# 
+# n_blocos = calc_instances(2, 0.5, power=0.8) # 2: n instancias, 0.5: tamanho de efeito mínimo; power: poder do teste
+# dimensoes = seq(2,150,length.out=38)
+# dimensoes_teste = sample(dimensoes, 10)  # amostragem para calculo de quantidade de repetições
+# tamanho_amostras <- data.frame(
+#   Dimensao = numeric(),    # Coluna tipo numérico
+#   Iterations1 = numeric(), # Evita fatores (para colunas de texto)
+#   Iterations2 = numeric() # Evita fatores (para colunas de texto)
+# )
+# for (dimensao in dimensoes_teste){
+#   cat("Dimensao: ", dimensao)
+#   si = sample_iterations(
+#     instance = dimensao,
+#     algo1 = wrapper_config1,
+#     algo2 = wrapper_config2,
+#     se_threshold = se_threshold,
+#     n0 = n0,
+#     n_max = n_max
+#   )
+#   cat("\nAmostra 1: ", si$n1,"| Amostra 2: ", si$n2, "\n")
+#   tamanho_amostras[nrow(tamanho_amostras)+1,] <- list(dimensao, si$n1, si$n2)
+#   
+# }
+#   
+# 
+# # Parâmetros adicionais para o ExpDE
+# resultados <- data.frame(matrix(ncol = length(configuracoes), nrow = length(dimensoes)))
+# repeticoes_resultados <- data.frame(
+#   Config = character(),   # Coluna tipo texto
+#   Dimensao = numeric(),    # Coluna tipo numérico
+#   Repeticao = numeric(),    # Coluna tipo double
+#   Valor = double() # Evita fatores (para colunas de texto)
+# )
+# colnames(resultados) <- sapply(configuracoes, function(config) config$name)
+# rownames(resultados) <- dimensoes
+# repeticoes <- 1:48  # Número de repetições
+# 
+# # Loop sobre dimensaoensões, configurações e repetições
+# for (dimensao in dimensoes) {
+#   for (configuracao in configuracoes) {
+#     resultados_config <- c()  # Vetor para armazenar os resultados das repetições
+#     i = 0
+#     for (repeticao in repeticoes) {
+#       selpars <- list(name = "selection_standard")
+#       stopcrit <- list(names = "stop_maxeval", maxevals = 5000 * dimensao, maxiter = 100 * dimensao)
+#       probpars <- list(name = "fn", xmin = rep(-5, dimensao), xmax = rep(10, dimensao))
+#       popsize = 5 * dimensao
+#       # Executa o algoritmo ExpDE e armazena o resultado
+#       # Run algorithm on problem:
+#       out <- ExpDE(mutpars = configuracao$mutpars,
+#                    recpars = configuracao$recpars,
+#                    popsize = popsize,
+#                    selpars = selpars,
+#                    stopcrit = stopcrit,
+#                    probpars = probpars,
+#                    showpars = list(show.iters = "dots", showevery = 20))
+#       # Extract observation:
+#       resultados_config <- c(resultados_config, out$Fbest)  # Supondo que "fitness" seja uma métrica retornada
+#       cat("Configuracao", configuracao$name, "| dimensão: ", dimensao, "| resultado: ", resultados_config)
+#       repeticoes_resultados[nrow(repeticoes_resultados)+1,] <- list(configuracao$name, dimensao, i, out$Fbest)
+#       i = i+1
+#       
+#       #print(resultados_config)
+#     }
+#     resultados[as.character(dimensao), configuracao$name] <- mean(resultados_config)
+#   }
+# }
+# 
+# write.csv(resultados, "resultados_comparacao_algoritmo.csv")
+# write.csv(repeticoes_resultados, "resultado_cada_repeticao.csv")
+# 
+# novo_df <- data.frame(
+#   Dimensão = rep(rownames(resultados), times = ncol(resultados)),
+#   Configuração = rep(colnames(resultados), each = nrow(resultados)),
+#   Resultado = as.vector(as.matrix(resultados))
+# )
+# write.csv(novo_df, "resultados_comparacao_algoritmo_REORGANIZADO.csv")
+```
+
+# Teste de Blocagem
+
+O teste de blocagem, como explicado anteriormente, permite avaliar a significância de parâmetros pressupondo outros como decorrentes de variações normalmente distribuídas. Uma vez que em R a função de teste ANOVA é capaz de separar o experimento por grupos, iremos utilizar ela para o experimento. O dataframe novo_df possui os dados das médias dos experimentos para cada par de configuração/bloco analisado.
+
+```{r loaddata5}
+
+novo_df <- read.csv('resultados_comparacao_algoritmo_REORGANIZADO.csv')
+novo_df$dim_numeric <- as.numeric(novo_df$Dimensão)
+novo_df$Configuração <- as.factor(novo_df$Configuração)
+novo_df$Dimensão <- as.factor(novo_df$Dimensão)
+
+model <- aov(Resultado~Configuração+Dimensão,
+             data = novo_df)
+
+summary(model)
+summary.lm(model)$r.squared
+
+library(ggplot2)
+library(dplyr)
+arrange(novo_df, dim_numeric)
+
+# Análise da Configuração pela Dimensão
+p <- ggplot(novo_df, aes(x = dim_numeric, 
+                         y = Resultado, 
+                         group = Configuração, 
+                         colour = Configuração))
+p + geom_line(linetype=2) + geom_point(size=5)
+```
+
+Podemos notar que, de fato, o fator de configuração não pode ser desprezado e consequentemente alguma das configurações possui um desempenho melhor que a outra. 
+
+Em contrapartida, o fator de dimensão não pode ser tomado como significativo no caso de considerar os blocos do experimento como cada uma das configurações. Apesar de este não ser o motivo primário da realização do experimento, abre possibilidades interessantes de otimização das configurações e fine-tunning de parâmetros de forma a se comportar bem em diversas dimensões.
+
+Apenas como uma análise complementar, iremos utilizar o resultado considerando todas as execuções dos algoritmos, ou seja, não iremos analisar apenas a média. Esta análise, apesar de não ser necessária nem possuir significado estatístico como a prévia, permite-nos avaliar a constância das médias no experimento.
+```{r loaddata13}
+repeticoes_resultados <- read.csv("resultado_cada_repeticao.csv")
+
+repeticoes_resultados$Config <- as.factor(repeticoes_resultados$Config)
+repeticoes_resultados$Dimensao <- as.factor(repeticoes_resultados$Dimensao)
+model2 <- aov(Valor~Config+Dimensao,
+             data = repeticoes_resultados)
+
+summary(model2)
+```
+
+Neste caso, a dimensão apresentou-se como um fator relevante. Apesar de isto não comprovar a dimensão em si como um fator relevante ao considerar o comportamento médio, abre portas para explorar o efeito de dimensões maiores no problema.
+
+## Testes Post-Hoc
+
+Podemos analisar qual a significância da configuração de forma mais aprofundada realizando um teste de Dunnett. Apesar de não ser necessário por termos apenas duas configurações, o teste de blocagem ter rejeitado a hipótese de a configuração ter um efeito desprezível e ser evidente qual das configurações possui um melhor comportamento, ainda é valido realizar este teste para termos noção do tamanho do intervalo de confiança que embasa nossa decisão.
+
+```{r loaddata11}
+library(multcomp)
+
+duntest     <- glht(model,
+                    linfct = mcp(Configuração = "Dunnett"))
+
+summary(duntest)
+
+duntestCI   <- confint(duntest)
+
+par(mar = c(5, 8, 4, 2), las = 1)
+plot(duntestCI,
+     xlab = "Mean difference")
+
+```
+
+Podemos perceber que o intervalo de confiança está de fato longe da origem, o que aumenta nossa confiança na conclusão de que há diferença significativa no comportamento das duas configurações.
+
+## Premissas do Teste
+
+Dotados dos resíduos do teste, podemos conferir as premissas específicas do próprio teste. Inicialmente, verificamos se os resíduos seguem de fato uma normal padrão
+
+```{r loaddata6}
+shapiro.test(model$residuals)
+
+
+qqnorm(model$residuals)
+qqline(model$residuals)
+
+hist(model$residuals)
+
+plot(ecdf(model$residuals))
+dados_test <- rnorm(100)
+plot(ecdf(dados_test))
+```
+
+Os resíduos do teste não seguem uma distribuição normal padrão. Apesar disso, tanto pela quantidade de dados quanto pelas maiores dispersões ocorrerem nas extremidades da cauda, ainda podemos considerar como válidos os resultados do experimento.
+
+```{r loaddata7}
+fligner.test(novo_df$Resultado ~ novo_df$Configuração, 
+             data = novo_df)
+```
+Novamente, o teste rejeita a hipótese nula e não podemos supor a premissa de igualdade de variâncias. Precisamos novamente de nos basear na quantidade de dados utilizados no experimento de forma a manter as conclusões aqui extraídas.
+
+
+# Discussões e Conclusões
+
+Os resultados do estudo demonstram diferenças significativas no desempenho médio das duas configurações do algoritmo de Evolução Diferencial na minimização da função Rosenbrock, com a Configuração 2 apresentando desempenho superior em termos de consistência e convergência para valores ótimos. A abordagem experimental adotada, utilizando blocagem para isolar o efeito da dimensão do problema, revelou-se eficaz para controlar a variabilidade entre os experimentos, permitindo uma análise robusta e estatisticamente válida.
+
+Embora os resultados confirmem a relevância da escolha de métodos de recombinação e mutação, o impacto da dimensão do problema sobre o desempenho, observado nos testes complementares, sugere que futuras investigações devem explorar a adaptação dinâmica de hiperparâmetros para melhorar a eficiência em problemas de maior escala.
+
+Apesar de limitações como a não normalidade dos resíduos e a heterogeneidade das variâncias, a robustez dos dados coletados permite validar as conclusões aqui apresentadas. Este trabalho contribui para o entendimento e aprimoramento de algoritmos evolucionários, oferecendo uma base sólida para o desenvolvimento de configurações mais otimizadas em aplicações práticas.
+
+
+# Bibliografia
+
