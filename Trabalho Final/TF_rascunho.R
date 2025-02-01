@@ -38,7 +38,7 @@ p <- ggplot(df, aes(x = frame,
                          group = model, 
                          colour = model))
 
-p + geom_line(linetype=2) + geom_point(size=5) + ggtitle("Título Personalizado") +
+p + geom_line(linetype=2) + geom_point(size=5) + ggtitle("Erros Pitch") +
   theme(plot.title = element_text(size = 16, color = "black", hjust = 0.5))
 
 ################################################################################
@@ -54,7 +54,8 @@ tuktestCI   <- confint(tuktest)
 
 par(mar = c(5, 8, 4, 2), las = 1)
 plot(tuktestCI,
-     xlab = "Mean difference")
+     xlab = "Mean difference",
+     main = "Comparação Modelos - Pitch")
 
 # Analisando o PITCH, 2 e PNP são os melhores
 
@@ -96,7 +97,7 @@ p <- ggplot(df, aes(x = frame,
                     group = model, 
                     colour = model))
 
-p + geom_line(linetype=2) + geom_point(size=5) + ggtitle("Título Personalizado") +
+p + geom_line(linetype=2) + geom_point(size=5) + ggtitle("Erros Roll") +
   theme(plot.title = element_text(size = 16, color = "black", hjust = 0.5))
 
 ################################################################################
@@ -112,7 +113,8 @@ tuktestCI   <- confint(tuktest)
 
 par(mar = c(5, 8, 4, 2), las = 1)
 plot(tuktestCI,
-     xlab = "Mean difference", main="Comparação Configurações - Roll")
+     xlab = "Mean difference", 
+     main="Comparação Modelos - Roll")
 
 # Analisando o ROLL, 2 e PNP são os melhores
 
@@ -154,7 +156,7 @@ p <- ggplot(df, aes(x = frame,
                     group = model, 
                     colour = model))
 
-p + geom_line(linetype=2) + geom_point(size=5) + ggtitle("Título Personalizado") +
+p + geom_line(linetype=2) + geom_point(size=5) + ggtitle("Erros Distance") +
   theme(plot.title = element_text(size = 16, color = "black", hjust = 0.5))
 
 ################################################################################
@@ -170,7 +172,8 @@ tuktestCI   <- confint(tuktest)
 
 par(mar = c(5, 8, 4, 2), las = 1)
 plot(tuktestCI,
-     xlab = "Mean difference")
+     xlab = "Mean difference",
+     main="Comparação Modelos - Distance")
 
 # Analisando o DISTANCE, PNP é o melhor
 
@@ -211,7 +214,7 @@ SIGN.test(X, md=0, alternative="less")
 X <- pnp_values - model_2_values
 SIGN.test(X, md=0, alternative="less")
 
-hist(X)
+hist(X, main="Histograma - PnP - Modelo 2", xlab="Diferença dos Erros")
 
 X <- pnp_values - model_3_values
 SIGN.test(X, md=0, alternative="less")
@@ -225,12 +228,35 @@ model_aov <- aov(execution_time_mean~model_id+runway_id,
 summary(model_aov)
 summary.lm(model_aov)$r.squared
 
-# No Tempo, não existe diferença significativa
+p <- ggplot(df_times, aes(x = runway_id, 
+                    y = execution_time_mean, 
+                    group = model_id, 
+                    colour = model_id))
+
+p + geom_line(linetype=2) + geom_point(size=5) + ggtitle("Tempos") +
+  theme(plot.title = element_text(size = 16, color = "black", hjust = 0.5))
+
+################################################################################
+######### Teste POST-HOC ######################################################
+
+## comparação da configuraçao #######
+tuktest     <- glht(model_aov,
+                    linfct = mcp(model = "Tukey"))
+
+summary(tuktest)
+
+tuktestCI   <- confint(tuktest)
+
+par(mar = c(5, 8, 4, 2), las = 1)
+plot(tuktestCI,
+     xlab = "Mean difference",
+     main="Comparação Modelos - Tempo")
+
+# Analisando o DISTANCE, PNP é o melhor
 
 ######### TESTES DAS PREMISSAS ######################################################
 # Check normality
 shapiro.test(model_aov$residuals)
-
 
 qqnorm(model_aov$residuals)
 qqline(model_aov$residuals)
